@@ -4,6 +4,7 @@ const countrySchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
     slug: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    flag: { type: String, required: true, trim: true },
     countryCode: { type: String, required: true, unique: true, lowercase: true, trim: true },
     status: { type: Boolean, default: true },
   },
