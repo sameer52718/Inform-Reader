@@ -9,9 +9,8 @@ class SoftwareController extends BaseController {
 
     async insert(req, res, next) {
         try {
-            const data = req.body; // Expecting an array of software objects
+            const data = req.body;
     
-            // Validate that the request body is an array and not empty
             if (!Array.isArray(data) || data.length === 0) {
                 return res.status(400).json({
                     success: false,
@@ -19,7 +18,6 @@ class SoftwareController extends BaseController {
                 });
             }
     
-            // Function to generate a unique slug if it already exists
             const generateUniqueSlug = async (slug) => {
                 let newSlug = slug;
                 let count = 1;
@@ -30,7 +28,6 @@ class SoftwareController extends BaseController {
                 return newSlug;
             };
     
-            // Process each software entry
             const softwareToInsert = await Promise.all(
                 data.map(async (software) => {
                     software.slug = await generateUniqueSlug(software.slug);
@@ -38,13 +35,13 @@ class SoftwareController extends BaseController {
                 })
             );
     
-            // Insert multiple software entries at once
             const newSoftware = await Software.insertMany(softwareToInsert);
     
             res.status(201).json({
                 success: true,
                 message: "Software entries added successfully",
             });
+            
         } catch (error) {
             return this.handleError(next, error);
         }
