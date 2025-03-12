@@ -1,78 +1,235 @@
 import mongoose from 'mongoose';
 import Country from '../models/Country.js'; // Ensure correct path
 import dotenv from 'dotenv';
+import slugify from 'slugify';
 
 dotenv.config();
 
 const countries = [
-    { name: "Afghanistan", countryCode: "AF", slug: "afghanistan", flag: "https://flagcdn.com/w320/af.png" },
-    { name: "Albania", countryCode: "AL", slug: "albania", flag: "https://flagcdn.com/w320/al.png" },
-    { name: "Algeria", countryCode: "DZ", slug: "algeria", flag: "https://flagcdn.com/w320/dz.png" },
-    { name: "Andorra", countryCode: "AD", slug: "andorra", flag: "https://flagcdn.com/w320/ad.png" },
-    { name: "Angola", countryCode: "AO", slug: "angola", flag: "https://flagcdn.com/w320/ao.png" },
-    { name: "Argentina", countryCode: "AR", slug: "argentina", flag: "https://flagcdn.com/w320/ar.png" },
-    { name: "Armenia", countryCode: "AM", slug: "armenia", flag: "https://flagcdn.com/w320/am.png" },
-    { name: "Australia", countryCode: "AU", slug: "australia", flag: "https://flagcdn.com/w320/au.png" },
-    { name: "Austria", countryCode: "AT", slug: "austria", flag: "https://flagcdn.com/w320/at.png" },
-    { name: "Azerbaijan", countryCode: "AZ", slug: "azerbaijan", flag: "https://flagcdn.com/w320/az.png" },
-    { name: "Bahamas", countryCode: "BS", slug: "bahamas", flag: "https://flagcdn.com/w320/bs.png" },
-    { name: "Bahrain", countryCode: "BH", slug: "bahrain", flag: "https://flagcdn.com/w320/bh.png" },
-    { name: "Bangladesh", countryCode: "BD", slug: "bangladesh", flag: "https://flagcdn.com/w320/bd.png" },
-    { name: "Belarus", countryCode: "BY", slug: "belarus", flag: "https://flagcdn.com/w320/by.png" },
-    { name: "Belgium", countryCode: "BE", slug: "belgium", flag: "https://flagcdn.com/w320/be.png" },
-    { name: "Belize", countryCode: "BZ", slug: "belize", flag: "https://flagcdn.com/w320/bz.png" },
-    { name: "Benin", countryCode: "BJ", slug: "benin", flag: "https://flagcdn.com/w320/bj.png" },
-    { name: "Bhutan", countryCode: "BT", slug: "bhutan", flag: "https://flagcdn.com/w320/bt.png" },
-    { name: "Bolivia", countryCode: "BO", slug: "bolivia", flag: "https://flagcdn.com/w320/bo.png" },
-    { name: "Bosnia and Herzegovina", countryCode: "BA", slug: "bosnia-and-herzegovina", flag: "https://flagcdn.com/w320/ba.png" },
-    { name: "Botswana", countryCode: "BW", slug: "botswana", flag: "https://flagcdn.com/w320/bw.png" },
-    { name: "Brazil", countryCode: "BR", slug: "brazil", flag: "https://flagcdn.com/w320/br.png" },
-    { name: "Bulgaria", countryCode: "BG", slug: "bulgaria", flag: "https://flagcdn.com/w320/bg.png" },
-    { name: "Burkina Faso", countryCode: "BF", slug: "burkina-faso", flag: "https://flagcdn.com/w320/bf.png" },
-    { name: "Canada", countryCode: "CA", slug: "canada", flag: "https://flagcdn.com/w320/ca.png" },
-    { name: "Chile", countryCode: "CL", slug: "chile", flag: "https://flagcdn.com/w320/cl.png" },
-    { name: "China", countryCode: "CN", slug: "china", flag: "https://flagcdn.com/w320/cn.png" },
-    { name: "Colombia", countryCode: "CO", slug: "colombia", flag: "https://flagcdn.com/w320/co.png" },
-    { name: "Denmark", countryCode: "DK", slug: "denmark", flag: "https://flagcdn.com/w320/dk.png" },
-    { name: "Egypt", countryCode: "EG", slug: "egypt", flag: "https://flagcdn.com/w320/eg.png" },
-    { name: "Finland", countryCode: "FI", slug: "finland", flag: "https://flagcdn.com/w320/fi.png" },
-    { name: "France", countryCode: "FR", slug: "france", flag: "https://flagcdn.com/w320/fr.png" },
-    { name: "Germany", countryCode: "DE", slug: "germany", flag: "https://flagcdn.com/w320/de.png" },
-    { name: "United Kingdom", countryCode: "GB", slug: "united-kingdom", flag: "https://flagcdn.com/w320/gb.png" },
-    { name: "United States", countryCode: "US", slug: "united-states", flag: "https://flagcdn.com/w320/us.png" },
-    { name: "Vietnam", countryCode: "VN", slug: "vietnam", flag: "https://flagcdn.com/w320/vn.png" },
-    { name: "Zimbabwe", countryCode: "ZW", slug: "zimbabwe", flag: "https://flagcdn.com/w320/zw.png" }
+  { name: 'Afghanistan', countryCode: 'AF' },
+  { name: 'Albania', countryCode: 'AL' },
+  { name: 'Algeria', countryCode: 'DZ' },
+  { name: 'Andorra', countryCode: 'AD' },
+  { name: 'Angola', countryCode: 'AO' },
+  { name: 'Antigua and Barbuda', countryCode: 'AG' },
+  { name: 'Argentina', countryCode: 'AR' },
+  { name: 'Armenia', countryCode: 'AM' },
+  { name: 'Australia', countryCode: 'AU' },
+  { name: 'Austria', countryCode: 'AT' },
+  { name: 'Azerbaijan', countryCode: 'AZ' },
+  { name: 'Bahamas', countryCode: 'BS' },
+  { name: 'Bahrain', countryCode: 'BH' },
+  { name: 'Bangladesh', countryCode: 'BD' },
+  { name: 'Barbados', countryCode: 'BB' },
+  { name: 'Belarus', countryCode: 'BY' },
+  { name: 'Belgium', countryCode: 'BE' },
+  { name: 'Belize', countryCode: 'BZ' },
+  { name: 'Benin', countryCode: 'BJ' },
+  { name: 'Bhutan', countryCode: 'BT' },
+  { name: 'Bolivia', countryCode: 'BO' },
+  { name: 'Bosnia and Herzegovina', countryCode: 'BA' },
+  { name: 'Botswana', countryCode: 'BW' },
+  { name: 'Brazil', countryCode: 'BR' },
+  { name: 'Brunei', countryCode: 'BN' },
+  { name: 'Bulgaria', countryCode: 'BG' },
+  { name: 'Burkina Faso', countryCode: 'BF' },
+  { name: 'Burundi', countryCode: 'BI' },
+  { name: 'Cabo Verde', countryCode: 'CV' },
+  { name: 'Cambodia', countryCode: 'KH' },
+  { name: 'Cameroon', countryCode: 'CM' },
+  { name: 'Canada', countryCode: 'CA' },
+  { name: 'Central African Republic', countryCode: 'CF' },
+  { name: 'Chad', countryCode: 'TD' },
+  { name: 'Chile', countryCode: 'CL' },
+  { name: 'China', countryCode: 'CN' },
+  { name: 'Colombia', countryCode: 'CO' },
+  { name: 'Comoros', countryCode: 'KM' },
+  { name: 'Congo, Democratic Republic of the', countryCode: 'CD' },
+  { name: 'Congo, Republic of the', countryCode: 'CG' },
+  { name: 'Costa Rica', countryCode: 'CR' },
+  { name: 'Croatia', countryCode: 'HR' },
+  { name: 'Cuba', countryCode: 'CU' },
+  { name: 'Cyprus', countryCode: 'CY' },
+  { name: 'Czech Republic', countryCode: 'CZ' },
+  { name: 'Denmark', countryCode: 'DK' },
+  { name: 'Djibouti', countryCode: 'DJ' },
+  { name: 'Dominica', countryCode: 'DM' },
+  { name: 'Dominican Republic', countryCode: 'DO' },
+  { name: 'Ecuador', countryCode: 'EC' },
+  { name: 'Egypt', countryCode: 'EG' },
+  { name: 'El Salvador', countryCode: 'SV' },
+  { name: 'Equatorial Guinea', countryCode: 'GQ' },
+  { name: 'Eritrea', countryCode: 'ER' },
+  { name: 'Estonia', countryCode: 'EE' },
+  { name: 'Eswatini', countryCode: 'SZ' },
+  { name: 'Ethiopia', countryCode: 'ET' },
+  { name: 'Fiji', countryCode: 'FJ' },
+  { name: 'Finland', countryCode: 'FI' },
+  { name: 'France', countryCode: 'FR' },
+  { name: 'Gabon', countryCode: 'GA' },
+  { name: 'Gambia', countryCode: 'GM' },
+  { name: 'Georgia', countryCode: 'GE' },
+  { name: 'Germany', countryCode: 'DE' },
+  { name: 'Ghana', countryCode: 'GH' },
+  { name: 'Greece', countryCode: 'GR' },
+  { name: 'Grenada', countryCode: 'GD' },
+  { name: 'Guatemala', countryCode: 'GT' },
+  { name: 'Guinea', countryCode: 'GN' },
+  { name: 'Guinea-Bissau', countryCode: 'GW' },
+  { name: 'Guyana', countryCode: 'GY' },
+  { name: 'Haiti', countryCode: 'HT' },
+  { name: 'Honduras', countryCode: 'HN' },
+  { name: 'Hungary', countryCode: 'HU' },
+  { name: 'Iceland', countryCode: 'IS' },
+  { name: 'India', countryCode: 'IN' },
+  { name: 'Indonesia', countryCode: 'ID' },
+  { name: 'Iran', countryCode: 'IR' },
+  { name: 'Iraq', countryCode: 'IQ' },
+  { name: 'Ireland', countryCode: 'IE' },
+  { name: 'Israel', countryCode: 'IL' },
+  { name: 'Italy', countryCode: 'IT' },
+  { name: 'Jamaica', countryCode: 'JM' },
+  { name: 'Japan', countryCode: 'JP' },
+  { name: 'Jordan', countryCode: 'JO' },
+  { name: 'Kazakhstan', countryCode: 'KZ' },
+  { name: 'Kenya', countryCode: 'KE' },
+  { name: 'Kiribati', countryCode: 'KI' },
+  { name: 'Korea, North', countryCode: 'KP' },
+  { name: 'Korea, South', countryCode: 'KR' },
+  { name: 'Kuwait', countryCode: 'KW' },
+  { name: 'Kyrgyzstan', countryCode: 'KG' },
+  { name: 'Laos', countryCode: 'LA' },
+  { name: 'Latvia', countryCode: 'LV' },
+  { name: 'Lebanon', countryCode: 'LB' },
+  { name: 'Lesotho', countryCode: 'LS' },
+  { name: 'Liberia', countryCode: 'LR' },
+  { name: 'Libya', countryCode: 'LY' },
+  { name: 'Liechtenstein', countryCode: 'LI' },
+  { name: 'Lithuania', countryCode: 'LT' },
+  { name: 'Luxembourg', countryCode: 'LU' },
+  { name: 'Madagascar', countryCode: 'MG' },
+  { name: 'Malawi', countryCode: 'MW' },
+  { name: 'Malaysia', countryCode: 'MY' },
+  { name: 'Maldives', countryCode: 'MV' },
+  { name: 'Mali', countryCode: 'ML' },
+  { name: 'Malta', countryCode: 'MT' },
+  { name: 'Marshall Islands', countryCode: 'MH' },
+  { name: 'Mauritania', countryCode: 'MR' },
+  { name: 'Mauritius', countryCode: 'MU' },
+  { name: 'Mexico', countryCode: 'MX' },
+  { name: 'Micronesia', countryCode: 'FM' },
+  { name: 'Moldova', countryCode: 'MD' },
+  { name: 'Monaco', countryCode: 'MC' },
+  { name: 'Mongolia', countryCode: 'MN' },
+  { name: 'Montenegro', countryCode: 'ME' },
+  { name: 'Morocco', countryCode: 'MA' },
+  { name: 'Mozambique', countryCode: 'MZ' },
+  { name: 'Myanmar', countryCode: 'MM' },
+  { name: 'Namibia', countryCode: 'NA' },
+  { name: 'Nauru', countryCode: 'NR' },
+  { name: 'Nepal', countryCode: 'NP' },
+  { name: 'Netherlands', countryCode: 'NL' },
+  { name: 'New Zealand', countryCode: 'NZ' },
+  { name: 'Nicaragua', countryCode: 'NI' },
+  { name: 'Niger', countryCode: 'NE' },
+  { name: 'Nigeria', countryCode: 'NG' },
+  { name: 'North Macedonia', countryCode: 'MK' },
+  { name: 'Norway', countryCode: 'NO' },
+  { name: 'Oman', countryCode: 'OM' },
+  { name: 'Pakistan', countryCode: 'PK' },
+  { name: 'Palau', countryCode: 'PW' },
+  { name: 'Panama', countryCode: 'PA' },
+  { name: 'Papua New Guinea', countryCode: 'PG' },
+  { name: 'Paraguay', countryCode: 'PY' },
+  { name: 'Peru', countryCode: 'PE' },
+  { name: 'Philippines', countryCode: 'PH' },
+  { name: 'Poland', countryCode: 'PL' },
+  { name: 'Portugal', countryCode: 'PT' },
+  { name: 'Qatar', countryCode: 'QA' },
+  { name: 'Romania', countryCode: 'RO' },
+  { name: 'Russia', countryCode: 'RU' },
+  { name: 'Rwanda', countryCode: 'RW' },
+  { name: 'Saint Kitts and Nevis', countryCode: 'KN' },
+  { name: 'Saint Lucia', countryCode: 'LC' },
+  { name: 'Saint Vincent and the Grenadines', countryCode: 'VC' },
+  { name: 'Samoa', countryCode: 'WS' },
+  { name: 'San Marino', countryCode: 'SM' },
+  { name: 'Sao Tome and Principe', countryCode: 'ST' },
+  { name: 'Saudi Arabia', countryCode: 'SA' },
+  { name: 'Senegal', countryCode: 'SN' },
+  { name: 'Serbia', countryCode: 'RS' },
+  { name: 'Seychelles', countryCode: 'SC' },
+  { name: 'Sierra Leone', countryCode: 'SL' },
+  { name: 'Singapore', countryCode: 'SG' },
+  { name: 'Slovakia', countryCode: 'SK' },
+  { name: 'Slovenia', countryCode: 'SI' },
+  { name: 'Solomon Islands', countryCode: 'SB' },
+  { name: 'Somalia', countryCode: 'SO' },
+  { name: 'South Africa', countryCode: 'ZA' },
+  { name: 'South Sudan', countryCode: 'SS' },
+  { name: 'Spain', countryCode: 'ES' },
+  { name: 'Sri Lanka', countryCode: 'LK' },
+  { name: 'Sudan', countryCode: 'SD' },
+  { name: 'Suriname', countryCode: 'SR' },
+  { name: 'Sweden', countryCode: 'SE' },
+  { name: 'Switzerland', countryCode: 'CH' },
+  { name: 'Syria', countryCode: 'SY' },
+  { name: 'Taiwan', countryCode: 'TW' },
+  { name: 'Tajikistan', countryCode: 'TJ' },
+  { name: 'Tanzania', countryCode: 'TZ' },
+  { name: 'Thailand', countryCode: 'TH' },
+  { name: 'Togo', countryCode: 'TG' },
+  { name: 'Tonga', countryCode: 'TO' },
+  { name: 'Trinidad and Tobago', countryCode: 'TT' },
+  { name: 'Tunisia', countryCode: 'TN' },
+  { name: 'Turkey', countryCode: 'TR' },
+  { name: 'Turkmenistan', countryCode: 'TM' },
+  { name: 'Tuvalu', countryCode: 'TV' },
+  { name: 'Uganda', countryCode: 'UG' },
+  { name: 'Ukraine', countryCode: 'UA' },
+  { name: 'United Arab Emirates', countryCode: 'AE' },
+  { name: 'United Kingdom', countryCode: 'GB' },
+  { name: 'United States', countryCode: 'US' },
+  { name: 'Uruguay', countryCode: 'UY' },
+  { name: 'Uzbekistan', countryCode: 'UZ' },
+  { name: 'Vanuatu', countryCode: 'VU' },
+  { name: 'Vatican City', countryCode: 'VA' },
+  { name: 'Venezuela', countryCode: 'VE' },
+  { name: 'Vietnam', countryCode: 'VN' },
+  { name: 'Yemen', countryCode: 'YE' },
+  { name: 'Zambia', countryCode: 'ZM' },
+  { name: 'Zimbabwe', countryCode: 'ZW' },
 ];
 
-
 const seedCountries = async () => {
-    try {
-        await mongoose.connect(process.env.MONGO_DB_URL, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-        console.log('✅ Database connected');
+  try {
+    await mongoose.connect(process.env.MONGO_DB_URL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log('✅ Database connected');
 
-        // Remove existing data to prevent duplicates
-        await Country.deleteMany();
-        console.log('⚠️ Existing country data removed');
+    // Remove existing data to prevent duplicates
+    await Country.deleteMany();
+    console.log('⚠️ Existing country data removed');
 
-        // Ensure country codes are stored in lowercase
-        const formattedCountries = countries.map(country => ({
-            ...country,
-            countryCode: country.countryCode.toLowerCase()
-        }));
+    // Ensure country codes are stored in lowercase
+    const formattedCountries = countries.map((country) => ({
+      name: country.name,
+      countryCode: country.countryCode.toLowerCase(),
+      slug: slugify(country.name),
+      flag: `https://flagcdn.com/w320/${country.countryCode.toLowerCase()}.png`,
+    }));
 
-        // Insert new countries
-        await Country.insertMany(formattedCountries);
-        console.log('✅ Countries seeded successfully');
-
-    } catch (error) {
-        console.error('❌ Error seeding countries:', error);
-    } finally {
-        mongoose.connection.close();
-        console.log('🔌 Database connection closed');
-    }
+    // Insert new countries
+    await Country.insertMany(formattedCountries);
+    console.log('✅ Countries seeded successfully');
+  } catch (error) {
+    console.error('❌ Error seeding countries:', error);
+  } finally {
+    mongoose.connection.close();
+    console.log('🔌 Database connection closed');
+  }
 };
 
 // Run the seeder
