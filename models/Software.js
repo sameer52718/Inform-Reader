@@ -1,9 +1,10 @@
 import mongoose from 'mongoose';
+import slugify from 'slugify'; // Make sure to install the slugify library
 
 const softwareSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
-    slug: { type: String, required: false, unique: true, lowercase: true, trim: true },
+    slug: { type: String, required: false, lowercase: true, trim: true },
     overview: { type: String, required: true, trim: true },
     logo: { type: String, required: true },
     download: { type: String, required: true },
@@ -15,8 +16,9 @@ const softwareSchema = new mongoose.Schema(
     tag: { type: String, required: false },
     wishList: { type: Array, default: [] },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
+
 
 const Software = mongoose.model('Software', softwareSchema);
 
