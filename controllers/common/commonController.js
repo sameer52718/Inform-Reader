@@ -14,7 +14,7 @@ class CommonController extends BaseController {
   
       // If groupCountry is provided, group the countries by region
       if (groupCountry) {
-        response['groupCountry'] = await Country.aggregate([
+         const groupCountry = await Country.aggregate([
           {
             $group: {
               _id: "$region",
@@ -25,6 +25,8 @@ class CommonController extends BaseController {
             $sort: { _id: 1 },
           },
         ]);
+
+        response['groupCountry'] = groupCountry[0];
       }
   
       if (region) {
