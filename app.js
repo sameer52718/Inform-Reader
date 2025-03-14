@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/v1', ApiV1Router);
 
-const PORT = process.env.PORT || 2000;
+const PORT = process.env.PORT || 1000;
 
 app.use(ErrorHandler);
 
