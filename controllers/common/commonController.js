@@ -26,7 +26,7 @@ class CommonController extends BaseController {
           },
         ]);
 
-        response['groupCountry'] = groupCountry[0];
+        response['groupCountry'] = groupCountry;
       }
   
       if (region) {
