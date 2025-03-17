@@ -71,7 +71,7 @@ class BankCodeController extends BaseController {
         }
 
         // Fetch the bank details
-        const bankCodes = await BankCode.findOne({ swiftCode });
+        const bankCodes = await BankCode.findOne({ swiftCode }).populate('countryId', 'name');
 
         if (!bankCodes) {
             return res.status(404).json({ success: false, message: 'Bank not found' });
