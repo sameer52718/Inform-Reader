@@ -82,7 +82,7 @@ class BankCodeController extends BaseController {
         const related = await relatedPromise;
 
         return res.status(200).json({
-            success: true,
+            error: false,
             bankCodes,
             related, // Include related results
         });
