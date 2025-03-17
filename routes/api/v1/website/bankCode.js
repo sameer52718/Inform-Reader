@@ -4,5 +4,6 @@ import BankCodeController from '../../../../controllers/website/bankCodeControll
 const router = Router();
 
 router.get('/', BankCodeController.get);
+router.get('/:swiftCode', BankCodeController.detail);
 
 export default router;

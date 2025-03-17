@@ -6,6 +6,7 @@ class BankCodeController extends BaseController {
   constructor() {
     super();
     this.get = this.get.bind(this);
+    this.detail = this.detail.bind(this);
   }
 
   async get(req, res, next) {
@@ -56,6 +57,37 @@ class BankCodeController extends BaseController {
       return this.handleError(next, error.message, 500);
     }
   }
+
+  async detail(req, res, next) {
+    try {
+        const { swiftCode } = req.params;
+
+        if (!swiftCode) {
+            return this.handleError(next, 'swiftCode is required', 400);
+        }
+
+        // Fetch the bank details
+        const bankCodes = await BankCode.findOne({ swiftCode });
+
+        if (!bankCodes) {
+            return res.status(404).json({ success: false, message: 'Bank not found' });
+        }
+
+        // Fetch related banks in parallel
+        const relatedPromise = BankCode.find({ bank: bankCodes.bank, _id: {$ne: bankCodes._id} }).limit(25);
+        const related = await relatedPromise;
+
+        return res.status(200).json({
+            success: true,
+            bankCodes,
+            related, // Include related results
+        });
+    } catch (error) {
+        return this.handleError(next, error.message, 500);
+    }
+}
+
+
 
 
 
