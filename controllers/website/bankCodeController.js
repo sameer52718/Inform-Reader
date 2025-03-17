@@ -11,7 +11,7 @@ class BankCodeController extends BaseController {
 
   async get(req, res, next) {
     try {
-      const { countryCode, page = 1, limit = 10 } = req.query;  // Default page to 1 and limit to 10
+      const { countryCode, page = 1, limit = 10, search } = req.query;  // Default page to 1 and limit to 10
       const skip = (page - 1) * limit;  // Calculate the skip value based on the current page
 
       // Validate input fields
@@ -28,6 +28,10 @@ class BankCodeController extends BaseController {
 
       // Build the query object
       const query = { countryId: country._id };
+
+      if (search) {
+          query.bank = { $regex: search, $options: 'i' }; // Case-insensitive search
+      }
 
       // Fetch paginated BankCodes by countryId with skip and limit
       const bankCodes = await BankCode.find(query)
