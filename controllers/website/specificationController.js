@@ -37,6 +37,7 @@ class SpecificationController extends BaseController {
                                 input: "$specification",
                                 as: "specification",
                                 in: {
+                                    _id: "$$specification._id", // Include brand
                                     brand: "$$specification.brand", // Include brand
                                     name: "$$specification.name", // Include name
                                     price: "$$specification.price", // Include price
