@@ -25,10 +25,10 @@ class SpecificationController extends BaseController {
                     $project: {
                         _id: 0, // Don't include the _id field
                         category: "$_id", // Category name
-                        specification: { $slice: ["$specification", 5] } // Limit to 5 latest specification in each category
+                        specification: { $slice: ["$specification", 25] } // Limit to 25 latest specification in each category
                     }
                 },
-                { $sample: { size: 5 } }, // Randomly select 5 categories
+                { $sample: { size: 25 } }, // Randomly select 25 categories
                 {
                     $project: {
                         category: 1, // Include the category field
@@ -73,7 +73,7 @@ class SpecificationController extends BaseController {
     async getAll(req, res, next) {
         try {
             const { category } = req.params;
-            const { page = 1, limit = 10 } = req.query;  // Default page to 1 and limit to 10
+            const { page = 1, limit = 10, sortBy } = req.query;  // Default page to 1 and limit to 10
             const skip = (page - 1) * limit;  // Calculate the skip value based on the current page
 
             // Validate input fields
@@ -84,12 +84,28 @@ class SpecificationController extends BaseController {
             // Build the query object for the specified category
             const query = { category };
 
-            // Fetch the specification for the specified category with pagination (skip and limit)
-            const specification = await Specification.find(query)
-                .select('brand name price priceSymbal image category')
-                .skip(skip)
-                .limit(parseInt(limit))
-                .exec();
+            // Prepare sorting object based on sortBy query parameter
+            let aggregationPipeline = [
+                { $match: query },  // Filter by category
+                { $skip: skip },     // Skip for pagination
+                { $limit: parseInt(limit) }  // Limit results
+            ];
+
+            if (sortBy === 'highToLowPrice') {
+                aggregationPipeline.push({ $sort: { price: -1 } });  // Sort by price descending
+            } else if (sortBy === 'LowToHighPrice') {
+                aggregationPipeline.push({ $sort: { price: 1 } });   // Sort by price ascending
+            } else if (sortBy === 'name') {
+                aggregationPipeline.push({ $sort: { name: 1 } });    // Sort by name ascending
+            } else if (sortBy === 'latest') {
+                aggregationPipeline.push({ $sort: { createdAt: -1 } });  // Sort by creation date descending
+            } else {
+                // Random sort
+                aggregationPipeline.push({ $sample: { size: parseInt(limit) } });  // Random sample
+            }
+
+            // Use the aggregation pipeline to fetch data with sorting and pagination
+            const specification = await Specification.aggregate(aggregationPipeline);
 
             // Count the total number of specification in the specified category to calculate the total pages
             const totalspecification = await Specification.countDocuments(query);
@@ -113,34 +129,35 @@ class SpecificationController extends BaseController {
         }
     }
 
+
     async detail(req, res, next) {
         try {
             const { category, id } = req.params;
-    
+
             // Validate input fields
             if (!category || !id) {
                 return this.handleError(next, 'Category and ID are required', 400);
             }
-    
+
             // Fetch the specification by category and id
             const specification = await Specification.findOne({ _id: id, category });
-    
+
             // If the specification is not found, return a 404 error
             if (!specification) {
                 return this.handleError(next, 'specification not found', 404);
             }
-    
+
             // Return the specification details
             res.status(200).json({
                 error: false,
                 specification,
             });
-    
+
         } catch (error) {
             return this.handleError(next, error.message, 500);
         }
     }
-    
+
 
 }
 
