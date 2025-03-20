@@ -12,7 +12,7 @@ import crypto from 'crypto';
 class BaseController {
   userTypes = {
     user: 1,
-    poster: 2,
+    admin:2,
   };
 
   /**
