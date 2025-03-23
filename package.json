@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon app.js",
     "start": "node app.js",
-    "seed:categories": "node seeders/category.js",
+    "seed:types": "node seeders/type.js",
     "seed:countries": "node seeders/country.js"
   },
   "keywords": [],

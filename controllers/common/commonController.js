@@ -1,10 +1,12 @@
 import BaseController from '../BaseController.js';
 import Country from '../../models/Country.js';
+import Type from '../../models/Type.js';
 
 class CommonController extends BaseController {
   constructor() {
     super();
     this.country = this.country.bind(this);
+    this.type = this.type.bind(this);
   }
 
   async country(req, res, next) {
@@ -38,6 +40,17 @@ class CommonController extends BaseController {
       }
   
       return res.json({ error: false, response });
+    } catch (error) {
+      return this.handleError(next, error.message, 500);
+    }
+  }
+
+  async type(req, res, next) {
+    try {
+
+      const types = await Type.find({status: true});
+      return res.json({ error: false, types });
+      
     } catch (error) {
       return this.handleError(next, error.message, 500);
     }
