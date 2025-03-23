@@ -1,12 +1,14 @@
 import BaseController from '../BaseController.js';
 import Country from '../../models/Country.js';
 import Type from '../../models/Type.js';
+import Category from '../../models/Category.js';
 
 class CommonController extends BaseController {
   constructor() {
     super();
     this.country = this.country.bind(this);
     this.type = this.type.bind(this);
+    this.category = this.category.bind(this);
   }
 
   async country(req, res, next) {
@@ -48,8 +50,19 @@ class CommonController extends BaseController {
   async type(req, res, next) {
     try {
 
-      const types = await Type.find({status: true});
+      const types = await Type.find({status: true}).select('name');
       return res.json({ error: false, types });
+      
+    } catch (error) {
+      return this.handleError(next, error.message, 500);
+    }
+  }
+
+  async category(req, res, next) {
+    try {
+
+      const categories = await Category.find({status: true, isDeleted: false}).select('name');;
+      return res.json({ error: false, categories });
       
     } catch (error) {
       return this.handleError(next, error.message, 500);

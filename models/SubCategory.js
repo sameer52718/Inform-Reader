@@ -1,16 +1,17 @@
 import mongoose from 'mongoose';
 
-const categorySchema = new mongoose.Schema(
+const subCategorySchema = new mongoose.Schema(
   {
     adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     typeId: { type: mongoose.Schema.Types.ObjectId, ref: 'Type' },
+    categoryId: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
     name: { type: String, required: true, unique: true },
-    status: { type: Boolean, default: true},
+    status: { type: Boolean, default: false},
     isDeleted: { type: Boolean, default: false},
   },
   { timestamps: true }
 );
 
-const Category = mongoose.model('Category', categorySchema);
+const SubCategory = mongoose.model('SubCategory', subCategorySchema);
 
-export default Category;
+export default SubCategory;
