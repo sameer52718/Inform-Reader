@@ -2,6 +2,8 @@ import BaseController from '../BaseController.js';
 import Country from '../../models/Country.js';
 import Type from '../../models/Type.js';
 import Category from '../../models/Category.js';
+import SubCategory from '../../models/SubCategory.js';
+import Brand from '../../models/Brand.js';
 
 class CommonController extends BaseController {
   constructor() {
@@ -9,6 +11,8 @@ class CommonController extends BaseController {
     this.country = this.country.bind(this);
     this.type = this.type.bind(this);
     this.category = this.category.bind(this);
+    this.subCategory = this.subCategory.bind(this);
+    this.brand = this.brand.bind(this);
   }
 
   async country(req, res, next) {
@@ -61,8 +65,35 @@ class CommonController extends BaseController {
   async category(req, res, next) {
     try {
 
-      const categories = await Category.find({status: true, isDeleted: false}).select('name');;
+      const categories = await Category.find({status: true, isDeleted: false}).select('name');
       return res.json({ error: false, categories });
+      
+    } catch (error) {
+      return this.handleError(next, error.message, 500);
+    }
+  }
+
+  async subCategory(req, res, next) {
+    try {
+
+      const filter = {status: true, isDeleted: false};
+      if (req.query.categoryId){
+        filter.categoryId = req.query.categoryId;
+      }
+
+      const subCategories = await SubCategory.find(filter).select('name');
+      return res.json({ error: false, subCategories });
+      
+    } catch (error) {
+      return this.handleError(next, error.message, 500);
+    }
+  }
+
+  async brand(req, res, next) {
+    try {
+
+      const brands = await Brand.find({status: true, isDeleted: false}).select('name');;
+      return res.json({ error: false, brands });
       
     } catch (error) {
       return this.handleError(next, error.message, 500);
