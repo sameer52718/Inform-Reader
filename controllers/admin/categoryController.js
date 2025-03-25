@@ -104,7 +104,7 @@ class CategoryController extends BaseController {
     async update(req, res, next) {
         try {
             const { _id } = req.user;
-            const { name, typeId, status } = req.body;
+            const { name, typeId } = req.body;
             const { id } = req.params;
 
             if (!name || !typeId) {
@@ -124,7 +124,6 @@ class CategoryController extends BaseController {
             // Update the category
             existingCategory.name = name;
             existingCategory.typeId = typeId;
-            existingCategory.status = status !== undefined ? status : existingCategory.status;
             existingCategory.adminId = _id;
 
             await existingCategory.save();
@@ -178,7 +177,6 @@ class CategoryController extends BaseController {
             return res.status(200).json({
                 error: false,
                 message: `Category has been ${category.isDeleted ? 'deleted' : 'restored'} successfully`,
-                category,
             });
 
         } catch (error) {

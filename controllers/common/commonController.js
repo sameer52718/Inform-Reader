@@ -4,6 +4,7 @@ import Type from '../../models/Type.js';
 import Category from '../../models/Category.js';
 import SubCategory from '../../models/SubCategory.js';
 import Brand from '../../models/Brand.js';
+import Religion from '../../models/Religion.js';
 
 class CommonController extends BaseController {
   constructor() {
@@ -13,6 +14,7 @@ class CommonController extends BaseController {
     this.category = this.category.bind(this);
     this.subCategory = this.subCategory.bind(this);
     this.brand = this.brand.bind(this);
+    this.religion = this.religion.bind(this);
   }
 
   async country(req, res, next) {
@@ -99,9 +101,18 @@ class CommonController extends BaseController {
       return this.handleError(next, error.message, 500);
     }
   }
+
+  async religion(req, res, next) {
+    try {
+
+      const religions = await Religion.find({status: true}).select('name');
+      return res.json({ error: false, religions });
+      
+    } catch (error) {
+      return this.handleError(next, error.message, 500);
+    }
+  }
   
-
-
 }
 
 export default new CommonController();

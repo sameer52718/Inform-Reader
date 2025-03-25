@@ -13,5 +13,4 @@ router.patch('/:id',isUser, SpecificationController.status);
 router.delete('/:id',isUser, SpecificationController.delete);
 router.delete('/data/:id',isUser, SpecificationController.deleteData);
 
-
 export default router;
