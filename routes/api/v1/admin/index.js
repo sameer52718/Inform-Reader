@@ -7,6 +7,7 @@ import subCategoryRouter from './subCategory.js';
 import brandRouter from './brand.js';
 import specificationRouter from './specification.js';
 import couponRouter from './coupon.js';
+import biographyRouter from './Biography.js';
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use('/subCategory', subCategoryRouter);
 router.use('/brand', brandRouter);
 router.use('/specification', specificationRouter);
 router.use('/coupon', couponRouter);
+router.use('/biography', biographyRouter);
 
 export default router;

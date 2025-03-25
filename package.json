@@ -7,7 +7,8 @@
     "dev": "nodemon app.js",
     "start": "node app.js",
     "seed:types": "node seeders/type.js",
-    "seed:countries": "node seeders/country.js"
+    "seed:countries": "node seeders/country.js",
+    "seed:nationalities": "node seeders/nationality.js"
   },
   "keywords": [],
   "author": "",
