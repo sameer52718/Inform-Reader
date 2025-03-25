@@ -9,6 +9,7 @@ import specificationRouter from './specification.js';
 import couponRouter from './coupon.js';
 import biographyRouter from './biography.js';
 import nameRouter from './name.js';
+import softwareRouter from './software.js';
 
 const router = Router();
 
@@ -22,5 +23,6 @@ router.use('/specification', specificationRouter);
 router.use('/coupon', couponRouter);
 router.use('/biography', biographyRouter);
 router.use('/name', nameRouter);
+router.use('/software', softwareRouter);
 
 export default router;
