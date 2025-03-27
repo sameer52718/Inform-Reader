@@ -11,6 +11,8 @@ import biographyRouter from './biography.js';
 import nameRouter from './name.js';
 import softwareRouter from './software.js';
 import blogRouter from './blog.js';
+import companyRouter from './company.js';
+import jobRouter from './job.js';
 
 const router = Router();
 
@@ -26,5 +28,7 @@ router.use('/biography', biographyRouter);
 router.use('/name', nameRouter);
 router.use('/software', softwareRouter);
 router.use('/blog', blogRouter);
+router.use('/company', companyRouter);
+router.use('/job', jobRouter);
 
 export default router;
