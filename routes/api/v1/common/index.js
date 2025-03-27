@@ -9,6 +9,7 @@ router.get("/category", commonController.category)
 router.get("/subCategory", commonController.subCategory)
 router.get("/brand", commonController.brand)
 router.get("/religion", commonController.religion)
+router.get("/company", commonController.company)
 
 
 export default router;

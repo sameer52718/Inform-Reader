@@ -5,6 +5,7 @@ import Category from '../../models/Category.js';
 import SubCategory from '../../models/SubCategory.js';
 import Brand from '../../models/Brand.js';
 import Religion from '../../models/Religion.js';
+import Company from '../../models/Company.js';
 
 class CommonController extends BaseController {
   constructor() {
@@ -15,6 +16,7 @@ class CommonController extends BaseController {
     this.subCategory = this.subCategory.bind(this);
     this.brand = this.brand.bind(this);
     this.religion = this.religion.bind(this);
+    this.company = this.company.bind(this);
   }
 
   async country(req, res, next) {
@@ -107,6 +109,17 @@ class CommonController extends BaseController {
 
       const religions = await Religion.find({status: true}).select('name');
       return res.json({ error: false, religions });
+      
+    } catch (error) {
+      return this.handleError(next, error.message, 500);
+    }
+  }
+
+  async company(req, res, next) {
+    try {
+
+      const companies = await Company.find({status: true}).select('name');
+      return res.json({ error: false, companies });
       
     } catch (error) {
       return this.handleError(next, error.message, 500);
