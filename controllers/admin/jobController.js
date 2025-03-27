@@ -57,11 +57,11 @@ class JobController extends BaseController {
             const { _id } = req.user;
             const {
                 categoryId, subCategoryId, companyId, countryId, location,
-                name, qualification, experience, gender, careerLevel, type
+                name, qualification, experience, gender, careerLevel, type, description
             } = req.body;
 
             // Ensure all required fields are provided
-            const requiredFields = { categoryId, subCategoryId, companyId, name, type, countryId, location, qualification, experience, gender, careerLevel };
+            const requiredFields = { categoryId, subCategoryId, companyId, name, type, countryId, location, qualification, experience, gender, careerLevel, description };
             const missingFields = Object.entries(requiredFields).filter(([_, value]) => !value).map(([key]) => key);
 
             if (missingFields.length) {
@@ -118,7 +118,7 @@ class JobController extends BaseController {
             }
 
             // Validate required fields in the request body
-            const requiredFields = ['categoryId', 'subCategoryId', 'companyId', 'name', 'type', 'countryId', 'location', 'qualification', 'experience', 'gender', 'careerLevel'];
+            const requiredFields = ['categoryId', 'subCategoryId', 'companyId', 'name', 'type', 'countryId', 'location', 'qualification', 'experience', 'gender', 'careerLevel', 'description'];
             const missingFields = requiredFields.filter(field => !updates[field]);
 
             if (missingFields.length) {

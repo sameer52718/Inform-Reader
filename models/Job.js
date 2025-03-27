@@ -10,6 +10,7 @@ const jobSchema = new mongoose.Schema(
     location: { type: String, required: true },
     name: { type: String, required: true, unique: true },
     qualification: { type: String, required: true },
+    description: { type: String, required: false },
     experience: { type: String, required: true },
     gender: { type: String, enum: ['Male', 'Female', 'Any'], required: true },
     careerLevel: { type: String, required: true },
