@@ -13,6 +13,7 @@ import softwareRouter from './software.js';
 import blogRouter from './blog.js';
 import companyRouter from './company.js';
 import jobRouter from './job.js';
+import realStateRouter from './realState.js';
 
 const router = Router();
 
@@ -30,5 +31,6 @@ router.use('/software', softwareRouter);
 router.use('/blog', blogRouter);
 router.use('/company', companyRouter);
 router.use('/job', jobRouter);
+router.use('/realState', realStateRouter);
 
 export default router;
