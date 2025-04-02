@@ -28,6 +28,7 @@ class BiographyController extends BaseController {
             const biographies = await Biography.find(filters)
                 .populate('adminId', 'name')
                 .populate('nationalityId', 'name')
+                .populate('categoryId', 'name')
                 .select('name image status createdAt')
                 .skip(skip)
                 .limit(limit);
@@ -54,10 +55,10 @@ class BiographyController extends BaseController {
     async insert(req, res, next) {
         try {
             const { _id } = req.user;
-            const { nationalityId, name } = req.body;
+            const { nationalityId, name, categoryId } = req.body;
 
-            if (!nationalityId || !name) {
-                return this.handleError(next, 'All required fields (nationalityId, name) must be provided', 400);
+            if (!nationalityId || !name || !categoryId) {
+                return this.handleError(next, 'All required fields (nationalityId, categoryId, name) must be provided', 400);
             }
 
             // Handle image and banner picture upload if a file is provided
@@ -100,6 +101,7 @@ class BiographyController extends BaseController {
 
             const newBiography = await Biography.create({
                 nationalityId,
+                categoryId,
                 adminId: _id,
                 name,
                 image,
@@ -149,7 +151,8 @@ class BiographyController extends BaseController {
             const { id } = req.params;
             const biography = await Biography.findById(id)
                 .populate('adminId', 'name')
-                .populate('nationalityId', 'name');
+                .populate('nationalityId', 'name')
+                .populate('categoryId', 'name');
 
             if (!biography) {
                 return this.handleError(next, 'Biography not found', 404);
