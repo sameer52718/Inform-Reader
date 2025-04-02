@@ -15,6 +15,7 @@ import companyRouter from './company.js';
 import jobRouter from './job.js';
 import realStateRouter from './realState.js';
 import bankCodesRouter from './bankCodes.js';
+import postalCodeRouter from './postalCode.js';
 
 const router = Router();
 
@@ -34,5 +35,6 @@ router.use('/company', companyRouter);
 router.use('/job', jobRouter);
 router.use('/realState', realStateRouter);
 router.use('/bankCodes', bankCodesRouter);
+router.use('/postalCode', postalCodeRouter);
 
 export default router;
