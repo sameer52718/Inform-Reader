@@ -30,7 +30,7 @@ class BankCodeController extends BaseController {
       const query = { countryId: country._id };
 
       if (search) {
-          query.bank = { $regex: search, $options: 'i' }; // Case-insensitive search
+        query.bank = { $regex: search, $options: 'i' }; // Case-insensitive search
       }
 
       // Fetch paginated BankCodes by countryId with skip and limit
@@ -64,32 +64,32 @@ class BankCodeController extends BaseController {
 
   async detail(req, res, next) {
     try {
-        const { swiftCode } = req.params;
+      const { swiftCode } = req.params;
 
-        if (!swiftCode) {
-            return this.handleError(next, 'swiftCode is required', 400);
-        }
+      if (!swiftCode) {
+        return this.handleError(next, 'swiftCode is required', 400);
+      }
 
-        // Fetch the bank details
-        const bankCodes = await BankCode.findOne({ swiftCode }).populate('countryId', 'name');
+      // Fetch the bank details
+      const bankCodes = await BankCode.findOne({ swiftCode }).populate('countryId', 'name');
 
-        if (!bankCodes) {
-            return res.status(404).json({ success: false, message: 'Bank not found' });
-        }
+      if (!bankCodes) {
+        return res.status(404).json({ success: false, message: 'Bank not found' });
+      }
 
-        // Fetch related banks in parallel
-        const relatedPromise = BankCode.find({ bank: bankCodes.bank, _id: {$ne: bankCodes._id} }).limit(25);
-        const related = await relatedPromise;
+      // Fetch related banks in parallel
+      const relatedPromise = BankCode.find({ bank: bankCodes.bank, _id: { $ne: bankCodes._id } }).limit(25);
+      const related = await relatedPromise;
 
-        return res.status(200).json({
-            error: false,
-            bankCodes,
-            related, // Include related results
-        });
+      return res.status(200).json({
+        error: false,
+        bankCodes,
+        related, // Include related results
+      });
     } catch (error) {
-        return this.handleError(next, error.message, 500);
+      return this.handleError(next, error.message, 500);
     }
-}
+  }
 
 
 

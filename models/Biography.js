@@ -10,7 +10,8 @@ const biohraphySchema = new mongoose.Schema(
     {
         adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
         nationalityId: { type: mongoose.Schema.Types.ObjectId, ref: 'Nationality', required: false },
-        name: { type: String, required: true, unique: true },
+        categoryId: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: false },
+        name: { type: String, required: true, },
         image: { type: String, required: false, trim: true },
         generalInformation: [generalInformationSchema],
         status: { type: Boolean, default: true },
