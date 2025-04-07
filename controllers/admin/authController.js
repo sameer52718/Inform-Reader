@@ -16,7 +16,7 @@ class AuthController extends BaseController {
         if (!adminExists) {
             const defaultAdmin = new User({
                 name: 'Default Admin',
-                email: 'admin@example.com',
+                email: 'sameer@thebytepulse.com',
                 password: 'Admin@123', // Hash password
                 role: 'ADMIN',
                 status: true,
