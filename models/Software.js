@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const softwareSchema = new mongoose.Schema(
   {
-    adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
     categoryId: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: false },
     subCategoryId: { type: mongoose.Schema.Types.ObjectId, ref: 'SubCategory', required: false },
 

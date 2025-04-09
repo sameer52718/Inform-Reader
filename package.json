@@ -10,7 +10,9 @@
     "seed:countries": "node seeders/country.js",
     "seed:nationalities": "node seeders/nationality.js",
     "seed:religions": "node seeders/religion.js",
-    "seed:postalCodes": "node seeders/postalCode.js"
+    "seed:postalCodes": "node seeders/postalCode.js",
+    "seed:names": "node seeders/name.js",
+    "seed:softwares": "node seeders/software.js"
   },
   "keywords": [],
   "author": "",
