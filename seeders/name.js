@@ -27,7 +27,7 @@ const seedNames = async () => {
     const religionMap = new Map();
     const categoryMap = new Map();
     const typeMap = new Map();
-
+    let added = 0;
     // Set to track unique names
     const existingNamesSet = new Set();
 
@@ -36,11 +36,11 @@ const seedNames = async () => {
 
     for (const item of namesData) {
       // Check and get religion from map or database
-      let religion = religionMap.get(item.religion || "Unknown");
+      let religion = religionMap.get(item.religion || 'Unknown');
       if (!religion) {
-        religion = await Religion.findOne({ name: item.religion || "Unknown" }).select('_id');
+        religion = await Religion.findOne({ name: item.religion || 'Unknown' }).select('_id');
         if (!religion) {
-          religion = await Religion.create({ name: item.religion || "Unknown", status: false });
+          religion = await Religion.create({ name: item.religion || 'Unknown', status: false });
         }
         religionMap.set(item.religion, religion); // Cache the result
       }
@@ -79,11 +79,11 @@ const seedNames = async () => {
         longMeaning: item.longMeaning,
         gender: item.gender?.toUpperCase() === 'BOY' ? 'MALE' : item.gender?.toUpperCase() === 'GIRL' ? 'FEMALE' : 'OTHER',
         origion: item.origin,
-        shortName: item.shortName || "NO",
+        shortName: item.shortName || 'NO',
         nameLength: item.name.length,
       };
 
-      batchData.push(formattedName)
+      batchData.push(formattedName);
 
       // Skip the name if it's already been added to the batch or exists in the database
       // if (existingNamesSet.has(item.name)) {
@@ -103,7 +103,8 @@ const seedNames = async () => {
       // If the batch size is reached, insert the data in bulk
       if (batchData.length >= BATCH_SIZE) {
         await Name.insertMany(batchData);
-        console.log(`✅ Inserted ${batchData.length} names into the database`);
+        added = added + BATCH_SIZE;
+        console.log(`✅ Inserted ${batchData.length} names into the database , ${added}`);
         batchData.length = 0; // Clear the batch after insertion
         existingNamesSet.clear(); // Clear the set after batch insert
       }

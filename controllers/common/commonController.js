@@ -23,14 +23,14 @@ class CommonController extends BaseController {
     try {
       const { groupCountry, region, country } = req.query;
       const response = {};
-  
+
       // If groupCountry is provided, group the countries by region
       if (groupCountry) {
-         const groupCountry = await Country.aggregate([
+        const groupCountry = await Country.aggregate([
           {
             $group: {
-              _id: "$region",
-              countries: { $push: { name: "$name", countryCode: "$countryCode", flag: "$flag" } }, // Push country details to the array
+              _id: '$region',
+              countries: { $push: { name: '$name', countryCode: '$countryCode', flag: '$flag' } }, // Push country details to the array
             },
           },
           {
@@ -40,15 +40,15 @@ class CommonController extends BaseController {
 
         response['groupCountry'] = groupCountry;
       }
-  
+
       if (region) {
         response['regionCountry'] = await Country.find({ region: region });
       }
 
       if (country) {
-        response['country'] = await Country.find({ });
+        response['country'] = await Country.find({});
       }
-  
+
       return res.json({ error: false, response });
     } catch (error) {
       return this.handleError(next, error.message, 500);
@@ -57,21 +57,29 @@ class CommonController extends BaseController {
 
   async type(req, res, next) {
     try {
-
-      const types = await Type.find({status: true}).select('name');
+      const types = await Type.find({ status: true }).select('name');
       return res.json({ error: false, types });
-      
     } catch (error) {
       return this.handleError(next, error.message, 500);
     }
   }
 
   async category(req, res, next) {
-    try {
+    const { type } = req.query;
 
-      const categories = await Category.find({status: true, isDeleted: false}).select('name');
+    try {
+      const filter = { status: true, isDeleted: false };
+
+      if (type) {
+        const categoryType = await Type.findOne({ name: type });
+        if (type) {
+          filter.typeId = categoryType._id;
+        }
+      }
+      console.log(filter);
+
+      const categories = await Category.find(filter).select('name');
       return res.json({ error: false, categories });
-      
     } catch (error) {
       return this.handleError(next, error.message, 500);
     }
@@ -79,15 +87,13 @@ class CommonController extends BaseController {
 
   async subCategory(req, res, next) {
     try {
-
-      const filter = {status: true, isDeleted: false};
-      if (req.query.categoryId){
+      const filter = { status: true, isDeleted: false };
+      if (req.query.categoryId) {
         filter.categoryId = req.query.categoryId;
       }
 
       const subCategories = await SubCategory.find(filter).select('name');
       return res.json({ error: false, subCategories });
-      
     } catch (error) {
       return this.handleError(next, error.message, 500);
     }
@@ -95,10 +101,8 @@ class CommonController extends BaseController {
 
   async brand(req, res, next) {
     try {
-
-      const brands = await Brand.find({status: true, isDeleted: false}).select('name');;
+      const brands = await Brand.find({ status: true, isDeleted: false }).select('name');
       return res.json({ error: false, brands });
-      
     } catch (error) {
       return this.handleError(next, error.message, 500);
     }
@@ -106,10 +110,8 @@ class CommonController extends BaseController {
 
   async religion(req, res, next) {
     try {
-
-      const religions = await Religion.find({status: true}).select('name');
+      const religions = await Religion.find({ status: true }).select('name');
       return res.json({ error: false, religions });
-      
     } catch (error) {
       return this.handleError(next, error.message, 500);
     }
@@ -117,15 +119,12 @@ class CommonController extends BaseController {
 
   async company(req, res, next) {
     try {
-
-      const companies = await Company.find({status: true}).select('name');
+      const companies = await Company.find({ status: true }).select('name');
       return res.json({ error: false, companies });
-      
     } catch (error) {
       return this.handleError(next, error.message, 500);
     }
   }
-  
 }
 
 export default new CommonController();
