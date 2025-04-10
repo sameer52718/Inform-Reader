@@ -7,7 +7,7 @@ import subCategoryRouter from './subCategory.js';
 import brandRouter from './brand.js';
 import specificationRouter from './specification.js';
 import couponRouter from './coupon.js';
-import biographyRouter from './biography.js';
+import biographyRouter from './Biography.js';
 import nameRouter from './name.js';
 import softwareRouter from './software.js';
 import blogRouter from './blog.js';
