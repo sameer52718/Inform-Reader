@@ -8,7 +8,7 @@ import Type from '../models/Type.js';
 
 dotenv.config();
 
-const BATCH_SIZE = 100; // Set batch size for insertions
+const BATCH_SIZE = 500; // Set batch size for insertions
 
 const seedNames = async () => {
   try {
@@ -28,16 +28,19 @@ const seedNames = async () => {
     const categoryMap = new Map();
     const typeMap = new Map();
 
+    // Set to track unique names
+    const existingNamesSet = new Set();
+
     // Array to collect the names to insert in batches
     const batchData = [];
 
     for (const item of namesData) {
       // Check and get religion from map or database
-      let religion = religionMap.get(item.religion);
+      let religion = religionMap.get(item.religion || "Unknown");
       if (!religion) {
-        religion = await Religion.findOne({ name: item.religion }).select('_id');
+        religion = await Religion.findOne({ name: item.religion || "Unknown" }).select('_id');
         if (!religion) {
-          religion = await Religion.create({ name: item.religion, status: false });
+          religion = await Religion.create({ name: item.religion || "Unknown", status: false });
         }
         religionMap.set(item.religion, religion); // Cache the result
       }
@@ -76,23 +79,33 @@ const seedNames = async () => {
         longMeaning: item.longMeaning,
         gender: item.gender?.toUpperCase() === 'BOY' ? 'MALE' : item.gender?.toUpperCase() === 'GIRL' ? 'FEMALE' : 'OTHER',
         origion: item.origin,
-        shortName: item.shortName,
+        shortName: item.shortName || "NO",
         nameLength: item.name.length,
       };
 
-      const existing = await Name.findOne({ name: item.name });
-      if (!existing) {
-        batchData.push(formattedName); // Collect the data in the batch array
-        console.log(`✅ Queued for insertion: ${item.name}`);
-      } else {
-        console.log(`⚠️ Skipped (already exists): ${item.name}`);
-      }
+      batchData.push(formattedName)
+
+      // Skip the name if it's already been added to the batch or exists in the database
+      // if (existingNamesSet.has(item.name)) {
+      //   console.log(`⚠️ Skipped (already exists in batch): ${item.name}`);
+      //   continue; // Skip this iteration if the name is already in the set
+      // }
+
+      // const existing = await Name.findOne({ name: item.name });
+      // if (existing) {
+      //   console.log(`⚠️ Skipped (already exists in DB): ${item.name}`);
+      // } else {
+      //   batchData.push(formattedName); // Collect the data in the batch array
+      //   existingNamesSet.add(item.name); // Add name to the set to ensure uniqueness
+      //   // console.log(`✅ Queued for insertion: ${item.name}`);
+      // }
 
       // If the batch size is reached, insert the data in bulk
       if (batchData.length >= BATCH_SIZE) {
         await Name.insertMany(batchData);
         console.log(`✅ Inserted ${batchData.length} names into the database`);
         batchData.length = 0; // Clear the batch after insertion
+        existingNamesSet.clear(); // Clear the set after batch insert
       }
     }
 
@@ -106,7 +119,7 @@ const seedNames = async () => {
     console.log('🔌 Disconnected from MongoDB');
     process.exit();
   } catch (error) {
-    console.error('❌ Error seeding names:', error);
+    console.error('❌ Error seeding names:', error.message);
     process.exit(1);
   }
 };

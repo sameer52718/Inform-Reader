@@ -6,7 +6,7 @@ const nameSchema = new mongoose.Schema(
         adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
         religionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Religion' },
         categoryId: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
-        name: { type: String, required: true, unique: true },
+        name: { type: String, required: true },
         initialLetter: { type: String, required: true },
         shortMeaning: { type: String, required: true },
         longMeaning: { type: String, required: true },
