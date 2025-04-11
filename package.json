@@ -12,7 +12,8 @@
     "seed:religions": "node seeders/religion.js",
     "seed:postalCodes": "node seeders/postalCode.js",
     "seed:names": "node seeders/name.js",
-    "seed:softwares": "node seeders/software.js"
+    "seed:softwares": "node seeders/software.js",
+    "seed:bikes": "node seeders/bike.js"
   },
   "keywords": [],
   "author": "",

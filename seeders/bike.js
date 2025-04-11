@@ -1,16 +1,13 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import fs from 'fs';
-import Name from '../models/Name.js';
-import Religion from '../models/Religion.js';
-import Category from '../models/Category.js';
-import Type from '../models/Type.js';
+import Bike from '../models/Bike.js';
+import Make from '../models/Make.js';
+import Model from '../models/Model.js';
+import User from '../models/User.js';
 
 dotenv.config();
 
-const BATCH_SIZE = 500; // Set batch size for insertions
-
-const seedNames = async () => {
+const seedBikes = async () => {
   try {
     await mongoose.connect(process.env.MONGO_DB_URL, {
       useNewUrlParser: true,
@@ -19,110 +16,92 @@ const seedNames = async () => {
 
     console.log('🚀 Connected to MongoDB');
 
-    // Read the JSON file and parse it
-    const rawData = fs.readFileSync('seeders/baby_names.json');
-    const namesData = JSON.parse(rawData);
+    // Dummy specs
+    const dummySpecs = [
+      { name: 'Engine Type', value: 'Liquid-cooled, 4-stroke' },
+      { name: 'Displacement', value: '155 cc' },
+      { name: 'Fuel System', value: 'Fuel Injection' },
+    ];
 
-    // Maps to cache religions, categories, and types to avoid redundant DB calls
-    const religionMap = new Map();
-    const categoryMap = new Map();
-    const typeMap = new Map();
-    let added = 0;
-    // Set to track unique names
-    const existingNamesSet = new Set();
+    const dummyFeatures = [
+      { name: 'ABS', value: 'Yes' },
+      { name: 'Traction Control', value: 'No' },
+    ];
 
-    // Array to collect the names to insert in batches
-    const batchData = [];
+    const dummyEvsFeatures = [
+      { name: 'Battery Capacity', value: '3.2 kWh' },
+      { name: 'Charging Time', value: '4 hours' },
+    ];
 
-    for (const item of namesData) {
-      // Check and get religion from map or database
-      let religion = religionMap.get(item.religion || 'Unknown');
-      if (!religion) {
-        religion = await Religion.findOne({ name: item.religion || 'Unknown' }).select('_id');
-        if (!religion) {
-          religion = await Religion.create({ name: item.religion || 'Unknown', status: false });
-        }
-        religionMap.set(item.religion, religion); // Cache the result
+    const bikesData = [
+      { make: 'Toyota', model: 'Corolla', year: 2024, image: 'https://i.pinimg.com/736x/27/f8/3a/27f83a1a4952e167b728d00e2a3f0e30.jpg' },
+      { make: 'Honda', model: 'CBR500R', year: 2023, image: 'https://i.pinimg.com/736x/27/f8/3a/27f83a1a4952e167b728d00e2a3f0e30.jpg' },
+      { make: 'Yamaha', model: 'R15', year: 2022, image: 'https://i.pinimg.com/736x/27/f8/3a/27f83a1a4952e167b728d00e2a3f0e30.jpg' },
+      { make: 'Suzuki', model: 'Gixxer SF', year: 2021, image: 'https://i.pinimg.com/736x/27/f8/3a/27f83a1a4952e167b728d00e2a3f0e30.jpg' },
+      { make: 'Kawasaki', model: 'Ninja 300', year: 2023, image: 'https://i.pinimg.com/736x/27/f8/3a/27f83a1a4952e167b728d00e2a3f0e30.jpg' },
+      { make: 'BMW', model: 'G 310 R', year: 2024, image: 'https://i.pinimg.com/736x/27/f8/3a/27f83a1a4952e167b728d00e2a3f0e30.jpg' },
+      { make: 'Ducati', model: 'Monster', year: 2022, image: 'https://i.pinimg.com/736x/27/f8/3a/27f83a1a4952e167b728d00e2a3f0e30.jpg' },
+      { make: 'KTM', model: 'RC 390', year: 2023, image: 'https://i.pinimg.com/736x/27/f8/3a/27f83a1a4952e167b728d00e2a3f0e30.jpg' },
+      { make: 'Royal Enfield', model: 'Classic 350', year: 2021, image: 'https://i.pinimg.com/736x/27/f8/3a/27f83a1a4952e167b728d00e2a3f0e30.jpg' },
+      { make: 'Hero', model: 'Xtreme 160R', year: 2022, image: 'https://i.pinimg.com/736x/27/f8/3a/27f83a1a4952e167b728d00e2a3f0e30.jpg' },
+      { make: 'TVS', model: 'Apache RR 310', year: 2020, image: 'https://i.pinimg.com/736x/27/f8/3a/27f83a1a4952e167b728d00e2a3f0e30.jpg' },
+      { make: 'Bajaj', model: 'Dominar 400', year: 2021, image: 'https://i.pinimg.com/736x/27/f8/3a/27f83a1a4952e167b728d00e2a3f0e30.jpg' },
+      { make: 'Triumph', model: 'Trident 660', year: 2023, image: 'https://i.pinimg.com/736x/27/f8/3a/27f83a1a4952e167b728d00e2a3f0e30.jpg' },
+      { make: 'Harley-Davidson', model: 'Iron 883', year: 2020, image: 'https://i.pinimg.com/736x/27/f8/3a/27f83a1a4952e167b728d00e2a3f0e30.jpg' },
+      { make: 'Aprilia', model: 'RS 660', year: 2022, image: 'https://i.pinimg.com/736x/27/f8/3a/27f83a1a4952e167b728d00e2a3f0e30.jpg' },
+      { make: 'Benelli', model: 'Imperiale 400', year: 2023, image: 'https://i.pinimg.com/736x/27/f8/3a/27f83a1a4952e167b728d00e2a3f0e30.jpg' },
+      { make: 'Honda', model: 'CB500X', year: 2024, image: 'https://i.pinimg.com/736x/27/f8/3a/27f83a1a4952e167b728d00e2a3f0e30.jpg' },
+      { make: 'Yamaha', model: 'MT-15', year: 2023, image: 'https://i.pinimg.com/736x/27/f8/3a/27f83a1a4952e167b728d00e2a3f0e30.jpg' },
+      { make: 'Suzuki', model: 'Burgman Street', year: 2022, image: 'https://i.pinimg.com/736x/27/f8/3a/27f83a1a4952e167b728d00e2a3f0e30.jpg' },
+      { make: 'BMW', model: 'S 1000 RR', year: 2023, image: 'https://i.pinimg.com/736x/27/f8/3a/27f83a1a4952e167b728d00e2a3f0e30.jpg' },
+      // ... (Add more below to reach 100+ total)
+    ];
+
+    // Preload all makes and models
+    const allMakes = await Make.find();
+    const allModels = await Model.find();
+
+    // Create maps for quick lookup
+    const makeMap = new Map(allMakes.map(m => [m.name, m]));
+    const modelMap = new Map(allModels.map(m => [`${m.name}_${m.makeId.toString()}`, m]));
+
+    for (const bike of bikesData) {
+      // Check make
+      let make = makeMap.get(bike.make);
+      if (!make) {
+        make = await Make.create({ name: bike.make });
+        makeMap.set(bike.make, make); // Add to cache
+        console.log(`📌 Created new make: ${bike.make}`);
       }
 
-      // Check and get category from map or database
-      let category = categoryMap.get(item.categoryName);
-      if (!category) {
-        category = await Category.findOne({ name: item.categoryName }).select('_id');
-        if (!category) {
-          let type = typeMap.get('Name');
-          if (!type) {
-            type = await Type.findOne({ name: 'Name' }).select('_id');
-            if (!type) {
-              type = await Type.create({ name: 'Name', slug: 'name' });
-            }
-            typeMap.set('Name', type); // Cache the type result
-          }
-
-          category = await Category.create({
-            adminId: null,
-            typeId: type._id,
-            name: item.categoryName,
-            status: false,
-          });
-        }
-        categoryMap.set(item.categoryName, category); // Cache the category result
+      const modelKey = `${bike.model}_${make._id.toString()}`;
+      let model = modelMap.get(modelKey);
+      if (!model) {
+        model = await Model.create({ name: bike.model, makeId: make._id });
+        modelMap.set(modelKey, model); // Add to cache
+        console.log(`📌 Created new model: ${bike.model}`);
       }
 
-      const formattedName = {
-        adminId: null, // Optionally set admin if available
-        religionId: religion._id,
-        categoryId: category._id,
-        name: item.name,
-        initialLetter: item.name[0].toUpperCase(),
-        shortMeaning: item.shortMeaning,
-        longMeaning: item.longMeaning,
-        gender: item.gender?.toUpperCase() === 'BOY' ? 'MALE' : item.gender?.toUpperCase() === 'GIRL' ? 'FEMALE' : 'OTHER',
-        origion: item.origin,
-        shortName: item.shortName || 'NO',
-        nameLength: item.name.length,
-      };
+      await Bike.create({
+        adminId: null,
+        makeId: make._id,
+        modelId: model._id,
+        year: bike.year,
+        technicalSpecs: dummySpecs,
+        featureAndSafety: dummyFeatures,
+        evsFeatures: dummyEvsFeatures,
+      });
 
-      batchData.push(formattedName);
-
-      // Skip the name if it's already been added to the batch or exists in the database
-      // if (existingNamesSet.has(item.name)) {
-      //   console.log(`⚠️ Skipped (already exists in batch): ${item.name}`);
-      //   continue; // Skip this iteration if the name is already in the set
-      // }
-
-      // const existing = await Name.findOne({ name: item.name });
-      // if (existing) {
-      //   console.log(`⚠️ Skipped (already exists in DB): ${item.name}`);
-      // } else {
-      //   batchData.push(formattedName); // Collect the data in the batch array
-      //   existingNamesSet.add(item.name); // Add name to the set to ensure uniqueness
-      //   // console.log(`✅ Queued for insertion: ${item.name}`);
-      // }
-
-      // If the batch size is reached, insert the data in bulk
-      if (batchData.length >= BATCH_SIZE) {
-        await Name.insertMany(batchData);
-        added = added + BATCH_SIZE;
-        console.log(`✅ Inserted ${batchData.length} names into the database , ${added}`);
-        batchData.length = 0; // Clear the batch after insertion
-        existingNamesSet.clear(); // Clear the set after batch insert
-      }
-    }
-
-    // Insert any remaining data that wasn't inserted in the last batch
-    if (batchData.length > 0) {
-      await Name.insertMany(batchData);
-      console.log(`✅ Inserted ${batchData.length} names into the database`);
+      console.log(`✅ Inserted bike: ${bike.make} ${bike.model} (${bike.year})`);
     }
 
     await mongoose.disconnect();
     console.log('🔌 Disconnected from MongoDB');
     process.exit();
   } catch (error) {
-    console.error('❌ Error seeding names:', error.message);
+    console.error('❌ Error seeding bikes:', error.message);
     process.exit(1);
   }
 };
 
-seedNames();
+seedBikes();
