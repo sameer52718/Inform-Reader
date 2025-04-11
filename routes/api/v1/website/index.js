@@ -6,6 +6,7 @@ import blogRouter from './blog.js';
 import couponRouter from './coupon.js';
 import nameRouter from './name.js';
 import softwareRouter from './software.js';
+import postalCodeRouter from './postalCode.js';
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use('/blog', blogRouter);
 router.use('/coupon', couponRouter);
 router.use('/name', nameRouter);
 router.use('/software', softwareRouter);
+router.use('/postalCode', postalCodeRouter);
 
 export default router;

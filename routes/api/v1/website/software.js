@@ -1,13 +1,11 @@
 import { Router } from 'express';
-import softwareController from '../../../../controllers/website/softwareController.js';
+import SoftwareController from '../../../../controllers/website/softwareController.js';
 
 const router = Router();
 
 // Route for listing software with pagination and filters
-router.get('/', softwareController.get);
-router.get('/:id', softwareController.detail);
+router.get('/', SoftwareController.get);
+router.get('/:id', SoftwareController.detail);
 
-// Route for getting name details by ID
-// router.get('/:nameId', softwareController.getNameDetail);
 
 export default router;
