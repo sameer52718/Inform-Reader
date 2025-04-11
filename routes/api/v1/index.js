@@ -5,6 +5,7 @@ import websiteRouter from './website/index.js';
 import adminRouter from './admin/index.js';
 import userRouter from './user/index.js';
 
+
 const router = Router();
 
 router.use('/scraping', scrapingRouter);
@@ -12,5 +13,6 @@ router.use('/common', commonRouter);
 router.use('/website', websiteRouter);
 router.use('/admin', adminRouter);
 router.use('/user', userRouter);
+
 
 export default router;

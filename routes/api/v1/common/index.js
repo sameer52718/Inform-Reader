@@ -10,6 +10,7 @@ router.get("/subCategory", commonController.subCategory)
 router.get("/brand", commonController.brand)
 router.get("/religion", commonController.religion)
 router.get("/company", commonController.company)
+router.get("/make", commonController.make)
 
 
 export default router;

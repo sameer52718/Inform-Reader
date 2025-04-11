@@ -17,6 +17,7 @@ class CommonController extends BaseController {
     this.brand = this.brand.bind(this);
     this.religion = this.religion.bind(this);
     this.company = this.company.bind(this);
+    this.make = this.make.bind(this);
   }
 
   async country(req, res, next) {
@@ -121,6 +122,15 @@ class CommonController extends BaseController {
     try {
       const companies = await Company.find({ status: true }).select('name');
       return res.json({ error: false, companies });
+    } catch (error) {
+      return this.handleError(next, error.message, 500);
+    }
+  }
+
+  async make(req, res, next) {
+    try {
+      const makes = await Make.find({ status: true }).select('name');
+      return res.json({ error: false, makes });
     } catch (error) {
       return this.handleError(next, error.message, 500);
     }

@@ -16,6 +16,9 @@ import jobRouter from './job.js';
 import realStateRouter from './realState.js';
 import bankCodesRouter from './bankCodes.js';
 import postalCodeRouter from './postalCode.js';
+import makeRouter from './make.js';
+import modelRouter from './model.js';
+
 
 const router = Router();
 
@@ -36,5 +39,7 @@ router.use('/job', jobRouter);
 router.use('/realState', realStateRouter);
 router.use('/bankCodes', bankCodesRouter);
 router.use('/postalCode', postalCodeRouter);
+router.use('/make', makeRouter);
+router.use('/model', modelRouter);
 
 export default router;
