@@ -13,7 +13,7 @@
     "seed:postalCodes": "node seeders/postalCode.js",
     "seed:names": "node seeders/name.js",
     "seed:softwares": "node seeders/software.js",
-    "seed:bikes": "node seeders/bike.js"
+    "seed:vehicles": "node seeders/vehicle.js"
   },
   "keywords": [],
   "author": "",
