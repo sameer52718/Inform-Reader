@@ -30941,12 +30941,22 @@ const seedPostalCode = async () => {
 
         console.log('🚀 Connected to MongoDB');
 
+        // Step 1: Get all unique country names from postalCodes input
+        const countryNames = [...new Set(postalCodes.map(entry => entry.country))];
+
+        // Step 2: Fetch all countries at once
+        const countries = await Country.find({ name: { $in: countryNames } }).select('_id name');
+
+        // Step 3: Build a Map for quick lookup
+        const countryMap = new Map(countries.map(c => [c.name, c._id]));
+
+        // Step 4: Build postal code documents
         const postalCodeDocs = [];
 
         for (const entry of postalCodes) {
-            const country = await Country.findOne({ name: entry.country }).select('_id');
+            const countryId = countryMap.get(entry.country);
 
-            if (!country) {
+            if (!countryId) {
                 console.warn(`⚠️ Country not found: ${entry.country}`);
                 continue;
             }
@@ -30954,7 +30964,7 @@ const seedPostalCode = async () => {
             for (const area of entry.area) {
                 for (const code of area.postalCodes) {
                     postalCodeDocs.push({
-                        countryId: country._id,
+                        countryId,
                         state: area.areaName,
                         area: code.place,
                         code: code.code,
@@ -30963,6 +30973,7 @@ const seedPostalCode = async () => {
             }
         }
 
+        // Step 5: Insert data if exists
         if (postalCodeDocs.length > 0) {
             await PostalCode.insertMany(postalCodeDocs);
             console.log(`✅ Inserted ${postalCodeDocs.length} postal codes`);
@@ -30978,5 +30989,6 @@ const seedPostalCode = async () => {
         process.exit();
     }
 };
+
 
 seedPostalCode();
