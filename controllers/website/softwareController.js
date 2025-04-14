@@ -8,12 +8,12 @@ class SoftwareController extends BaseController {
         this.detail = this.detail.bind(this);
     }
 
-    // Method for software listing with filters and pagination
     async get(req, res) {
         try {
             const {
                 page = 1,
                 limit = 10,
+                search,
                 categoryId,
                 subCategoryId,
                 operatingSystem,
@@ -35,7 +35,12 @@ class SoftwareController extends BaseController {
             if (operatingSystem) filter.operatingSystem = operatingSystem;
             if (tag) filter.tag = tag;
 
-            // Query the database
+            // Apply name search if provided (case-insensitive)
+            if (search) {
+                filter.name = { $regex: search, $options: 'i' };
+            }
+
+            // Query the database with pagination
             const softwareList = await Software.find(filter)
                 .select('name overview version logo tag')
                 .skip((parsedPage - 1) * parsedLimit)
@@ -57,33 +62,52 @@ class SoftwareController extends BaseController {
             console.error(error);
             return res.status(500).json({ message: 'Error retrieving software list' });
         }
+
     }
 
-    // Get single software detail by ID
     async detail(req, res) {
         try {
             const { id } = req.params;
 
+            // Get the main software by ID
             const software = await Software.findOne({
                 _id: id,
                 status: true,
                 isDeleted: false,
             })
-                .populate('categoryId', 'name') // populate category name
-                .populate('subCategoryId', 'name') // populate sub-category name
-                .populate('adminId', 'name email') // optional: populate admin info
-                .select('-__v -isDeleted'); // exclude version and internal fields if desired
+                .populate('categoryId', 'name')
+                .populate('subCategoryId', 'name')
+                .populate('adminId', 'name email')
+                .select('-__v -isDeleted');
 
             if (!software) {
                 return res.status(404).json({ message: 'Software not found' });
             }
 
-            return res.status(200).json({ data: software });
+            // Fetch related software from the same category/subcategory
+            const relatedSoftware = await Software.find({
+                _id: { $ne: id }, // Exclude the current software
+                status: true,
+                isDeleted: false,
+                $or: [
+                    { categoryId: software.categoryId._id },
+                ]
+            })
+                .limit(20)
+                .select('name overview version logo tag')
+                .lean();
+
+            return res.status(200).json({
+                data: software,
+                related: relatedSoftware,
+            });
+
         } catch (error) {
             console.error(error);
             return res.status(500).json({ message: 'Error retrieving software details' });
         }
     }
+
 
 }
 

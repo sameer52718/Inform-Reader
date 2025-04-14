@@ -130,7 +130,6 @@ class SpecificationController extends BaseController {
         }
     }
 
-
     async detail(req, res, next) {
         try {
             const { category, id } = req.params;
@@ -158,7 +157,6 @@ class SpecificationController extends BaseController {
             return this.handleError(next, error.message, 500);
         }
     }
-
 
 }
 
