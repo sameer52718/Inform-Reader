@@ -24,10 +24,11 @@ class SoftwareController extends BaseController {
 
             const software = await Software.find(filters)
                 .populate('adminId', 'name')
-                .populate('categoryId', 'name')
-                .populate('subCategoryId', 'name')
-                .select('name logo status size createdAt')
+                // .populate('categoryId', 'name')
+                // .populate('subCategoryId', 'name')
+                .select('name logo status version createdAt operatingSystem')
                 .skip(skip)
+                .sort({createdAt : -1})
                 .limit(limit);
 
             const totalSoftwares = await Software.countDocuments(filters);
@@ -35,7 +36,7 @@ class SoftwareController extends BaseController {
 
             return res.status(200).json({
                 error: false,
-                software,
+                data: software,
                 pagination: {
                     totalItems: totalSoftwares,
                     currentPage: page,

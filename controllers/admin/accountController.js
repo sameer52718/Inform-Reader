@@ -54,24 +54,41 @@ class AuthController extends BaseController {
 
     async get(req, res, next) {
         try {
+            let { page = 1, limit = 10 } = req.query;
+
+            page = parseInt(page);
+            limit = parseInt(limit);
+            const skip = (page - 1) * limit;
+
             const { _id } = req.user;
 
-            const users = await User.find({ _id: { $ne: _id }, role: 'ADMIN' }).select('name email phone profile status createdAt');
+            // Retrieve users excluding the current user and filter by role 'ADMIN'
+            const users = await User.find({ _id: { $ne: _id }, role: 'ADMIN' })
+                .select('name email phone profile status createdAt')
+                .skip(skip)
+                .limit(limit);
 
-            if (!users || users.length === 0) {
-                return this.handleError(next, 'No users found', 404);
-            }
+            // Count total users for pagination calculation
+            const totalUsers = await User.countDocuments({ _id: { $ne: _id }, role: 'ADMIN' });
+            const totalPages = Math.ceil(totalUsers / limit);
 
             return res.status(200).json({
                 error: false,
                 message: 'Users retrieved successfully',
-                data: users
+                data: users,
+                pagination: {
+                    totalItems: totalUsers,
+                    currentPage: page,
+                    totalPages,
+                    pageSize: limit,
+                },
             });
 
         } catch (error) {
             return this.handleError(next, error.message || 'An unexpected error occurred');
         }
     }
+
 
     async status(req, res, next) {
         try {
@@ -103,27 +120,27 @@ class AuthController extends BaseController {
     async delete(req, res, next) {
         try {
             const { id } = req.params;
-    
+
             // Find user by ID
             const admin = await User.findById(id);
-    
+
             if (!admin) {
                 return this.handleError(next, 'Admin not found', 404);
             }
-    
+
             // Delete the admin from the database
             await User.deleteOne({ _id: id });
-    
+
             return res.status(200).json({
                 error: false,
                 message: 'Admin account deleted successfully.',
             });
-    
+
         } catch (error) {
             return this.handleError(next, error.message || 'An unexpected error occurred');
         }
     }
-    
+
 
 }
 
