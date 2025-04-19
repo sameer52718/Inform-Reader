@@ -18,6 +18,7 @@ import bankCodesRouter from './bankCodes.js';
 import postalCodeRouter from './postalCode.js';
 import makeRouter from './make.js';
 import modelRouter from './model.js';
+import userRouter from './user.js';
 
 
 const router = Router();
@@ -41,5 +42,6 @@ router.use('/bankCodes', bankCodesRouter);
 router.use('/postalCode', postalCodeRouter);
 router.use('/make', makeRouter);
 router.use('/model', modelRouter);
+router.use('/user', userRouter);
 
 export default router;
