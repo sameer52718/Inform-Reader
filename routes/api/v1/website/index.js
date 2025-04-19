@@ -8,6 +8,7 @@ import nameRouter from './name.js';
 import softwareRouter from './software.js';
 import postalCodeRouter from './postalCode.js';
 import homeRouter from './home.js';
+import contactRouter from './contact.js';
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use('/name', nameRouter);
 router.use('/software', softwareRouter);
 router.use('/postalCode', postalCodeRouter);
 router.use('/home', homeRouter);
+router.use('/contact', contactRouter);
 
 export default router;
