@@ -21,6 +21,7 @@ import modelRouter from './model.js';
 import userRouter from './user.js';
 import contactRouter from './contact.js';
 import newsLetterRouter from './newsletter.js';
+import homeRouter from './home.js';
 
 
 const router = Router();
@@ -47,5 +48,6 @@ router.use('/model', modelRouter);
 router.use('/user', userRouter);
 router.use('/contact', contactRouter);
 router.use('/newsletter', newsLetterRouter);
+router.use('/home', homeRouter);
 
 export default router;

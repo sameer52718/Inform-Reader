@@ -40,7 +40,8 @@ class AuthController extends BaseController {
         otp,
         name,
         password,
-        phone
+        phone,
+        verified:true
       };
 
       // Create new user entry
@@ -50,7 +51,7 @@ class AuthController extends BaseController {
       const token = this.generateToken(newUser._id, this.userTypes.user, '5m');
 
       // Send OTP verification email
-      await this.sendOtpMail(email, otp, 'Verify Your Account');
+      // await this.sendOtpMail(email, otp, 'Verify Your Account');
 
       return res.json({
         error: false,
