@@ -7,6 +7,7 @@ import couponRouter from './coupon.js';
 import nameRouter from './name.js';
 import softwareRouter from './software.js';
 import postalCodeRouter from './postalCode.js';
+import homeRouter from './home.js';
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use('/coupon', couponRouter);
 router.use('/name', nameRouter);
 router.use('/software', softwareRouter);
 router.use('/postalCode', postalCodeRouter);
+router.use('/home', homeRouter);
 
 export default router;
