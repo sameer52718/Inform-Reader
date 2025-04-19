@@ -19,6 +19,8 @@ import postalCodeRouter from './postalCode.js';
 import makeRouter from './make.js';
 import modelRouter from './model.js';
 import userRouter from './user.js';
+import contactRouter from './contact.js';
+import newsLetterRouter from './newsletter.js';
 
 
 const router = Router();
@@ -43,5 +45,7 @@ router.use('/postalCode', postalCodeRouter);
 router.use('/make', makeRouter);
 router.use('/model', modelRouter);
 router.use('/user', userRouter);
+router.use('/contact', contactRouter);
+router.use('/newsletter', newsLetterRouter);
 
 export default router;

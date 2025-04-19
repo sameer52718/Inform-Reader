@@ -17,15 +17,10 @@ class NewsLetterController extends BaseController {
 
             const existingEmail = await NewsLetter.findOne({ email });
 
-            if (existingEmail) {
-                return res.status(409).json({
-                    error: true,
-                    message: 'Email is already subscribed',
-                });
+            if (!existingEmail) {
+                const newNewsLetter = new NewsLetter({ email });
+                await newNewsLetter.save();
             }
-
-            const newNewsLetter = new NewsLetter({ email });
-            await newNewsLetter.save();
 
             return res.status(201).json({
                 error: false,

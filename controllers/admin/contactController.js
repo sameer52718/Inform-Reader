@@ -1,7 +1,7 @@
 import BaseController from '../BaseController.js';
-import User from '../../models/User.js';
+import Contact from '../../models/Contact.js'; // Make sure this path is correct
 
-class UserController extends BaseController {
+class ContactController extends BaseController {
     constructor() {
         super();
         this.get = this.get.bind(this);
@@ -15,10 +15,9 @@ class UserController extends BaseController {
             limit = parseInt(limit);
             const skip = (page - 1) * limit;
 
-            const { _id } = req.user;
+            const filter = {};
 
-            const filter = { role: 'USER' };
-
+            // Optional date filtering
             if (startDate) {
                 filter.createdAt = { $gte: new Date(startDate) };
             }
@@ -30,20 +29,21 @@ class UserController extends BaseController {
                 };
             }
 
-            const users = await User.find(filter)
-                .select('name email phone profile status createdAt')
+            const messages = await Contact.find(filter)
+                .select('name email subject message createdAt')
+                .sort({ createdAt: -1 }) // Most recent first
                 .skip(skip)
                 .limit(limit);
 
-            const totalUsers = await User.countDocuments(filter);
-            const totalPages = Math.ceil(totalUsers / limit);
+            const totalMessages = await Contact.countDocuments(filter);
+            const totalPages = Math.ceil(totalMessages / limit);
 
             return res.status(200).json({
                 error: false,
-                message: 'Users retrieved successfully',
-                data: users,
+                message: 'Contact messages retrieved successfully',
+                data: messages,
                 pagination: {
-                    totalItems: totalUsers,
+                    totalItems: totalMessages,
                     currentPage: page,
                     totalPages,
                     pageSize: limit,
@@ -53,9 +53,6 @@ class UserController extends BaseController {
             return this.handleError(next, error.message || 'An unexpected error occurred');
         }
     }
-
-
-
 }
 
-export default new UserController();
+export default new ContactController();
