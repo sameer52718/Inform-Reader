@@ -9,6 +9,7 @@ import softwareRouter from './software.js';
 import postalCodeRouter from './postalCode.js';
 import homeRouter from './home.js';
 import contactRouter from './contact.js';
+import newsLetterRouter from './newsletter.js';
 
 const router = Router();
 
@@ -22,5 +23,6 @@ router.use('/software', softwareRouter);
 router.use('/postalCode', postalCodeRouter);
 router.use('/home', homeRouter);
 router.use('/contact', contactRouter);
+router.use('/newsletter', newsLetterRouter);
 
 export default router;
