@@ -25,11 +25,10 @@ class SpecificationController extends BaseController {
       if (isDeleted) filters.isDeleted = true;
 
       const specifications = await Specification.find(filters)
-        .populate('adminId', 'name')
+        .select('name price priceSymbal status createdAt image categoryId')
         .populate('categoryId', 'name')
         .populate('subCategoryId', 'name')
         .populate('brandId', 'name')
-        .select('name price priceSymbal status createdAt')
         .skip(skip)
         .limit(limit);
 
