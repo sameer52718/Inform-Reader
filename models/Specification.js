@@ -25,7 +25,7 @@ const dataSchema = new mongoose.Schema({
     design: [generalSchema],
     powerSupply: [generalSchema],
     audioFeatures: [generalSchema],
-});
+},{ _id: false });
 
 // Schema for Specification (used for different product categories)
 const specificationSchema = new mongoose.Schema(

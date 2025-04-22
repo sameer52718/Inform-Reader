@@ -1,5 +1,7 @@
 import BaseController from '../BaseController.js';
 import Specification from '../../models/Specification.js';
+import Category from '../../models/Category.js';
+import mongoose from 'mongoose';
 
 class SpecificationController extends BaseController {
     constructor() {
@@ -9,42 +11,97 @@ class SpecificationController extends BaseController {
         this.detail = this.detail.bind(this);
     }
 
+    // GET: Grouped specifications by category
     async get(req, res, next) {
         try {
-            // Step 1: Group specification by category and sort them by createdAt, then limit to 5 latest specification in each category
             const categories = await Specification.aggregate([
+                // Group specifications by categoryId
                 {
                     $group: {
-                        _id: "$category", // Group by category
-                        specification: {
-                            $push: "$$ROOT" // Push all data for each category into 'specification'
-                        }
+                        _id: "$categoryId",
+                        specifications: { $push: "$$ROOT" }
                     }
                 },
+                // Limit specifications per category and project relevant fields
                 {
                     $project: {
-                        _id: 0, // Don't include the _id field
-                        category: "$_id", // Category name
-                        specification: { $slice: ["$specification", 25] } // Limit to 25 latest specification in each category
+                        _id: 0,
+                        categoryId: "$_id",
+                        specifications: { $slice: ["$specifications", 25] }
                     }
                 },
-                { $sample: { size: 25 } }, // Randomly select 25 categories
+                // Randomly sample 25 categories
+                { $sample: { size: 25 } },
+                // Lookup category information
+                {
+                    $lookup: {
+                        from: "categories",
+                        localField: "categoryId",
+                        foreignField: "_id",
+                        as: "categoryInfo"
+                    }
+                },
+                // Unwind categoryInfo to simplify structure
+                {
+                    $unwind: {
+                        path: "$categoryInfo",
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                // Lookup brand information
+                {
+                    $lookup: {
+                        from: "brands",
+                        localField: "specifications.brandId",
+                        foreignField: "_id",
+                        as: "brandInfo"
+                    }
+                },
+                // Lookup subcategory information
+                {
+                    $lookup: {
+                        from: "subcategories",
+                        localField: "specifications.subCategoryId",
+                        foreignField: "_id",
+                        as: "subCategoryInfo"
+                    }
+                },
+                // Final projection with mapped specifications
                 {
                     $project: {
-                        category: 1, // Include the category field
-                        specification: {
+                        categoryId: 1,
+                        categoryName: "$categoryInfo.name",
+                        specifications: {
                             $map: {
-                                input: "$specification",
-                                as: "specification",
+                                input: "$specifications",
+                                as: "spec",
                                 in: {
-                                    _id: "$$specification._id", // Include brand
-                                    brand: "$$specification.brand", // Include brand
-                                    name: "$$specification.name", // Include name
-                                    price: "$$specification.price", // Include price
-                                    priceSymbal: "$$specification.priceSymbal", // Include price symbol
-                                    image: "$$specification.image", // Include image
-                                    category: "$$specification.category", // Include category
-                                    // Include any other necessary fields
+                                    _id: "$$spec._id",
+                                    name: "$$spec.name",
+                                    image: "$$spec.image",
+                                    price: "$$spec.price",
+                                    priceSymbol: "$$spec.priceSymbal", // Fixed typo in field name
+                                    brandId: "$$spec.brandId",
+                                    categoryId: "$$spec.categoryId",
+                                    subCategoryId: "$$spec.subCategoryId",
+                                    // Match brandInfo with brandId
+                                    brandName: {
+                                        $arrayElemAt: [
+                                            "$brandInfo.name",
+                                            {
+                                                $indexOfArray: ["$brandInfo._id", "$$spec.brandId"]
+                                            }
+                                        ]
+                                    },
+                                    // Match subCategoryInfo with subCategoryId
+                                    subCategoryName: {
+                                        $arrayElemAt: [
+                                            "$subCategoryInfo.name",
+                                            {
+                                                $indexOfArray: ["$subCategoryInfo._id", "$$spec.subCategoryId"]
+                                            }
+                                        ]
+                                    }
                                 }
                             }
                         }
@@ -52,102 +109,214 @@ class SpecificationController extends BaseController {
                 }
             ]);
 
-            // Step 2: Prepare response
             if (!categories || categories.length === 0) {
                 return res.status(404).json({
                     success: false,
-                    message: "No categories found",
+                    message: "No specifications found"
                 });
             }
 
-            // Send the response with the random 5 categories and their latest 5 specification
-            res.status(200).json({
-                error: false,
+            return res.status(200).json({
+                success: true, // Changed 'error: false' to 'success: true' for consistency
                 data: categories
             });
 
         } catch (error) {
-            return this.handleError(next, error.message, 500);
+            // Improved error handling with more details
+            return next({
+                status: 500,
+                message: error.message || "Internal server error",
+                stack: process.env.NODE_ENV === "development" ? error.stack : undefined
+            });
         }
     }
 
     async getAll(req, res, next) {
         try {
+            // Extract and validate query parameters
             const { category } = req.params;
-            const { page = 1, limit = 10, sortBy } = req.query;  // Default page to 1 and limit to 10
-            const skip = (page - 1) * limit;  // Calculate the skip value based on the current page
+            const { page = 1, limit = 10, sortBy = 'latest' } = req.query;
+            const pageNum = parseInt(page, 10);
+            const limitNum = parseInt(limit, 10);
+            const skip = (pageNum - 1) * limitNum;
 
-            // Validate input fields
+            // Validate category parameter
             if (!category) {
-                return this.handleError(next, 'Category is required', 400);
+                return next({
+                    status: 400,
+                    message: 'Category name is required'
+                });
             }
 
-            // Build the query object for the specified category
-            const query = { category };
+            // Find category by name (case-insensitive for better UX)
+            const categoryDoc = await Category.findOne({
+                name: { $regex: new RegExp(`^${category}$`, 'i') }
+            });
 
-            // Prepare sorting object based on sortBy query parameter
-            let aggregationPipeline = [
-                { $match: query },  // Filter by category
-                { $skip: skip },     // Skip for pagination
-                { $limit: parseInt(limit) }  // Limit results
+            if (!categoryDoc) {
+                return next({
+                    status: 404,
+                    message: `Category '${category}' not found`
+                });
+            }
+
+            // Build query with categoryId
+            const query = {
+                categoryId: new mongoose.Types.ObjectId(categoryDoc._id)
+            };
+
+            // Define aggregation pipeline
+            const aggregationPipeline = [
+                { $match: query },
+                // Lookup category info (optional, as we already have categoryDoc)
+                {
+                    $lookup: {
+                        from: 'categories',
+                        localField: 'categoryId',
+                        foreignField: '_id',
+                        as: 'category'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$category',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                // Lookup brand and subcategory info for completeness
+                {
+                    $lookup: {
+                        from: 'brands',
+                        localField: 'brandId',
+                        foreignField: '_id',
+                        as: 'brand'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$brand',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'subcategories',
+                        localField: 'subCategoryId',
+                        foreignField: '_id',
+                        as: 'subCategory'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$subCategory',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                // Project relevant fields
+                {
+                    $project: {
+                        _id: 1,
+                        name: 1,
+                        image: 1,
+                        price: 1,
+                        priceSymbol: 1, // Fixed typo from priceSymbal
+                        brandId: 1,
+                        brandName: '$brand.name',
+                        categoryId: 1,
+                        categoryName: '$category.name',
+                        subCategoryId: 1,
+                        subCategoryName: '$subCategory.name'
+                    }
+                },
+                { $skip: skip },
+                { $limit: limitNum }
             ];
 
-            if (sortBy === 'highToLowPrice') {
-                aggregationPipeline.push({ $sort: { price: -1 } });  // Sort by price descending
-            } else if (sortBy === 'LowToHighPrice') {
-                aggregationPipeline.push({ $sort: { price: 1 } });   // Sort by price ascending
-            } else if (sortBy === 'name') {
-                aggregationPipeline.push({ $sort: { name: 1 } });    // Sort by name ascending
-            } else if (sortBy === 'latest') {
-                aggregationPipeline.push({ $sort: { createdAt: -1 } });  // Sort by creation date descending
-            } else {
-                // Random sort
-                aggregationPipeline.push({ $sample: { size: parseInt(limit) } });  // Random sample
+            // Handle sorting
+            switch (sortBy.toLowerCase()) {
+                case 'hightolowprice':
+                    aggregationPipeline.splice(1, 0, { $sort: { price: -1 } });
+                    break;
+                case 'lowtohighprice':
+                    aggregationPipeline.splice(1, 0, { $sort: { price: 1 } });
+                    break;
+                case 'name':
+                    aggregationPipeline.splice(1, 0, { $sort: { name: 1 } });
+                    break;
+                case 'latest':
+                    aggregationPipeline.splice(1, 0, { $sort: { createdAt: -1 } });
+                    break;
+                default:
+                    aggregationPipeline.splice(1, 0, { $sort: { createdAt: -1 } }); // Default to latest instead of random sample
             }
 
-            // Use the aggregation pipeline to fetch data with sorting and pagination
-            const specification = await Specification.aggregate(aggregationPipeline);
+            // Execute aggregation and count total documents in parallel
+            const [specifications, totalSpecifications] = await Promise.all([
+                Specification.aggregate(aggregationPipeline),
+                Specification.countDocuments(query)
+            ]);
 
-            // Count the total number of specification in the specified category to calculate the total pages
-            const totalspecification = await Specification.countDocuments(query);
+            // Calculate pagination details
+            const totalPages = Math.ceil(totalSpecifications / limitNum);
 
-            // Calculate total pages based on the total specification and limit
-            const totalPages = Math.ceil(totalspecification / limit);
-
-            // Return paginated data with pagination metadata
-            res.status(200).json({
-                error: false,
-                specification,
+            // Return response
+            return res.status(200).json({
+                success: true,
+                data: specifications,
                 pagination: {
-                    totalItems: totalspecification,
-                    currentPage: parseInt(page),
+                    totalItems: totalSpecifications,
+                    currentPage: pageNum,
                     totalPages,
-                    pageSize: parseInt(limit),
-                },
+                    pageSize: limitNum
+                }
             });
+
         } catch (error) {
-            return this.handleError(next, error.message, 500);
+            return next({
+                status: 500,
+                message: error.message || 'Internal server error',
+                stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+            });
         }
     }
 
+    // GET DETAIL: By id and categoryId
     async detail(req, res, next) {
         try {
             const { category, id } = req.params;
 
-            // Validate input fields
-            if (!category || !id) {
-                return this.handleError(next, 'Category and ID are required', 400);
+            // Validate category parameter
+            if (!category) {
+                return next({
+                    status: 400,
+                    message: 'Category name is required'
+                });
             }
 
-            // Fetch the specification by category and id
-            const specification = await Specification.findOne({ _id: id, category });
+            // Find category by name (case-insensitive for better UX)
+            const categoryDoc = await Category.findOne({
+                name: { $regex: new RegExp(`^${category}$`, 'i') }
+            });
 
-            // If the specification is not found, return a 404 error
+            if (!categoryDoc) {
+                return next({
+                    status: 404,
+                    message: `Category '${category}' not found`
+                });
+            }
+
+            // Build query with categoryId
+            const query = {
+                categoryId: new mongoose.Types.ObjectId(categoryDoc._id),
+                _id: id
+            };
+
+            const specification = await Specification.findOne(query).populate('categoryId', 'name').populate('brandId', 'name').populate('subCategoryId', 'name');
+
             if (!specification) {
-                return this.handleError(next, 'specification not found', 404);
+                return this.handleError(next, 'Specification not found', 404);
             }
 
-            // Return the specification details
             res.status(200).json({
                 error: false,
                 specification,
@@ -157,7 +326,6 @@ class SpecificationController extends BaseController {
             return this.handleError(next, error.message, 500);
         }
     }
-
 }
 
 export default new SpecificationController();
