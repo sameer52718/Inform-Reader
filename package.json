@@ -14,7 +14,8 @@
     "seed:names": "node seeders/name.js",
     "seed:softwares": "node seeders/software.js",
     "seed:vehicles": "node seeders/vehicle.js",
-    "seed:specification": "node seeders/specification.js"
+    "seed:specification": "node seeders/specification.js",
+    "seed:biography": "node seeders/biography.js"
   },
   "keywords": [],
   "author": "",
