@@ -8,7 +8,7 @@ import os from 'os';
 import ApiV1Router from './routes/api/v1/index.js';
 import connectDB from './db/index.js';
 import { initializeSocket } from './socket.js';
-// import miningCronJob from './miningCronJob.js';
+import youtubeVideo from './cronJobs/youtubeVideo.js';
 
 const app = express();
 

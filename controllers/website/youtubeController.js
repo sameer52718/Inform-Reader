@@ -1,7 +1,4 @@
 import BaseController from '../BaseController.js';
-import ytdl from 'ytdl-core';
-import sanitize from 'sanitize-filename';
-import { URL } from 'url';
 import fs from 'fs';
 import path from 'path';
 import { spawn } from 'child_process';
