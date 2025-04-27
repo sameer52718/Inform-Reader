@@ -15,6 +15,8 @@ const app = express();
 dotenv.config();
 
 app.use('/uploads', express.static('uploads'));
+app.use('/youtubeVideos', express.static('youtubeVideos'));
+
 connectDB();
 app.use(cors());
 app.use(morgan('common'));

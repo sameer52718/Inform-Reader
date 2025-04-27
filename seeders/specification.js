@@ -121,6 +121,7 @@ const seedSpecifications = async () => {
                 categoryId: category._id,
                 subCategoryId: subCategory._id,
                 name: item.name,
+                url: item.url,
                 price: parseInt(item.price.replace(/,/g, ''), 10),
                 priceSymbal: 'PKR',
                 image: item.image,

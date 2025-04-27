@@ -35,6 +35,7 @@ const specificationSchema = new mongoose.Schema(
         categoryId: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: false },
         subCategoryId: { type: mongoose.Schema.Types.ObjectId, ref: 'SubCategory', required: false },
         name: { type: String, required: true, trim: true },
+        url: { type: String, required: true, trim: true },
         price: { type: Number, required: true, trim: true },
         priceSymbal: { type: String, default: 'PKR' },
         image: { type: String, required: false, trim: true },

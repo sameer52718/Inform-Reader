@@ -10,6 +10,7 @@ import postalCodeRouter from './postalCode.js';
 import homeRouter from './home.js';
 import contactRouter from './contact.js';
 import newsLetterRouter from './newsletter.js';
+import youtubeRouter from './youtube.js';
 
 const router = Router();
 
@@ -24,5 +25,6 @@ router.use('/postalCode', postalCodeRouter);
 router.use('/home', homeRouter);
 router.use('/contact', contactRouter);
 router.use('/newsletter', newsLetterRouter);
+router.use('/youtube', youtubeRouter);
 
 export default router;

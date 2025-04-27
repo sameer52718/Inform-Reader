@@ -38,6 +38,10 @@ const getNationality = async (name) => {
     return nationality;
 };
 
+const biographyExists = async (name, categoryId, nationalityId) => {
+    return await Biography.exists({ name, categoryId, nationalityId });
+};
+
 const seedBiographies = async () => {
     try {
         await mongoose.connect(process.env.MONGO_DB_URL, {
@@ -50,6 +54,12 @@ const seedBiographies = async () => {
         for (const item of biographies) {
             const category = await getCategory(item.category || 'General');
             const nationality = await getNationality(item.nationality || 'Unknown');
+
+            const alreadyExists = await biographyExists(item.name, category._id, nationality._id);
+            if (alreadyExists) {
+                console.log(`⚠️ Biography already exists: ${item.name}`);
+                continue;
+            }
 
             const bioDoc = {
                 name: item.name,
