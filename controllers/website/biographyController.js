@@ -41,10 +41,10 @@ class BiographyController extends BaseController {
                     $group: {
                         _id: "$categoryId",
                         categoryName: { $first: "$category.name" },
-                        biographies: { $push: { name: "$name", image: "$image" } }
+                        biographies: { $push: { name: "$name", _id: "$_id", image: "$image" } }
                     }
                 },
-                { $project: { _id: 1, categoryName: 1, biographies: { $slice: ["$biographies", 5] } } }
+                { $project: { _id: 1, categoryName: 1, biographies: { $slice: ["$biographies", 8] } } }
             ]);
 
             return res.status(200).json({
@@ -60,48 +60,86 @@ class BiographyController extends BaseController {
 
     async filterByCategory(req, res, next) {
         try {
-            let { isDeleted } = req.query;
-            let { categoryId } = req.params;
-
-            const filters = { isDeleted: false, categoryId: categoryId };
+            let { page = 1, limit = 10, isDeleted, search } = req.query;
+            const { categoryId } = req.params;
+    
+            page = parseInt(page);
+            limit = parseInt(limit);
+            const skip = (page - 1) * limit;
+    
+            // Construct filters
+            const filters = {
+                categoryId,
+                isDeleted: false
+            };
             if (isDeleted) filters.isDeleted = true;
-
+            if (search) {
+                filters.name = { $regex: search, $options: 'i' }; // Case-insensitive name filter
+            }
+    
+            // Query with filters, pagination, and optional search
             const biographies = await Biography.find(filters)
-                .select("name image");
-
+                .populate('categoryId', 'name')
+                .select('name image')
+                .skip(skip)
+                .limit(limit);
+    
+            const totalBiographies = await Biography.countDocuments(filters);
+            const totalPages = Math.ceil(totalBiographies / limit);
+    
             return res.status(200).json({
                 error: false,
-                biographies
+                biographies,
+                pagination: {
+                    totalItems: totalBiographies,
+                    currentPage: page,
+                    totalPages,
+                    pageSize: limit,
+                }
             });
-
+    
         } catch (error) {
             return this.handleError(next, error.message || "An unexpected error occurred", 500);
         }
     }
+    
 
     async detail(req, res, next) {
         try {
-            let { isDeleted } = req.query;
-            let { categoryId } = req.params;
-            let { biographyId } = req.params;
+            const { biographyId } = req.params;
 
-            const filters = { isDeleted: false, categoryId: categoryId, _id: biographyId };
-            if (isDeleted) filters.isDeleted = true;
-
-            const biographies = await Biography.findOne(filters)
+            // Fetch the primary biography
+            const biography = await Biography.findOne({ _id: biographyId, isDeleted: false })
                 .populate('nationalityId', 'name')
-                .populate('categoryId', 'name')
-                .select("name image generalInformation");
+                .populate('categoryId', 'name');
+
+            if (!biography) {
+                return res.status(404).json({
+                    error: true,
+                    message: 'Biography not found',
+                });
+            }
+
+            // Fetch related biographies from the same category (excluding current one)
+            const related = await Biography.find({
+                _id: { $ne: biographyId },
+                categoryId: biography.categoryId,
+                isDeleted: false
+            })
+                .populate('nationalityId', 'name')
+                .populate('categoryId', 'name');
 
             return res.status(200).json({
                 error: false,
-                biographies
+                biography,
+                related
             });
 
         } catch (error) {
             return this.handleError(next, error.message || "An unexpected error occurred", 500);
         }
     }
+
 
 }
 

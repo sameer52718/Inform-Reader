@@ -5,6 +5,6 @@ const router = Router();
 
 router.get('/', BiographyController.get);
 router.get('/:categoryId', BiographyController.filterByCategory);
-router.get('/:categoryId/:biographyId', BiographyController.detail);
+router.get('/detail/:biographyId', BiographyController.detail);
 
 export default router;
