@@ -14,7 +14,7 @@ class PostalCodeController extends BaseController {
   // Method for software listing with filters and pagination
   async get(req, res) {
     try {
-      const { page = 1, limit = 10, countryCode, region } = req.query;
+      const { page = 1, limit = 10, countryCode, region, search } = req.query;
 
       const parsedPage = parseInt(page);
       const parsedLimit = parseInt(limit);
@@ -36,6 +36,10 @@ class PostalCodeController extends BaseController {
 
       filter.countryId = country._id;
       filter.state = region;
+
+      if (search) {
+        filter.$or = [{ code: { $regex: search, $options: 'i' } }, { area: { $regex: search, $options: 'i' } }];
+      }
 
       const groupedRegions = await PostalCode.aggregate([
         { $match: { countryId: new mongoose.Types.ObjectId(country._id), state: { $ne: region } } },

@@ -12,13 +12,14 @@ class NamesController extends BaseController {
   async getNamesList(req, res) {
     try {
       // Extract query parameters
-      const { page = 1, limit = 10, initialLetter, categoryId, gender } = req.query;
+      const { page = 1, limit = 10, initialLetter, categoryId, gender, search } = req.query;
 
       // Build filter object
       let filter = {};
       if (initialLetter) filter.initialLetter = initialLetter;
       if (categoryId) filter.categoryId = categoryId;
       if (gender) filter.gender = gender;
+      if (search) filter.name = { $regex: search, $options: 'i' };
 
       // Paginate and get names
       const names = await Name.find(filter)
