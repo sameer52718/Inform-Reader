@@ -20,7 +20,7 @@ const seedNames = async () => {
     console.log('🚀 Connected to MongoDB');
 
     // Read the JSON file and parse it
-    const rawData = fs.readFileSync('seeders/baby_names.json');
+    const rawData = fs.readFileSync('seeders/output.json');
     const namesData = JSON.parse(rawData);
 
     // Maps to cache religions, categories, and types to avoid redundant DB calls
@@ -75,30 +75,30 @@ const seedNames = async () => {
         categoryId: category._id,
         name: item.name,
         initialLetter: item.name[0].toUpperCase(),
-        shortMeaning: item.shortMeaning,
+        shortMeaning: item.longMeaning,
         longMeaning: item.longMeaning,
-        gender: item.gender?.toUpperCase() === 'BOY' ? 'MALE' : item.gender?.toUpperCase() === 'GIRL' ? 'FEMALE' : 'OTHER',
+        gender: item.gender?.toUpperCase() === 'MALE' ? 'MALE' : item.gender?.toUpperCase() === 'FEMALE' ? 'FEMALE' : 'OTHER',
         origion: item.origin,
         shortName: item.shortName || 'NO',
         nameLength: item.name.length,
       };
 
-      batchData.push(formattedName);
+      // batchData.push(formattedName);
 
       // Skip the name if it's already been added to the batch or exists in the database
-      // if (existingNamesSet.has(item.name)) {
-      //   console.log(`⚠️ Skipped (already exists in batch): ${item.name}`);
-      //   continue; // Skip this iteration if the name is already in the set
-      // }
+      if (existingNamesSet.has(item.name)) {
+        console.log(`⚠️ Skipped (already exists in batch): ${item.name}`);
+        continue; // Skip this iteration if the name is already in the set
+      }
 
-      // const existing = await Name.findOne({ name: item.name });
-      // if (existing) {
-      //   console.log(`⚠️ Skipped (already exists in DB): ${item.name}`);
-      // } else {
-      //   batchData.push(formattedName); // Collect the data in the batch array
-      //   existingNamesSet.add(item.name); // Add name to the set to ensure uniqueness
-      //   // console.log(`✅ Queued for insertion: ${item.name}`);
-      // }
+      const existing = await Name.findOne({ name: item.name });
+      if (existing) {
+        console.log(`⚠️ Skipped (already exists in DB): ${item.name}`);
+      } else {
+        batchData.push(formattedName); // Collect the data in the batch array
+        existingNamesSet.add(item.name); // Add name to the set to ensure uniqueness
+        // console.log(`✅ Queued for insertion: ${item.name}`);
+      }
 
       // If the batch size is reached, insert the data in bulk
       if (batchData.length >= BATCH_SIZE) {

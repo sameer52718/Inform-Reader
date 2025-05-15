@@ -35,7 +35,8 @@ class PostalCodeController extends BaseController {
       }
 
       filter.countryId = country._id;
-      filter.state = region;
+      filter.state = region.replaceAll('%20', ' ');
+      console.log(filter);
 
       if (search) {
         filter.$or = [{ code: { $regex: search, $options: 'i' } }, { area: { $regex: search, $options: 'i' } }];
