@@ -102,6 +102,7 @@ async function startCron() {
                 country: country._id,
                 category: category._id,
                 content: cleanContentSnippet(item.contentSnippet),
+                source: feed['source'] || 'Google',
               };
 
               await Article.create(articleData);

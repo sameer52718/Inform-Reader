@@ -11,6 +11,7 @@ import homeRouter from './home.js';
 import contactRouter from './contact.js';
 import newsLetterRouter from './newsletter.js';
 import youtubeRouter from './youtube.js';
+import articleRouter from './articleRoute.js';
 
 const router = Router();
 
@@ -26,5 +27,5 @@ router.use('/home', homeRouter);
 router.use('/contact', contactRouter);
 router.use('/newsletter', newsLetterRouter);
 router.use('/youtube', youtubeRouter);
-
+router.use('/article', articleRouter);
 export default router;

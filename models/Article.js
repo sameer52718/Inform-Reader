@@ -8,6 +8,7 @@ const articleSchema = new mongoose.Schema(
     country: { type: mongoose.Types.ObjectId, ref: 'Country' },
     category: { type: mongoose.Types.ObjectId, ref: 'Category' },
     content: { type: String },
+    source: { type: String, default: 'Google' },
   },
   { timestamps: true },
 );
