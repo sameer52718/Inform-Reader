@@ -59,7 +59,7 @@ async function startCron() {
     });
 
     // Uncomment when ready to schedule:
-    cron.schedule('*/30 * * * *', async () => {
+    cron.schedule('0 */4 * * *', async () => {
       console.log(`[Cron] Running feed fetch at ${new Date().toISOString()}`);
       for (const feed of feeds) {
         const feedUrl = feed['RSS Feed URL'];
