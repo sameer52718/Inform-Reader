@@ -14,6 +14,8 @@ class ArticleController extends BaseController {
   async getByCountry(req, res, next) {
     try {
       const clientIP = req.headers['x-forwarded-for']?.split(',')[0] || req.ip;
+      console.log(clientIP, req.ip, req.headers['x-forwarded-for']?.split(',')[0]);
+
       const geo = geoip.lookup(clientIP);
       const countryCode = geo?.country?.toUpperCase();
 
