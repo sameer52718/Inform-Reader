@@ -9,6 +9,7 @@ import ApiV1Router from './routes/api/v1/index.js';
 import connectDB from './db/index.js';
 import { initializeSocket } from './socket.js';
 import youtubeVideo from './cronJobs/youtubeVideo.js';
+import startCron from './jobs/feeds.js';
 
 const app = express();
 
@@ -48,6 +49,7 @@ function getLocalIP() {
   return 'localhost';
 }
 
+startCron();
 server.listen(PORT, () => {
   const ip = getLocalIP();
   console.log(`Server is listening on  Link: http://${ip}:${PORT}`);
