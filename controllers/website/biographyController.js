@@ -11,36 +11,55 @@ class BiographyController extends BaseController {
 
   async get(req, res, next) {
     try {
-      let { isDeleted } = req.query;
+      let { isDeleted, search } = req.query;
 
       const filters = { isDeleted: false };
       if (isDeleted) filters.isDeleted = true;
 
-      // Get 5 random categories
+      // Step 1: Get 25 random category IDs
       const randomCategories = await Biography.aggregate([{ $match: filters }, { $group: { _id: '$categoryId' } }, { $sample: { size: 25 } }]);
-
       const categoryIds = randomCategories.map((cat) => cat._id);
 
-      // Fetch 5 biographies per category with category name
+      // Step 2: Match biographies in those categories, perform lookup, filter on search
+      const searchRegex = search ? new RegExp(search, 'i') : null;
+
       const biographies = await Biography.aggregate([
         { $match: { ...filters, categoryId: { $in: categoryIds } } },
         {
           $lookup: {
-            from: 'categories', // Make sure this matches your Category model collection name
+            from: 'categories',
             localField: 'categoryId',
             foreignField: '_id',
             as: 'category',
           },
         },
         { $unwind: '$category' },
+        // Filter based on search if provided
+        ...(search
+          ? [
+              {
+                $match: {
+                  $or: [{ name: { $regex: searchRegex } }, { 'category.name': { $regex: searchRegex } }],
+                },
+              },
+            ]
+          : []),
         {
           $group: {
             _id: '$categoryId',
             categoryName: { $first: '$category.name' },
-            biographies: { $push: { name: '$name', _id: '$_id', image: '$image' } },
+            biographies: {
+              $push: { name: '$name', _id: '$_id', image: '$image' },
+            },
           },
         },
-        { $project: { _id: 1, categoryName: 1, biographies: { $slice: ['$biographies', 12] } } },
+        {
+          $project: {
+            _id: 1,
+            categoryName: 1,
+            biographies: { $slice: ['$biographies', 12] },
+          },
+        },
       ]);
 
       return res.status(200).json({

@@ -8,7 +8,6 @@ const isUser = async (req, res, next) => {
     return res.status(401).json({ error: true, message: 'No token, authorization denied' });
   }
   try {
-
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
     const user = await User.findById(decoded.id);
@@ -22,8 +21,8 @@ const isUser = async (req, res, next) => {
 
     req.user = user;
     next();
-
   } catch (error) {
+    console.error(error.message);
     return res.status(401).json({ error: true, message: 'Token is not valid' });
   }
 };

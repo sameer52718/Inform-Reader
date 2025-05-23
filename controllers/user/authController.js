@@ -41,23 +41,22 @@ class AuthController extends BaseController {
         name,
         password,
         phone,
-        verified:true
+        verified: true,
       };
 
       // Create new user entry
       const newUser = await User.create(userDetails);
 
       // Generate token for the new user
-      const token = this.generateToken(newUser._id, this.userTypes.user, '5m');
+      const token = this.generateToken(newUser._id, this.userTypes.user, '365d');
 
       // Send OTP verification email
       // await this.sendOtpMail(email, otp, 'Verify Your Account');
 
       return res.json({
         error: false,
-        token
+        token,
       });
-
     } catch (error) {
       // Centralized error handling
       return this.handleError(next, error.message || error);
@@ -127,7 +126,7 @@ class AuthController extends BaseController {
 
       await this.sendOtpMail(user.email, otp, 'Verify Your Account');
 
-      const token = this.generateToken(user._id, this.userTypes.user, '5m');
+      const token = this.generateToken(user._id, this.userTypes.user, '365d');
 
       return res.status(200).json({
         error: false,
@@ -135,7 +134,6 @@ class AuthController extends BaseController {
         token,
       });
     } catch (error) {
-
       return this.handleError(next, error.message);
     }
   }
@@ -174,12 +172,12 @@ class AuthController extends BaseController {
       // Step 4: If the user is not verified, generate an OTP and send it
       if (!user.verified) {
         otp = this.generateOtp();
-        user.otp = otp;  // Update the user's OTP field
-        await user.save();  // Save the user with the updated OTP
+        user.otp = otp; // Update the user's OTP field
+        await user.save(); // Save the user with the updated OTP
 
         // Generate a token valid for 5 minutes
-        authorization = this.generateToken(user._id, this.userTypes.user, '5m');
-        await this.sendOtpMail(user.email, otp, 'Verify Your Account');  // Send the OTP email
+        authorization = this.generateToken(user._id, this.userTypes.user, '365d');
+        await this.sendOtpMail(user.email, otp, 'Verify Your Account'); // Send the OTP email
       } else {
         // If the user is verified, generate a long-term token (365 days)
         authorization = this.generateToken(user._id, this.userTypes.user, '365d');
@@ -191,19 +189,19 @@ class AuthController extends BaseController {
         message: 'Login Successful',
         token: authorization,
         verified: user.verified,
-        _id: user._id,
         otp,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
+        user: {
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          _id: user._id,
+        },
       });
-
     } catch (error) {
       // Handle errors gracefully
       return this.handleError(next, error.message || 'An unexpected error occurred');
     }
   }
-
 
   async forgot(req, res, next) {
     try {
@@ -226,7 +224,7 @@ class AuthController extends BaseController {
       const otp = this.generateOtp();
 
       // Generate token (5 minutes validity for OTP)
-      const authorization = this.generateToken(user._id, this.userTypes.user, '5m');
+      const authorization = this.generateToken(user._id, this.userTypes.user, '365d');
 
       // Save the OTP in the user document
       user.otp = otp;
@@ -240,9 +238,8 @@ class AuthController extends BaseController {
         error: false,
         message: 'Account Found',
         token: authorization,
-        otp
+        otp,
       });
-
     } catch (error) {
       // Handle any unexpected errors
       return this.handleError(next, error.message || 'An unexpected error occurred');
@@ -278,7 +275,6 @@ class AuthController extends BaseController {
       return this.handleError(next, error.message || 'An unexpected error occurred.');
     }
   }
-
 }
 
 export default new AuthController();
