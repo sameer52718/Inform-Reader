@@ -9,6 +9,7 @@ import Type from '../models/Type.js';
 import Category from '../models/Category.js';
 
 import { fetchAndSaveCurrencyRates } from '../utils/fetchCurrency.js';
+import { fetchAndSaveMetalPrices } from '../utils/fetchMetalPrice.js';
 
 const parser = new Parser();
 
@@ -123,11 +124,16 @@ async function startCron() {
       }
       console.log(`[Cron] Finished cycle at ${new Date().toISOString()}`);
     });
-
     cron.schedule('0 0 * * *', () => {
-      console.log(`[Cron] Running feed fetch at ${new Date().toISOString()}`);
+      console.log(`[Cron] Running Currency fetch at ${new Date().toISOString()}`);
 
       fetchAndSaveCurrencyRates();
+    });
+
+    cron.schedule('0 0 * * *', () => {
+      console.log(`[Cron] Running Metals fetch at ${new Date().toISOString()}`);
+
+      fetchAndSaveMetalPrices();
     });
   } catch (err) {
     console.error(`[Startup Error] ${err.message}`);
