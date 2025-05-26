@@ -12,6 +12,7 @@ import contactRouter from './contact.js';
 import newsLetterRouter from './newsletter.js';
 import youtubeRouter from './youtube.js';
 import articleRouter from './articleRoute.js';
+import currencyRouter from './currency.js';
 
 const router = Router();
 
@@ -28,4 +29,6 @@ router.use('/contact', contactRouter);
 router.use('/newsletter', newsLetterRouter);
 router.use('/youtube', youtubeRouter);
 router.use('/article', articleRouter);
+router.use('/currency', currencyRouter);
+
 export default router;
