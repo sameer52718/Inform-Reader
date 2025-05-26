@@ -8,6 +8,8 @@ import Country from '../models/Country.js';
 import Type from '../models/Type.js';
 import Category from '../models/Category.js';
 
+import { fetchAndSaveCurrencyRates } from '../utils/fetchCurrency.js';
+
 const parser = new Parser();
 
 function parseCsv(filePath) {
@@ -120,6 +122,12 @@ async function startCron() {
         }
       }
       console.log(`[Cron] Finished cycle at ${new Date().toISOString()}`);
+    });
+
+    cron.schedule('0 0 * * *', () => {
+      console.log(`[Cron] Running feed fetch at ${new Date().toISOString()}`);
+
+      fetchAndSaveCurrencyRates();
     });
   } catch (err) {
     console.error(`[Startup Error] ${err.message}`);
