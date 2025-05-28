@@ -4,16 +4,16 @@ import CurrencyRate from '../models/CurrencyRate.js';
 
 // Metal metadata mapping
 const METAL_METADATA = {
-  XAU: { fullName: 'Gold', symbol: 'Au', unit: 'per ounce' },
-  XAG: { fullName: 'Silver', symbol: 'Ag', unit: 'per ounce' },
-  XCU: { fullName: 'Copper', symbol: 'Cu', unit: 'per ton' },
-  XPT: { fullName: 'Platinum', symbol: 'Pt', unit: 'per ounce' },
-  ALU: { fullName: 'Aluminum', symbol: 'Al', unit: 'per ton' },
-  NI: { fullName: 'Nickel', symbol: 'Ni', unit: 'per ton' },
-  ZNC: { fullName: 'Zinc', symbol: 'Zn', unit: 'per ton' },
-  IRON: { fullName: 'Iron Ore', symbol: 'Fe', unit: 'per metric ton' },
-  XPD: { fullName: 'Palladium', symbol: 'Pd', unit: 'per ounce' },
-  LITHIUM: { fullName: 'Lithium', symbol: 'Li', unit: 'per ton' },
+  XAU: { fullName: 'Gold', symbol: 'Au', unit: 'ounce' },
+  XAG: { fullName: 'Silver', symbol: 'Ag', unit: 'ounce' },
+  XCU: { fullName: 'Copper', symbol: 'Cu', unit: 'ounce' },
+  XPT: { fullName: 'Platinum', symbol: 'Pt', unit: 'ounce' },
+  ALU: { fullName: 'Aluminum', symbol: 'Al', unit: 'ounce' },
+  NI: { fullName: 'Nickel', symbol: 'Ni', unit: 'ounce' },
+  ZNC: { fullName: 'Zinc', symbol: 'Zn', unit: 'ounce' },
+  IRON: { fullName: 'Iron Ore', symbol: 'Fe', unit: 'ounce' },
+  XPD: { fullName: 'Palladium', symbol: 'Pd', unit: 'ounce' },
+  LITHIUM: { fullName: 'Lithium', symbol: 'Li', unit: 'ounce' },
 };
 
 const METALS = Object.keys(METAL_METADATA);
@@ -38,14 +38,18 @@ export async function fetchAndSaveMetalPrices() {
 
     for (const metalCode of METALS) {
       const rate = data.rates[`USD${metalCode}`] || data.rates[metalCode];
+
+      console.log(`${metalCode}, ${rate} , rate`);
+
       if (!rate) {
         console.warn(`No rate found for ${metalCode}`);
         continue;
       }
 
       // Convert rate (1/value) to price in USD
-      const priceUSD = rate !== 0 ? rate.toFixed() : 0;
+      const priceUSD = rate !== 0 ? rate.toFixed(6) : 0;
       const metadata = METAL_METADATA[metalCode];
+      console.log(`${metalCode}, ${priceUSD}, priceusd`);
 
       // Calculate prices in all supported currencies
       const conversionPrices = new Map();

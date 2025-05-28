@@ -13,6 +13,7 @@ import newsLetterRouter from './newsletter.js';
 import youtubeRouter from './youtube.js';
 import articleRouter from './articleRoute.js';
 import currencyRouter from './currency.js';
+import metalRouter from './metalRoute.js';
 
 const router = Router();
 
@@ -30,5 +31,6 @@ router.use('/newsletter', newsLetterRouter);
 router.use('/youtube', youtubeRouter);
 router.use('/article', articleRouter);
 router.use('/currency', currencyRouter);
+router.use('/metal', metalRouter);
 
 export default router;

@@ -22,7 +22,7 @@ const metalPriceSchema = new mongoose.Schema(
     unit: {
       type: String,
       required: true,
-      enum: ['per ounce', 'per ton', 'per gram', 'per kilogram', 'per metric ton'],
+      enum: ['ounce', 'ton', 'gram', 'kilogram', 'metric'],
     },
     priceUSD: {
       type: Number,
