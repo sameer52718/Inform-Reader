@@ -6,6 +6,8 @@ import SubCategory from '../../models/SubCategory.js';
 import Brand from '../../models/Brand.js';
 import Religion from '../../models/Religion.js';
 import Company from '../../models/Company.js';
+import Model from '../../models/Model.js';
+import Make from '../../models/Make.js';
 
 class CommonController extends BaseController {
   constructor() {
@@ -18,6 +20,7 @@ class CommonController extends BaseController {
     this.religion = this.religion.bind(this);
     this.company = this.company.bind(this);
     this.make = this.make.bind(this);
+    this.model = this.model.bind(this);
   }
 
   async country(req, res, next) {
@@ -130,7 +133,16 @@ class CommonController extends BaseController {
   async make(req, res, next) {
     try {
       const makes = await Make.find({ status: true }).select('name');
-      return res.json({ error: false, makes });
+      return res.json({ error: false, data: makes });
+    } catch (error) {
+      return this.handleError(next, error.message, 500);
+    }
+  }
+
+  async model(req, res, next) {
+    try {
+      const models = await Model.find({ status: true }).select('name');
+      return res.json({ error: false, data: models });
     } catch (error) {
       return this.handleError(next, error.message, 500);
     }

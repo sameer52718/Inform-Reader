@@ -14,6 +14,7 @@ import youtubeRouter from './youtube.js';
 import articleRouter from './articleRoute.js';
 import currencyRouter from './currency.js';
 import metalRouter from './metalRoute.js';
+import vehicleRouter from './vehicleRoute.js';
 
 const router = Router();
 
@@ -32,5 +33,6 @@ router.use('/youtube', youtubeRouter);
 router.use('/article', articleRouter);
 router.use('/currency', currencyRouter);
 router.use('/metal', metalRouter);
+router.use('/vehicle', vehicleRouter);
 
 export default router;
