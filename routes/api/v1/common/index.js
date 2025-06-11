@@ -12,5 +12,6 @@ router.get('/religion', commonController.religion);
 router.get('/company', commonController.company);
 router.get('/make', commonController.make);
 router.get('/model', commonController.model);
+router.get('/config', commonController.getConfig);
 
 export default router;

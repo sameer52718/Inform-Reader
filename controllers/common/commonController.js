@@ -8,6 +8,7 @@ import Religion from '../../models/Religion.js';
 import Company from '../../models/Company.js';
 import Model from '../../models/Model.js';
 import Make from '../../models/Make.js';
+import Config from '../../models/Config.js';
 
 class CommonController extends BaseController {
   constructor() {
@@ -21,6 +22,7 @@ class CommonController extends BaseController {
     this.company = this.company.bind(this);
     this.make = this.make.bind(this);
     this.model = this.model.bind(this);
+    this.getConfig = this.getConfig.bind(this);
   }
 
   async country(req, res, next) {
@@ -143,6 +145,15 @@ class CommonController extends BaseController {
     try {
       const models = await Model.find({ status: true }).select('name');
       return res.json({ error: false, data: models });
+    } catch (error) {
+      return this.handleError(next, error.message, 500);
+    }
+  }
+
+  async getConfig(req, res, next) {
+    try {
+      const config = await Config.findOne().select('logo themeColor -_id');
+      return res.json({ error: false, data: config });
     } catch (error) {
       return this.handleError(next, error.message, 500);
     }
