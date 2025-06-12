@@ -22,7 +22,7 @@ import userRouter from './user.js';
 import contactRouter from './contact.js';
 import newsLetterRouter from './newsletter.js';
 import homeRouter from './home.js';
-
+import configRouter from './config.js';
 
 const router = Router();
 
@@ -49,5 +49,6 @@ router.use('/user', userRouter);
 router.use('/contact', contactRouter);
 router.use('/newsletter', newsLetterRouter);
 router.use('/home', homeRouter);
+router.use('/config', configRouter);
 
 export default router;

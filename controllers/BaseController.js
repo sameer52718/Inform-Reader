@@ -2,17 +2,17 @@ import jwt from 'jsonwebtoken';
 import ErrorHandler from '../utils/Error.js';
 import otpGenerator from 'otp-generator';
 import sendMail, { EmailEnums, EmailTempletes } from '../utils/sendMail.js';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
-import s3 from '../S3Client.js';
 import mongoose from 'mongoose';
 import crypto from 'crypto';
+import path from 'path';
+import fs from 'fs';
 // import User from '../models/User.js';
 // import Notification from '../models/Notification.js';
 
 class BaseController {
   userTypes = {
     user: 1,
-    admin:2,
+    admin: 2,
   };
 
   /**
@@ -98,30 +98,34 @@ class BaseController {
    * @returns {boolean} Returns true if the file is uploaded successfully, false otherwise
    */
 
-  async uploadFile({ Key, Body, ContentType }) {
-    const params = {
-      Bucket: process.env.BUCKET_NAME,
-      Key,
-      Body,
-      ContentType,
-    };
+  /**
+   * Uploads a file to a local directory
+   * @param {object} params - Parameters for uploading the file
+   * @param {string} params.Key - The file path (including filename)
+   * @param {Buffer|string} params.Body - The file content (Buffer or string)
+   * @param {string} params.ContentType - The content type of the file (e.g., 'image/jpeg')
+   * @returns {boolean} Returns true if the file is uploaded successfully, false otherwise
+   */
+  async uploadFile({ Key, Body }) {
+    const localDir = path.join(process.cwd(), 'uploads');
 
-    const command = new PutObjectCommand(params);
-    const maxRetries = 3; // Maximum number of retries
-    let attempt = 0;
+    if (!fs.existsSync(localDir)) {
+      fs.mkdirSync(localDir, { recursive: true });
+    }
 
-    while (attempt < maxRetries) {
-      try {
-        const file = await s3.send(command);
-        return file.$metadata.httpStatusCode === 200;
-      } catch (error) {
-        console.error(`Attempt ${attempt + 1} failed:`, error);
-        attempt++;
-        if (attempt >= maxRetries) {
-          return false; // Return false after max retries
-        }
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second before retrying
-      }
+    const filePath = path.join(localDir, Key);
+    const fileDir = path.dirname(filePath);
+    if (!fs.existsSync(fileDir)) {
+      fs.mkdirSync(fileDir, { recursive: true });
+    }
+
+    try {
+      await fs.promises.writeFile(filePath, Body);
+      console.log(`File uploaded successfully to ${filePath}`);
+      return true;
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      return false;
     }
   }
   generateCredentialId() {
@@ -139,7 +143,7 @@ class BaseController {
   }
 
   attachPath(path) {
-    return path ? process.env.AWS_BASE_URL + path : null;
+    return path ? process.env.AWS_BASE_URL + 'uploads/' + path : null;
   }
 
   /**
@@ -161,7 +165,7 @@ class BaseController {
   createPath(path = '', name) {
     const newName = `${Date.now()}-${name.replaceAll(' ', '-')}`;
 
-    return `uploads/${path}${newName}`;
+    return `${path}${newName}`;
   }
   /**
    * Sends an OTP via email
@@ -191,10 +195,7 @@ class BaseController {
     let isUnique = false;
 
     while (!isUnique) {
-
-      referralCode = crypto.randomBytes(length).toString('base64')
-        .replace(/[+/=]/g, '')
-        .slice(0, length);
+      referralCode = crypto.randomBytes(length).toString('base64').replace(/[+/=]/g, '').slice(0, length);
 
       if (/^\d+$/.test(referralCode)) {
         const user = await User.findOne({ referralCode });
@@ -208,14 +209,13 @@ class BaseController {
     return referralCode;
   }
 
-
   findEarningAmount(type) {
     switch (type) {
-      case 'video':  // Replace 'type1' with the actual case value
+      case 'video': // Replace 'type1' with the actual case value
         return 0.01;
 
       default:
-        return 0.00;
+        return 0.0;
     }
   }
 
@@ -223,15 +223,10 @@ class BaseController {
     try {
       // Insert each notification into the database
       const results = await Notification.create(data);
-      
     } catch (err) {
       console.error('Error inserting notifications:', err);
     }
   }
-
-  
-
-
 
   // async prepareResponse(response){
   //   try {
