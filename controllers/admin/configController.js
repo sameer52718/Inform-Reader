@@ -57,9 +57,8 @@ class ConfigController extends BaseController {
           }
         }
       }
-
       // Apply updates to the config document
-      Object.assign(config, updates);
+      config.themeColor = updates.themeColor;
       config.logo = logo; // Update logo if changed
 
       await config.save();
