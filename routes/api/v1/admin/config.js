@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import ConfigController from '../../../../controllers/admin/ConfigController.js';
+import ConfigController from '../../../../controllers/admin/configController.js';
 import isUser from '../../../../middlewares/isUser.js';
 import upload from '../../../../multer.js';
 
