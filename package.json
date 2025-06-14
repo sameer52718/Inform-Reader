@@ -16,7 +16,11 @@
     "seed:vehicles": "node seeders/vehicle.js",
     "seed:specification": "node seeders/specification.js",
     "seed:biography": "node seeders/biography.js",
-    "seed:config": "node seeders/config.js"
+    "seed:config": "node seeders/config.js",
+    "seed:league": "node seeders/league.js",
+    "seed:season": "node seeders/season.js",
+    "seed:player": "node seeders/player.js",
+    "seed:team": "node seeders/team.js"
   },
   "keywords": [],
   "author": "",
