@@ -17,7 +17,7 @@ const playerSchema = new mongoose.Schema(
     height: { type: String, required: false, trim: true },
     weight: { type: String, required: false, trim: true },
     gender: { type: String, enum: ['Male', 'Female','Mixed'], required: true },
-    status: { type: String, enum: ['Active', 'Retired', 'Suspended','Coaching','Injured'], default: 'Active' },
+    status: { type: String, enum: ['Active', 'Retired', 'Suspended','Coaching','Injured','Free Agent'], default: 'Active' },
     description: { type: String, required: false, trim: true },
     thumb: { type: String, required: false, trim: true },
     cutout: { type: String, required: false, trim: true },
