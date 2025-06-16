@@ -49,7 +49,7 @@ function getLocalIP() {
   return 'localhost';
 }
 
-// startCron();
+startCron();
 server.listen(PORT, () => {
   const ip = getLocalIP();
   console.log(`Server is listening on  Link: http://${ip}:${PORT}`);
