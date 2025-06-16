@@ -1,7 +1,8 @@
 import axios from 'axios';
 import MetalPrice from '../models/MetalPrice.js';
 import CurrencyRate from '../models/CurrencyRate.js';
-
+import dotenv from "dotenv";
+dotenv.config();
 // Metal metadata mapping
 const METAL_METADATA = {
   XAU: { fullName: 'Gold', symbol: 'Au', unit: 'ounce' },
@@ -77,6 +78,7 @@ export async function fetchAndSaveMetalPrices() {
 
     console.log('All metal prices updated successfully.');
   } catch (error) {
+    console.error(error.response)
     console.error('Error fetching or saving metal prices:', error.message);
   }
 }
