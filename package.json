@@ -20,7 +20,8 @@
     "seed:league": "node seeders/league.js",
     "seed:season": "node seeders/season.js",
     "seed:player": "node seeders/player.js",
-    "seed:team": "node seeders/team.js"
+    "seed:team": "node seeders/team.js",
+    "seed:category": "node seeders/category.js"
   },
   "keywords": [],
   "author": "",
