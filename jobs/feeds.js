@@ -135,6 +135,7 @@ async function startCron() {
 
       fetchAndSaveMetalPrices();
     });
+
   } catch (err) {
     console.error(`[Startup Error] ${err.message}`);
   }

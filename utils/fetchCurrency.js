@@ -1,7 +1,8 @@
 import axios from 'axios';
 import CurrencyRate from '../models/CurrencyRate.js';
 import Country from '../models/Country.js';
-
+import dotenv from "dotenv";
+dotenv.config();
 // Currency metadata mapping
 const CURRENCY_METADATA = {
   USD: { fullName: 'United States Dollar', symbol: '$' },
