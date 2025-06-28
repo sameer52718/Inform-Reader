@@ -20,7 +20,8 @@
     "seed:league": "node seeders/league.js",
     "seed:season": "node seeders/season.js",
     "seed:player": "node seeders/player.js",
-    "seed:team": "node seeders/team.js"
+    "seed:team": "node seeders/team.js",
+    "seed:city": "node seeders/city.js"
   },
   "keywords": [],
   "author": "",
@@ -49,6 +50,7 @@
     "sanitize-filename": "^1.6.3",
     "slugify": "^1.6.6",
     "socket.io": "^4.8.1",
+    "tz-lookup": "^6.1.25",
     "ytdl-core": "^4.11.5"
   }
 }

@@ -9,6 +9,7 @@ import Company from '../../models/Company.js';
 import Model from '../../models/Model.js';
 import Make from '../../models/Make.js';
 import Config from '../../models/Config.js';
+import City from '../../models/City.js';
 
 class CommonController extends BaseController {
   constructor() {
@@ -23,6 +24,7 @@ class CommonController extends BaseController {
     this.make = this.make.bind(this);
     this.model = this.model.bind(this);
     this.getConfig = this.getConfig.bind(this);
+    this.cities = this.cities.bind(this);
   }
 
   async country(req, res, next) {
@@ -154,6 +156,49 @@ class CommonController extends BaseController {
     try {
       const config = await Config.findOne().select('logo themeColor -_id');
       return res.json({ error: false, data: config });
+    } catch (error) {
+      return this.handleError(next, error.message, 500);
+    }
+  }
+
+  async cities(req, res, next) {
+    try {
+      const { country, capital, minPopulation, name } = req.query;
+      const filter = { status: true, isDeleted: false };
+
+      // Filter by country (using countryCode)
+      if (country) {
+        const countryDoc = await Country.findOne({ countryCode: country.toLowerCase() });
+        if (countryDoc) {
+          filter.country = countryDoc._id;
+        } else {
+          return res.json({ error: false, cities: [] });
+        }
+      }
+
+      // Filter by capital (true/false)
+      if (capital !== undefined) {
+        filter.capital = capital === 'true';
+      }
+
+      // Filter by minimum population
+      if (minPopulation) {
+        const population = parseInt(minPopulation, 10);
+        if (!isNaN(population)) {
+          filter.population = { $gte: population };
+        }
+      }
+
+      // Filter by name (case-insensitive partial match)
+      if (name) {
+        filter.name = { $regex: name, $options: 'i' };
+      }
+
+      const cities = await City.find(filter)
+        .select('name zone')
+        .populate('country', 'name countryCode region');
+
+      return res.json({ error: false, cities });
     } catch (error) {
       return this.handleError(next, error.message, 500);
     }

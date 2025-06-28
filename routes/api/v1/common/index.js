@@ -13,5 +13,5 @@ router.get('/company', commonController.company);
 router.get('/make', commonController.make);
 router.get('/model', commonController.model);
 router.get('/config', commonController.getConfig);
-
+router.get("/city", commonController.cities);
 export default router;
