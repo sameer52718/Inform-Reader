@@ -6,7 +6,6 @@ class BlogController extends BaseController {
   constructor() {
     super();
     this.get = this.get.bind(this);
-    this.filterByCategory = this.filterByCategory.bind(this);
     this.detail = this.detail.bind(this);
   }
 
@@ -94,69 +93,35 @@ class BlogController extends BaseController {
     }
   }
 
-  async filterByCategory(req, res, next) {
-    try {
-      let { isDeleted } = req.query;
-      let { categoryId } = req.params;
-
-      const filters = { isDeleted: false, categoryId: new mongoose.Types.ObjectId(categoryId) };
-      if (isDeleted) filters.isDeleted = true;
-
-      // Get all blogs of the given categoryId
-      const blogs = await Blog.aggregate([
-        { $match: filters },
-        {
-          $lookup: {
-            from: 'categories', // Ensure this matches the Category collection name
-            localField: 'categoryId',
-            foreignField: '_id',
-            as: 'category',
-          },
-        },
-        { $unwind: '$category' },
-        {
-          $project: {
-            _id: 1,
-            categoryId: 1,
-            categoryName: '$category.name',
-            name: 1,
-            image: 1,
-            shortDescription: 1,
-            writterName: 1,
-          },
-        },
-      ]);
-
-      return res.status(200).json({
-        error: false,
-        blogs,
-      });
-    } catch (error) {
-      return this.handleError(next, error.message || 'An unexpected error occurred', 500);
-    }
-  }
-
   async detail(req, res, next) {
     try {
       let { isDeleted } = req.query;
-      let { categoryId } = req.params;
-      let { blogId } = req.params;
+      let { slug } = req.params;
 
-      const filters = { isDeleted: false, categoryId: new mongoose.Types.ObjectId(categoryId), _id: new mongoose.Types.ObjectId(blogId) };
+      const filters = { isDeleted: false, slug };
       if (isDeleted) filters.isDeleted = true;
 
       const blog = await Blog.findOne(filters)
         .populate('categoryId', 'name')
         .populate('subCategoryId', 'name')
+        .populate('adminId', 'name profile')
         .select('name blog image shortDescription writterName tag wishList createdAt');
 
       if (!blog) {
         return this.handleError(next, 'Blog not found', 404);
       }
 
+      const related = await Blog.find({ status: true, isDeleted: false, categoryId: blog.categoryId._id, _id: { $ne: blog._id } })
+        .populate('adminId', 'name email profile')
+        .populate('categoryId', 'name')
+        .populate('subCategoryId', 'name')
+        .sort({ createdAt: -1 })
+        .limit(10);
+
       return res.status(200).json({
         error: false,
         blog,
+        related,
       });
     } catch (error) {
       return this.handleError(next, error.message || 'An unexpected error occurred', 500);
