@@ -196,7 +196,7 @@ class CommonController extends BaseController {
 
       const cities = await City.find(filter)
         .select('name zone')
-        .populate('country', 'name countryCode region');
+        .populate('country', 'name countryCode region').limit(500);
 
       return res.json({ error: false, cities });
     } catch (error) {
