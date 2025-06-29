@@ -194,9 +194,7 @@ class CommonController extends BaseController {
         filter.name = { $regex: name, $options: 'i' };
       }
 
-      const cities = await City.find(filter)
-        .select('name zone')
-        .populate('country', 'name countryCode region').limit(500);
+      const cities = await City.find(filter).select('name zone lat lng').populate('country', 'name countryCode region').limit(500);
 
       return res.json({ error: false, cities });
     } catch (error) {
