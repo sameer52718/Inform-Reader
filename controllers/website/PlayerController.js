@@ -60,7 +60,7 @@ class PlayerController extends BaseController {
       const totalPlayers = await Player.countDocuments(filters);
       const totalPages = Math.ceil(totalPlayers / limitNum);
 
-      const players = await Player.find(filters).populate('team', 'name shortName badge').sort(sort).skip(skip).limit(limitNum);
+      const players = await Player.find(filters).populate('team', 'name shortName badge idTeam').sort(sort).skip(skip).limit(limitNum);
 
       // Return response
       return res.status(200).json({
@@ -84,7 +84,7 @@ class PlayerController extends BaseController {
 
       const filters = { idPlayer };
 
-      const player = await Player.findOne(filters).populate('team', 'name shortName badge logo');
+      const player = await Player.findOne(filters).populate('team', 'name shortName badge logo idTeam');
 
       if (!player) {
         return this.handleError(next, 'Player not found', 404);
