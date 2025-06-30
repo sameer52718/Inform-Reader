@@ -15,6 +15,9 @@ import articleRouter from './articleRoute.js';
 import currencyRouter from './currency.js';
 import metalRouter from './metalRoute.js';
 import vehicleRouter from './vehicleRoute.js';
+import leagueRouter from './leagues.js';
+import teamRouter from './teams.js';
+import playerRouter from './player.js';
 
 const router = Router();
 
@@ -34,5 +37,8 @@ router.use('/article', articleRouter);
 router.use('/currency', currencyRouter);
 router.use('/metal', metalRouter);
 router.use('/vehicle', vehicleRouter);
+router.use('/league', leagueRouter);
+router.use('/team', teamRouter);
+router.use('/player', playerRouter);
 
 export default router;
