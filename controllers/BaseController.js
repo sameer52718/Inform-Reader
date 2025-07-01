@@ -6,14 +6,40 @@ import mongoose from 'mongoose';
 import crypto from 'crypto';
 import path from 'path';
 import fs from 'fs';
+import { v2 } from '@google-cloud/translate';
 // import User from '../models/User.js';
 // import Notification from '../models/Notification.js';
 
 class BaseController {
+  constructor() {
+    this.translateClient = new v2.Translate();
+  }
+
+
   userTypes = {
     user: 1,
     admin: 2,
   };
+
+  async translateRecursive(obj, from, to) {
+    const result = Array.isArray(obj) ? [] : {};
+
+    for (const key in obj) {
+      const value = obj[key];
+
+      if (typeof value === 'object' && value !== null) {
+        result[key] = await this.translateRecursive(value, from, to);
+      } else if (typeof value === 'string') {
+        const [translated] = await this.translateClient.translate(value, { from, to });
+        result[key] = translated;
+      } else {
+        result[key] = value;
+      }
+    }
+
+    return result;
+  }
+
 
   /**
    * Generates a JWT token

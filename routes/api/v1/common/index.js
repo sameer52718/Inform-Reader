@@ -14,4 +14,5 @@ router.get('/make', commonController.make);
 router.get('/model', commonController.model);
 router.get('/config', commonController.getConfig);
 router.get("/city", commonController.cities);
+router.post('/translate', commonController.translateContent);
 export default router;

@@ -25,6 +25,7 @@ class CommonController extends BaseController {
     this.model = this.model.bind(this);
     this.getConfig = this.getConfig.bind(this);
     this.cities = this.cities.bind(this);
+    this.translateContent = this.translateContent.bind(this);
   }
 
   async country(req, res, next) {
@@ -201,6 +202,22 @@ class CommonController extends BaseController {
       return this.handleError(next, error.message, 500);
     }
   }
+
+  async translateContent(req, res, next) {
+    try {
+      const { json, from, to } = req.body;
+
+      if (!json || !from || !to) {
+        return res.status(400).json({ error: true, message: 'Missing required fields: json, from, to' });
+      }
+
+      const translated = await this.translateRecursive(json, from, to);
+      return res.json({ error: false, translated });
+    } catch (error) {
+      return this.handleError(next, error.message, 500);
+    }
+  }
+
 }
 
 export default new CommonController();

@@ -8,12 +8,12 @@ import os from 'os';
 import ApiV1Router from './routes/api/v1/index.js';
 import connectDB from './db/index.js';
 import { initializeSocket } from './socket.js';
-import youtubeVideo from './cronJobs/youtubeVideo.js';
 import startCron from './jobs/feeds.js';
 
 const app = express();
 
 dotenv.config();
+process.env.GOOGLE_APPLICATION_CREDENTIALS = './teal-2a1a0-4eee03f2412b.json';
 
 app.use('/uploads', express.static('uploads'));
 app.use('/youtubeVideos', express.static('youtubeVideos'));
