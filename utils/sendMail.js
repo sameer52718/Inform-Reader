@@ -1,22 +1,22 @@
-import nodemailer from "nodemailer";
-import hbs from "nodemailer-express-handlebars";
-import path from "path";
+import nodemailer from 'nodemailer';
+import hbs from 'nodemailer-express-handlebars';
+import path from 'path';
 export const EmailEnums = Object.freeze({
-  otp: "otp",
-  error: "error",
+  otp: 'otp',
+  error: 'error',
 });
 
 export const EmailTempletes = Object.freeze({
-  otp: "otp",
-  error: "error",
+  otp: 'otp',
+  error: 'error',
 });
 
 const handlebarsOptions = {
   viewEngine: {
-    partialsDir: path.resolve("./views/"),
+    partialsDir: path.resolve('./views/'),
     defaultLayout: false,
   },
-  viewPath: path.resolve("./views/"),
+  viewPath: path.resolve('./views/'),
 };
 
 const sendMail = async ({ email, subject, otp, template, type, context }) => {
@@ -33,7 +33,7 @@ const sendMail = async ({ email, subject, otp, template, type, context }) => {
     },
   });
 
-  transporter.use("compile", hbs(handlebarsOptions));
+  transporter.use('compile', hbs(handlebarsOptions));
 
   switch (type) {
     case EmailEnums.otp:
@@ -56,8 +56,8 @@ const sendMail = async ({ email, subject, otp, template, type, context }) => {
       const errorOptions = {
         from: `"HUSKNETWORK" <process.env.SMTP_MAIL>`,
         template,
-        to: "bilalajmery2124@gmail.com",
-        subject: "Error in api",
+        to: 'alisameer52718@gmail.com',
+        subject: 'Error in api',
         context,
       };
       await transporter.sendMail(errorOptions);
