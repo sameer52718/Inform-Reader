@@ -146,7 +146,15 @@ class CommonController extends BaseController {
 
   async model(req, res, next) {
     try {
-      const models = await Model.find({ status: true }).select('name');
+      const { makeId } = req.query;
+
+      const filters = { status: true }
+
+      if (makeId) {
+        filters.makeId = makeId;
+      }
+
+      const models = await Model.find(filters).select('name');
       return res.json({ error: false, data: models });
     } catch (error) {
       return this.handleError(next, error.message, 500);
