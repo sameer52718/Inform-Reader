@@ -212,12 +212,11 @@ class CommonController extends BaseController {
       }
 
       const translated = await this.translateRecursive(json, from, to);
-      return res.json({ error: false, translated });
+      return res.json(translated);
     } catch (error) {
       return this.handleError(next, error.message, 500);
     }
   }
-
 }
 
 export default new CommonController();

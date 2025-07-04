@@ -15,31 +15,108 @@ class BaseController {
     this.translateClient = new v2.Translate();
   }
 
-
   userTypes = {
     user: 1,
     admin: 2,
   };
 
   async translateRecursive(obj, from, to) {
-    const result = Array.isArray(obj) ? [] : {};
+    const untranslatable = new Set(['john@example.com', '+1 (555) 123-4567', '+1 (555) 000-0000', '••••••••', 'www.informreaders.com', '123 News Street, New York, NY 10001']);
 
-    for (const key in obj) {
-      const value = obj[key];
+    const paths = [];
+    const values = [];
 
-      if (typeof value === 'object' && value !== null) {
-        result[key] = await this.translateRecursive(value, from, to);
-      } else if (typeof value === 'string') {
-        const [translated] = await this.translateClient.translate(value, { from, to });
-        result[key] = translated;
+    // Step 1: Recursively collect strings and their paths
+    const collect = (curr, path = [], parentIsArray = false) => {
+      if (typeof curr === 'string') {
+        paths.push({ path, parentIsArray });
+        values.push(curr);
+        console.log(`Collected: Path = ${JSON.stringify(path)}, Value = "${curr}"`);
+      } else if (typeof curr === 'object' && curr !== null) {
+        const isArray = Array.isArray(curr);
+        for (const key in curr) {
+          const newKey = isArray ? Number(key) : key;
+          collect(curr[key], [...path, newKey], isArray);
+        }
+      }
+    };
+    collect(obj);
+
+    if (values.length === 0) return obj;
+
+    // Step 2: Translate strings
+    const translatedValues = [];
+    for (let i = 0; i < values.length; i++) {
+      const value = values[i];
+      if (untranslatable.has(value)) {
+        translatedValues.push(value); // Skip translation
+        console.log(`Skipped: Index ${i}, Value = "${value}"`);
       } else {
-        result[key] = value;
+        try {
+          const [translated] = await this.translateClient.translate(value, {
+            from,
+            to,
+            format: 'text',
+          });
+          const cleaned = translated.trim();
+          if (!cleaned) {
+            console.warn(`Empty translation at index ${i}, using original.`);
+            translatedValues.push(value);
+          } else {
+            translatedValues.push(cleaned);
+            console.log(`Translated: Index ${i}, Original = "${value}", Translated = "${cleaned}"`);
+          }
+        } catch (err) {
+          console.error(`Translation failed at index ${i} for "${value}":`, err);
+          translatedValues.push(value);
+        }
       }
     }
 
+    // Step 3: Validate translation count
+    if (translatedValues.length !== values.length) {
+      console.error('Original values:', values);
+      console.error('Translated values:', translatedValues);
+      throw new Error(`Translation mismatch: ${values.length} expected, got ${translatedValues.length}`);
+    }
+
+    // Optional: Warn on suspicious translation outputs
+    translatedValues.forEach((val, idx) => {
+      if (!val || /[\[\]#@]/.test(val)) {
+        console.warn(`Suspicious translation at index ${idx}: "${val}" (original: "${values[idx]}")`);
+      }
+    });
+
+    // Step 4: Rebuild translated object preserving structure
+    const result = Array.isArray(obj) ? [] : {};
+
+    const setDeep = (target, path, value, parentIsArray) => {
+      let ref = target;
+
+      for (let i = 0; i < path.length - 1; i++) {
+        const key = path[i];
+        const nextKey = path[i + 1];
+        const isNextArrayIndex = Number.isInteger(nextKey);
+
+        if (!(key in ref)) {
+          // Only create array/object if not already set
+          ref[key] = isNextArrayIndex ? [] : {};
+        }
+
+        ref = ref[key];
+      }
+
+      const lastKey = path[path.length - 1];
+      ref[lastKey] = value; // Set final translated string
+    };
+
+    paths.forEach(({ path, parentIsArray }, i) => {
+      setDeep(result, path, translatedValues[i], parentIsArray);
+    });
+
+    console.log('Final Translated Object:', JSON.stringify(result, null, 2));
     return result;
   }
-
 
   /**
    * Generates a JWT token
