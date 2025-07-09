@@ -8,6 +8,11 @@ const subCategorySchema = new mongoose.Schema(
     name: { type: String, required: true },
     status: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
+    order: {
+      type: Number,
+      required: true,
+      default: 1,
+    },
   },
   { timestamps: true },
 );

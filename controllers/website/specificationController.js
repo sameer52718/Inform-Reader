@@ -2,6 +2,7 @@ import BaseController from '../BaseController.js';
 import Specification from '../../models/Specification.js';
 import Category from '../../models/Category.js';
 import mongoose from 'mongoose';
+import Brand from '../../models/Brand.js';
 
 class SpecificationController extends BaseController {
   constructor() {
@@ -12,7 +13,6 @@ class SpecificationController extends BaseController {
     this.wishlist = this.wishlist.bind(this);
   }
 
-  // GET: Grouped specifications by category
   async get(req, res, next) {
     try {
       const categories = await Specification.aggregate([
@@ -31,8 +31,6 @@ class SpecificationController extends BaseController {
             specifications: { $slice: ['$specifications', 25] },
           },
         },
-        // Randomly sample 25 categories
-        { $sample: { size: 25 } },
         // Lookup category information
         {
           $lookup: {
@@ -47,6 +45,12 @@ class SpecificationController extends BaseController {
           $unwind: {
             path: '$categoryInfo',
             preserveNullAndEmptyArrays: true,
+          },
+        },
+        // Sort by category order to maintain fixed sequence
+        {
+          $sort: {
+            'categoryInfo.order': 1,
           },
         },
         // Lookup brand information
@@ -81,7 +85,7 @@ class SpecificationController extends BaseController {
                   name: '$$spec.name',
                   image: '$$spec.image',
                   price: '$$spec.price',
-                  priceSymbol: '$$spec.priceSymbal', // Fixed typo in field name
+                  priceSymbol: '$$spec.priceSymbol', // Fixed typo: priceSymbal -> priceSymbol
                   brandId: '$$spec.brandId',
                   categoryId: '$$spec.categoryId',
                   subCategoryId: '$$spec.subCategoryId',
@@ -118,11 +122,10 @@ class SpecificationController extends BaseController {
       }
 
       return res.status(200).json({
-        success: true, // Changed 'error: false' to 'success: true' for consistency
+        success: true,
         data: categories,
       });
     } catch (error) {
-      // Improved error handling with more details
       return next({
         status: 500,
         message: error.message || 'Internal server error',
@@ -134,41 +137,215 @@ class SpecificationController extends BaseController {
   async getAll(req, res, next) {
     try {
       // Extract and validate query parameters
-      const { category } = req.params;
-      const { page = 1, limit = 10, sortBy = 'latest' } = req.query;
+      const { category: categoryId } = req.params;
+      const {
+        page = 1,
+        limit = 10,
+        sortBy = 'latest',
+        brand,
+        priceRange,
+        availability,
+        condition,
+        ram,
+        storage,
+        camera,
+        battery,
+        screenSize,
+        displayType,
+        processor,
+        os,
+        network,
+        features,
+        laptopType,
+        storageType,
+        graphicsCard,
+        displayResolution,
+        connectivity,
+        cameraType,
+        megapixels,
+        sensorType,
+        lensMount,
+        videoResolution,
+        cameraFeatures,
+        accessoryType,
+        compatibility,
+        color,
+        accessoryFeatures,
+        resolution,
+        smartTv,
+        tvFeatures,
+        consoleType,
+        consoleStorage,
+        consoleFeatures,
+        printerType,
+        printerConnectivity,
+        printSpeed,
+        printerFeatures,
+        networkProductType,
+        networkSpeed,
+        band,
+        networkFeatures,
+        applianceType,
+        capacity,
+        applianceFeatures,
+      } = req.query;
+
       const pageNum = parseInt(page, 10);
       const limitNum = parseInt(limit, 10);
       const skip = (pageNum - 1) * limitNum;
 
-      // Validate category parameter
-      if (!category) {
+      // Validate categoryId parameter
+      if (!mongoose.Types.ObjectId.isValid(categoryId)) {
         return next({
           status: 400,
-          message: 'Category name is required',
+          message: 'Valid Category ID is required',
         });
       }
 
-      // Find category by name (case-insensitive for better UX)
-      const categoryDoc = await Category.findOne({
-        name: { $regex: new RegExp(`^${category}$`, 'i') },
-      });
-
+      // Find category by ID
+      const categoryDoc = await Category.findById(categoryId);
       if (!categoryDoc) {
         return next({
           status: 404,
-          message: `Category '${category}' not found`,
+          message: `Category with ID '${categoryId}' not found`,
         });
       }
 
-      // Build query with categoryId
+      // Build query
       const query = {
-        categoryId: new mongoose.Types.ObjectId(categoryDoc._id),
+        categoryId: new mongoose.Types.ObjectId(categoryId),
       };
+
+      // Apply general filters
+      if (brand) {
+        const brandNames = brand.split(',').map((b) => b.trim());
+        const brands = await Brand.find({ name: { $in: brandNames } }).select('_id');
+        query.brandId = { $in: brands.map((b) => b._id) };
+      }
+      if (priceRange) {
+        const ranges = priceRange.split(',').map((r) => r.trim());
+        query.$or = ranges.map((range) => {
+          if (range === '0-10000') return { price: { $lte: 10000 } };
+          if (range === '10000-20000') return { price: { $gte: 10000, $lte: 20000 } };
+          if (range === '20000-50000') return { price: { $gte: 20000, $lte: 50000 } };
+          if (range === '50000-100000') return { price: { $gte: 50000, $lte: 100000 } };
+          if (range === '100000-') return { price: { $gte: 100000 } };
+          return {};
+        });
+      }
+
+      if (availability) {
+        query['data.availability'] = { $in: availability.split(',').map((a) => a.trim()) };
+      }
+      if (condition) {
+        query['data.condition'] = { $in: condition.split(',').map((c) => c.trim()) };
+      }
+
+      // Apply category-specific filters based on category name
+      const categoryName = categoryDoc.name;
+      if (categoryName === 'Mobiles & Tablets') {
+        if (ram) query['data.ram'] = { $in: ram.split(',').map((r) => r.trim()) };
+        if (storage) query['data.storageCapacity'] = { $in: storage.split(',').map((s) => s.trim()) };
+        if (camera) query['data.cameraMegapixels'] = { $in: camera.split(',').map((c) => c.trim()) };
+        if (battery) {
+          query['data.batteryCapacity'] = {
+            $or: battery.split(',').map((b) => {
+              if (b === '0-4000') return { $lte: 4000 };
+              if (b === '4000-5000') return { $gte: 4000, $lte: 5000 };
+              if (b === '5000-6000') return { $gte: 5000, $lte: 6000 };
+              if (b === '6000-') return { $gte: 6000 };
+              return {};
+            }),
+          };
+        }
+        if (screenSize) {
+          const screenSizeConditions = screenSize.split(',').map((s) => {
+            if (s === '0-13') return { 'data.screenSize': { $lte: 13 } };
+            if (s === '13-14') return { 'data.screenSize': { $gte: 13, $lte: 14 } };
+            if (s === '15-16') return { 'data.screenSize': { $gte: 15, $lte: 16 } };
+            if (s === '16-') return { 'data.screenSize': { $gte: 16 } };
+            return {};
+          });
+
+          query.$or = screenSizeConditions;
+        }
+        if (displayType) query['data.displayType'] = { $in: displayType.split(',').map((d) => d.trim()) };
+        if (processor) query['data.processorType'] = { $in: processor.split(',').map((p) => new RegExp(p.trim(), 'i')) };
+        if (os) query['data.operatingSystem'] = { $in: os.split(',').map((o) => o.trim()) };
+        if (network) query['data.networkSupport'] = { $in: network.split(',').map((n) => n.trim()) };
+        if (features) query['data.features'] = { $in: features.split(',').map((f) => f.trim()) };
+      } else if (categoryName === 'Laptops & Computers') {
+        if (processor) query['data.processorType'] = { $in: processor.split(',').map((p) => new RegExp(p.trim(), 'i')) };
+        if (ram) query['data.ram'] = { $in: ram.split(',').map((r) => r.trim()) };
+        if (storageType) query['data.storageType'] = { $in: storageType.split(',').map((s) => s.trim()) };
+        if (storage) query['data.storageCapacity'] = { $in: storage.split(',').map((s) => s.trim()) };
+        if (screenSize) {
+          const screenSizeConditions = screenSize.split(',').map((s) => {
+            if (s === '0-13') return { 'data.screenSize': { $lte: 13 } };
+            if (s === '13-14') return { 'data.screenSize': { $gte: 13, $lte: 14 } };
+            if (s === '15-16') return { 'data.screenSize': { $gte: 15, $lte: 16 } };
+            if (s === '16-') return { 'data.screenSize': { $gte: 16 } };
+            return {};
+          });
+
+          query.$or = screenSizeConditions;
+        }
+        if (graphicsCard) query['data.graphicsCard'] = { $in: graphicsCard.split(',').map((g) => new RegExp(g.trim(), 'i')) };
+        if (os) query['data.operatingSystem'] = { $in: os.split(',').map((o) => o.trim()) };
+        if (laptopType) query['data.laptopType'] = { $in: laptopType.split(',').map((l) => l.trim()) };
+        if (displayResolution) query['data.displayResolution'] = { $in: displayResolution.split(',').map((d) => d.trim()) };
+      } else if (categoryName === 'Cameras & Drones') {
+        if (cameraType) query['data.cameraType'] = { $in: cameraType.split(',').map((c) => c.trim()) };
+        if (megapixels) {
+          query['data.cameraMegapixels'] = {
+            $or: megapixels.split(',').map((m) => {
+              if (m === '0-16') return { $lte: 16 };
+              if (m === '16-24') return { $gte: 16, $lte: 24 };
+              if (m === '24-36') return { $gte: 24, $lte: 36 };
+              if (m === '36-') return { $gte: 36 };
+              return {};
+            }),
+          };
+        }
+        if (sensorType) query['data.sensorType'] = { $in: sensorType.split(',').map((s) => s.trim()) };
+        if (lensMount) query['data.lensMount'] = { $in: lensMount.split(',').map((l) => l.trim()) };
+        if (videoResolution) query['data.videoResolution'] = { $in: videoResolution.split(',').map((v) => v.trim()) };
+        if (cameraFeatures) query['data.cameraFeatures'] = { $in: cameraFeatures.split(',').map((f) => f.trim()) };
+      } else if (categoryName === 'TVs & Home Entertainment') {
+        if (screenSize) {
+          const screenSizeConditions = screenSize.split(',').map((s) => {
+            if (s === '0-13') return { 'data.screenSize': { $lte: 13 } };
+            if (s === '13-14') return { 'data.screenSize': { $gte: 13, $lte: 14 } };
+            if (s === '15-16') return { 'data.screenSize': { $gte: 15, $lte: 16 } };
+            if (s === '16-') return { 'data.screenSize': { $gte: 16 } };
+            return {};
+          });
+
+          query.$or = screenSizeConditions;
+        }
+        if (resolution) query['data.resolution'] = { $in: resolution.split(',').map((r) => r.trim()) };
+        if (displayType) query['data.displayType'] = { $in: displayType.split(',').map((d) => d.trim()) };
+        if (smartTv) query['data.smartTv'] = { $in: smartTv.split(',').map((s) => s.trim()) };
+        if (tvFeatures) query['data.tvFeatures'] = { $in: tvFeatures.split(',').map((f) => f.trim()) };
+      } else if (categoryName === 'Gaming') {
+        if (consoleType) query['data.consoleType'] = { $in: consoleType.split(',').map((c) => c.trim()) };
+        if (consoleStorage) query['data.consoleStorage'] = { $in: consoleStorage.split(',').map((s) => s.trim()) };
+        if (consoleFeatures) query['data.consoleFeatures'] = { $in: consoleFeatures.split(',').map((f) => f.trim()) };
+      } else if (categoryName === 'Printers & Office Equipment') {
+        if (printerType) query['data.printerType'] = { $in: printerType.split(',').map((p) => p.trim()) };
+        if (printerConnectivity) query['data.printerConnectivity'] = { $in: printerConnectivity.split(',').map((c) => c.trim()) };
+        if (printSpeed) query['data.printSpeed'] = { $in: printSpeed.split(',').map((p) => p.trim()) };
+        if (printerFeatures) query['data.printerFeatures'] = { $in: printerFeatures.split(',').map((f) => f.trim()) };
+      } else if (categoryName === 'Home & Kitchen Appliances') {
+        if (applianceType) query['data.applianceType'] = { $in: applianceType.split(',').map((a) => a.trim()) };
+        if (capacity) query['data.capacity'] = { $in: capacity.split(',').map((c) => c.trim()) };
+        if (applianceFeatures) query['data.applianceFeatures'] = { $in: applianceFeatures.split(',').map((f) => f.trim()) };
+      }
 
       // Define aggregation pipeline
       const aggregationPipeline = [
         { $match: query },
-        // Lookup category info (optional, as we already have categoryDoc)
+        // Lookup category info
         {
           $lookup: {
             from: 'categories',
@@ -183,7 +360,7 @@ class SpecificationController extends BaseController {
             preserveNullAndEmptyArrays: true,
           },
         },
-        // Lookup brand and subcategory info for completeness
+        // Lookup brand info
         {
           $lookup: {
             from: 'brands',
@@ -198,6 +375,7 @@ class SpecificationController extends BaseController {
             preserveNullAndEmptyArrays: true,
           },
         },
+        // Lookup subcategory info
         {
           $lookup: {
             from: 'subcategories',
@@ -219,7 +397,7 @@ class SpecificationController extends BaseController {
             name: 1,
             image: 1,
             price: 1,
-            priceSymbol: 1, // Fixed typo from priceSymbal
+            priceSymbol: 1,
             brandId: 1,
             brandName: '$brand.name',
             categoryId: 1,
@@ -227,6 +405,7 @@ class SpecificationController extends BaseController {
             subCategoryId: 1,
             subCategoryName: '$subCategory.name',
             wishlist: 1,
+            data: 1, // Include data for client-side rendering of specifications
           },
         },
         { $skip: skip },
@@ -244,11 +423,16 @@ class SpecificationController extends BaseController {
         case 'name':
           aggregationPipeline.splice(1, 0, { $sort: { name: 1 } });
           break;
+        case 'name-z-a':
+          aggregationPipeline.splice(1, 0, { $sort: { name: -1 } });
+          break;
+        case 'popularity':
+          aggregationPipeline.splice(1, 0, { $sort: { 'wishlist.length': -1 } });
+          break;
         case 'latest':
+        default:
           aggregationPipeline.splice(1, 0, { $sort: { createdAt: -1 } });
           break;
-        default:
-          aggregationPipeline.splice(1, 0, { $sort: { createdAt: -1 } }); // Default to latest instead of random sample
       }
 
       // Execute aggregation and count total documents in parallel
@@ -282,29 +466,9 @@ class SpecificationController extends BaseController {
     try {
       const { category, id } = req.params;
 
-      // Validate category parameter
-      if (!category) {
-        return next({
-          status: 400,
-          message: 'Category name is required',
-        });
-      }
-
-      // Find category by name (case-insensitive for better UX)
-      const categoryDoc = await Category.findOne({
-        name: { $regex: new RegExp(`^${category}$`, 'i') },
-      });
-
-      if (!categoryDoc) {
-        return next({
-          status: 404,
-          message: `Category '${category}' not found`,
-        });
-      }
-
       // Build query with categoryId
       const query = {
-        categoryId: new mongoose.Types.ObjectId(categoryDoc._id),
+        categoryId: category,
         _id: id,
       };
 
