@@ -62,68 +62,68 @@ async function startCron() {
     });
 
     // Uncomment when ready to schedule:
-    // cron.schedule('0 0 * * *', async () => {
-    //   console.log(`[Cron] Running feed fetch at ${new Date().toISOString()}`);
-    //   for (const feed of feeds) {
-    //     const feedUrl = feed['RSS Feed URL'];
-    //     const feedCategoryName = feed['Category']?.trim() || 'General';
-    //     const countryCode = feed['Country Code']?.toUpperCase();
-    //     const country = countryMap.get(countryCode);
+    cron.schedule('0 0 * * *', async () => {
+      console.log(`[Cron] Running feed fetch at ${new Date().toISOString()}`);
+      for (const feed of feeds) {
+        const feedUrl = feed['RSS Feed URL'];
+        const feedCategoryName = feed['Category']?.trim() || 'General';
+        const countryCode = feed['Country Code']?.toUpperCase();
+        const country = countryMap.get(countryCode);
 
-    //     if (!country) {
-    //       console.warn(`[Warn] Country code '${countryCode}' not found. Skipping feed: ${feedUrl}`);
-    //       continue;
-    //     }
+        if (!country) {
+          console.warn(`[Warn] Country code '${countryCode}' not found. Skipping feed: ${feedUrl}`);
+          continue;
+        }
 
-    //     try {
-    //       const parsed = await parser.parseURL(feedUrl);
-    //       console.log(`[Feed] Parsed ${parsed.items.length} items from ${feedUrl}`);
+        try {
+          const parsed = await parser.parseURL(feedUrl);
+          console.log(`[Feed] Parsed ${parsed.items.length} items from ${feedUrl}`);
 
-    //       for (const item of parsed.items) {
-    //         try {
-    //           const existing = await Article.findOne({ link: item.link, country: country._id });
-    //           if (existing) {
-    //             console.log(`[Skip] Article already exists: ${item.title} [${countryCode}]`);
-    //             continue;
-    //           }
+          for (const item of parsed.items) {
+            try {
+              const existing = await Article.findOne({ link: item.link, country: country._id });
+              if (existing) {
+                console.log(`[Skip] Article already exists: ${item.title} [${countryCode}]`);
+                continue;
+              }
 
-    //           let category = categoryMap.get(feedCategoryName.toLowerCase());
-    //           if (!category) {
-    //             console.log(`[Info] Creating new category: ${feedCategoryName}`);
-    //             category = await Category.create({
-    //               adminId: null,
-    //               typeId: type._id,
-    //               name: feedCategoryName,
-    //             });
-    //             categoryMap.set(feedCategoryName.toLowerCase(), category);
-    //           }
+              let category = categoryMap.get(feedCategoryName.toLowerCase());
+              if (!category) {
+                console.log(`[Info] Creating new category: ${feedCategoryName}`);
+                category = await Category.create({
+                  adminId: null,
+                  typeId: type._id,
+                  name: feedCategoryName,
+                });
+                categoryMap.set(feedCategoryName.toLowerCase(), category);
+              }
 
-    //           const articleData = {
-    //             title: item.title,
-    //             link: item.link,
-    //             pubDate: item.pubDate ? new Date(item.pubDate) : new Date(),
-    //             country: country._id,
-    //             category: category._id,
-    //             content: cleanContentSnippet(item.contentSnippet),
-    //             source: feed['source'] || 'Google',
-    //           };
+              const articleData = {
+                title: item.title,
+                link: item.link,
+                pubDate: item.pubDate ? new Date(item.pubDate) : new Date(),
+                country: country._id,
+                category: category._id,
+                content: cleanContentSnippet(item.contentSnippet),
+                source: feed['source'] || 'Google',
+              };
 
-    //           await Article.create(articleData);
-    //           console.log(`[Add] Article added: ${item.title}`);
-    //         } catch (createErr) {
-    //           if (createErr.code === 11000) {
-    //             console.warn(`[Duplicate] Skipped duplicate article: ${item.link} [${countryCode}]`);
-    //           } else {
-    //             console.error(`[Error] Failed to save article '${item.title}': ${createErr.message}`);
-    //           }
-    //         }
-    //       }
-    //     } catch (feedErr) {
-    //       console.error(`[Error] Failed to fetch or parse feed: ${feedUrl} - ${feedErr.message}`);
-    //     }
-    //   }
-    //   console.log(`[Cron] Finished cycle at ${new Date().toISOString()}`);
-    // });
+              await Article.create(articleData);
+              console.log(`[Add] Article added: ${item.title}`);
+            } catch (createErr) {
+              if (createErr.code === 11000) {
+                console.warn(`[Duplicate] Skipped duplicate article: ${item.link} [${countryCode}]`);
+              } else {
+                console.error(`[Error] Failed to save article '${item.title}': ${createErr.message}`);
+              }
+            }
+          }
+        } catch (feedErr) {
+          console.error(`[Error] Failed to fetch or parse feed: ${feedUrl} - ${feedErr.message}`);
+        }
+      }
+      console.log(`[Cron] Finished cycle at ${new Date().toISOString()}`);
+    });
     cron.schedule('0 0 * * *', () => {
       console.log(`[Cron] Running Currency fetch at ${new Date().toISOString()}`);
 
@@ -135,7 +135,6 @@ async function startCron() {
 
       fetchAndSaveMetalPrices();
     });
-
   } catch (err) {
     console.error(`[Startup Error] ${err.message}`);
   }

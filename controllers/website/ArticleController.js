@@ -49,7 +49,7 @@ class ArticleController extends BaseController {
       const totalArticles = await Article.countDocuments(filters);
       const totalPages = Math.ceil(totalArticles / limit);
 
-      const articles = await Article.find(filters).limit(limit).skip(skip).populate('category', 'name');
+      const articles = await Article.find(filters).sort({ pubDate: -1 }).limit(limit).skip(skip).populate('category', 'name');
 
       return res.status(200).json({
         error: false,
