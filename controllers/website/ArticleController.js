@@ -9,6 +9,7 @@ class ArticleController extends BaseController {
   constructor() {
     super();
     this.getByCountry = this.getByCountry.bind(this);
+    this.getByCategory = this.getByCategory.bind(this);
   }
 
   async getByCountry(req, res, next) {
@@ -55,6 +56,52 @@ class ArticleController extends BaseController {
         error: false,
         country: country?.name || 'Unknown',
         categories: articles,
+        pagination: {
+          totalItems: totalArticles,
+          currentPage: page,
+          totalPages,
+          pageSize: limit,
+        },
+      });
+    } catch (error) {
+      return this.handleError(next, error.message || 'An unexpected error occurred', 500);
+    }
+  }
+
+  async getByCategory(req, res, next) {
+    try {
+      const { categoryId, categoryName } = req.query;
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
+
+      let category = null;
+      const filters = {};
+
+      if (categoryId) {
+        category = await Category.findById(categoryId);
+      } else if (categoryName) {
+        category = await Category.findOne({ name: categoryName });
+      }
+
+      if (!category) {
+        return res.status(404).json({
+          error: true,
+          message: 'Category not found.',
+        });
+      }
+
+      filters.category = category._id;
+
+      const totalArticles = await Article.countDocuments(filters);
+      const totalPages = Math.ceil(totalArticles / limit);
+
+      const articles = await Article.find(filters).sort({ pubDate: -1 }).limit(limit).skip(skip).populate('category', 'name');
+
+      return res.status(200).json({
+        error: false,
+        category: category.name,
+        articles,
         pagination: {
           totalItems: totalArticles,
           currentPage: page,
