@@ -7,6 +7,7 @@ const makeSchema = new mongoose.Schema(
     image: { type: String, required: false, trim: true },
     status: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
+    type: { type: String, default: "CAR", enum: ["CAR", "BIKE"] }
   },
   { timestamps: true },
 );

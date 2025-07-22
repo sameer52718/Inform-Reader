@@ -6,7 +6,7 @@ import Team from '../models/Team.js';
 
 dotenv.config();
 
-const BATCH_SIZE = 500; // Set batch size for insertions
+const BATCH_SIZE = 50; // Set batch size for insertions
 
 const seedPlayers = async () => {
     try {
@@ -87,12 +87,9 @@ const seedPlayers = async () => {
                 let team = teamMap.get(item.idTeam);
                 if (!team) {
                     team = await Team.findOne({ idTeam: item.idTeam }).select('_id');
-                    if (!team) {
-                        console.log(`⚠️ Skipped (team not found in DB): Player ${item.strPlayer} (idPlayer: ${item.idPlayer})`);
-                        skipped++;
-                        continue; // Skip if team is not found
+                    if (team) {
+                        teamMap.set(item.idTeam, team);
                     }
-                    teamMap.set(item.idTeam, team); // Cache the result
                 }
 
                 // Skip if player is already in the batch
@@ -103,41 +100,41 @@ const seedPlayers = async () => {
                 }
 
                 // Check if player already exists in the database
-                // const existing = await Player.findOne({ idPlayer: item.idPlayer });
-                // if (existing) {
-                //     console.log(`⚠️ Skipped (already exists in DB): Player ${item.strPlayer} (idPlayer: ${item.idPlayer})`);
-                //     skipped++;
-                // } else {
-                const formattedPlayer = {
-                    idPlayer: item.idPlayer,
-                    idAPIfootball: item.idAPIfootball || null,
-                    name: item.strPlayer,
-                    alternateName: item.strPlayerAlternate || null,
-                    nationality: item.strNationality,
-                    team: team._id,
-                    sport: item.strSport || 'Soccer',
-                    dateBorn: item.dateBorn ? new Date(item.dateBorn) : null,
-                    number: item.strNumber || null,
-                    signing: item.strSigning || null,
-                    birthLocation: item.strBirthLocation || null,
-                    position: item.strPosition,
-                    height: item.strHeight || null,
-                    weight: item.strWeight || null,
-                    gender: item.strGender,
-                    status: item.strStatus || 'Active',
-                    description: item.strDescriptionEN || null,
-                    thumb: item.strThumb || null,
-                    cutout: item.strCutout || null,
-                    render: item.strRender || null,
-                    facebook: item.strFacebook || null,
-                    twitter: item.strTwitter || null,
-                    instagram: item.strInstagram || null,
-                    youtube: item.strYoutube || null,
-                };
+                const existing = await Player.findOne({ idPlayer: item.idPlayer });
+                if (existing) {
+                    console.log(`⚠️ Skipped (already exists in DB): Player ${item.strPlayer} (idPlayer: ${item.idPlayer})`);
+                    skipped++;
+                } else {
+                    const formattedPlayer = {
+                        idPlayer: item.idPlayer,
+                        idAPIfootball: item.idAPIfootball || null,
+                        name: item.strPlayer,
+                        alternateName: item.strPlayerAlternate || null,
+                        nationality: item.strNationality,
+                        team: team?._id || null,
+                        sport: item.strSport || 'Soccer',
+                        dateBorn: item.dateBorn ? new Date(item.dateBorn) : null,
+                        number: item.strNumber || null,
+                        signing: item.strSigning || null,
+                        birthLocation: item.strBirthLocation || null,
+                        position: item.strPosition,
+                        height: item.strHeight || null,
+                        weight: item.strWeight || null,
+                        gender: item.strGender,
+                        status: item.strStatus || 'Active',
+                        description: item.strDescriptionEN || null,
+                        thumb: item.strThumb || null,
+                        cutout: item.strCutout || null,
+                        render: item.strRender || null,
+                        facebook: item.strFacebook || null,
+                        twitter: item.strTwitter || null,
+                        instagram: item.strInstagram || null,
+                        youtube: item.strYoutube || null,
+                    };
 
-                batchData.push(formattedPlayer); // Collect the data in the batch array
-                existingPlayersSet.add(item.idPlayer); // Add player ID to the set to ensure uniqueness
-                // }
+                    batchData.push(formattedPlayer); // Collect the data in the batch array
+                    existingPlayersSet.add(item.idPlayer); // Add player ID to the set to ensure uniqueness
+                }
 
                 // If the batch size is reached, insert the data in bulk
                 if (batchData.length >= BATCH_SIZE) {
