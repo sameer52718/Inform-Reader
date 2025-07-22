@@ -2,16 +2,67 @@
 
 <head>
     <title>Error Notification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+
+        h1 {
+            color: #d9534f;
+        }
+
+        .section {
+            margin-bottom: 16px;
+        }
+
+        .section strong {
+            display: inline-block;
+            width: 160px;
+        }
+
+        pre {
+            background: #f9f9f9;
+            padding: 10px;
+            border-left: 4px solid #ccc;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>An API Error Occurred</h1>
-    <p><strong>Project:</strong> HU`SK NETWORK</p>
-    <p><strong>API Endpoint:</strong> {{api}}</p>
-    <p><strong>Error:</strong> {{errorMessage}}</p>
-    <p><strong>Status Code:</strong> {{status}}</p>
-    <p><strong>Date:</strong> {{date}}</p>
-    <p><strong>Additional Info:</strong> {{additionalInfo}}</p>
+    <h1>🚨 An API Error Occurred</h1>
+
+    <div class="section"><strong>Project:</strong> Informreaders</div>
+    <div class="section"><strong>API Endpoint:</strong> {{api}}</div>
+    <div class="section"><strong>HTTP Method:</strong> {{method}}</div>
+    <div class="section"><strong>IP Address:</strong> {{ip}}</div>
+    <div class="section"><strong>User:</strong> {{user}}</div>
+    <div class="section"><strong>Status Code:</strong> {{status}}</div>
+    <div class="section"><strong>Environment:</strong> {{environment}}</div>
+    <div class="section"><strong>Date:</strong> {{date}}</div>
+    <div class="section"><strong>Error Message:</strong> {{errorMessage}}</div>
+
+    <div class="section">
+        <strong>Query Params:</strong>
+        <pre>{{{json query}}}</pre>
+    </div>
+
+    <div class="section">
+        <strong>Request Body:</strong>
+        <pre>{{{json body}}}</pre>
+    </div>
+
+    <div class="section">
+        <strong>Headers:</strong>
+        <pre>{{{json headers}}}</pre>
+    </div>
+
+    <div class="section">
+        <strong>Stack Trace:</strong>
+        <pre>{{stack}}</pre>
+    </div>
 </body>
 
 </html>

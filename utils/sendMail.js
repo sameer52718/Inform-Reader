@@ -15,6 +15,9 @@ const handlebarsOptions = {
   viewEngine: {
     partialsDir: path.resolve('./views/'),
     defaultLayout: false,
+    helpers: {
+      json: (context) => JSON.stringify(context, null, 2),
+    },
   },
   viewPath: path.resolve('./views/'),
 };
@@ -40,7 +43,7 @@ const sendMail = async ({ email, subject, otp, template, type, context }) => {
       // For sending Otp mail
 
       const mailOptions = {
-        from: `"HUSKNETWORK" <process.env.SMTP_MAIL>`,
+        from: `"INFORMREADERS" <process.env.SMTP_MAIL>`,
         template,
         to: email,
         subject: subject,
@@ -54,7 +57,7 @@ const sendMail = async ({ email, subject, otp, template, type, context }) => {
       // For sending Otp mail
 
       const errorOptions = {
-        from: `"HUSKNETWORK" <process.env.SMTP_MAIL>`,
+        from: `"INFORMREADERS" <process.env.SMTP_MAIL>`,
         template,
         to: 'alisameer52718@gmail.com',
         subject: 'Error in api',

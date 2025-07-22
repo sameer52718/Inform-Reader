@@ -37,10 +37,21 @@ export default async (err, req, res, next) => {
   if (err.statusCode === 500) {
     const errorDetails = {
       api: req.originalUrl,
+      method: req.method,
+      ip: req.ip,
+      user: req.user || 'Unauthenticated',
+      query: req.query,
+      body: req.body,
+      headers: {
+        host: req.headers.host,
+        userAgent: req.headers['user-agent'],
+        referer: req.headers.referer,
+      },
       errorMessage: err.message,
       status: err.status || 500,
       date: new Date().toLocaleString(),
-      additionalInfo: JSON.stringify(err.stack),
+      environment: process.env.NODE_ENV,
+      stack: err.stack,
     };
 
     await sendMail({
