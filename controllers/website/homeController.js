@@ -5,6 +5,8 @@ import Name from '../../models/Name.js';
 import Specification from '../../models/Specification.js';
 import Biography from '../../models/Biography.js';
 import Article from '../../models/Article.js';
+import Vehicle from '../../models/Vehicle.js';
+import Bike from '../../models/Bike.js';
 
 class HomeController extends BaseController {
   constructor() {
@@ -219,16 +221,166 @@ class HomeController extends BaseController {
           },
         ]);
 
+      const getRandomVehicles = () =>
+        Vehicle.aggregate([
+          // Match active and non-deleted vehicles
+          {
+            $match: {
+              status: true,
+              isDeleted: false,
+            },
+          },
+          // Randomly select 12 vehicles
+          { $sample: { size: 12 } },
+          // Lookup category information
+          {
+            $lookup: {
+              from: 'categories',
+              localField: 'categoryId',
+              foreignField: '_id',
+              as: 'categoryInfo',
+            },
+          },
+          // Unwind categoryInfo
+          {
+            $unwind: {
+              path: '$categoryInfo',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          // Lookup make information
+          {
+            $lookup: {
+              from: 'makes',
+              localField: 'makeId',
+              foreignField: '_id',
+              as: 'makeInfo',
+            },
+          },
+          // Unwind makeInfo
+          {
+            $unwind: {
+              path: '$makeInfo',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          // Lookup model information
+          {
+            $lookup: {
+              from: 'models',
+              localField: 'modelId',
+              foreignField: '_id',
+              as: 'modelInfo',
+            },
+          },
+          // Unwind modelInfo
+          {
+            $unwind: {
+              path: '$modelInfo',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          // Project relevant fields with populated values in a nested object
+          {
+            $project: {
+              _id: 1,
+              name: 1,
+              year: 1,
+              vehicleType: 1,
+              image: 1,
+              category: {
+                _id: '$categoryId',
+                name: '$categoryInfo.name',
+              },
+              make: {
+                _id: '$makeId',
+                name: '$makeInfo.name',
+              },
+              model: {
+                _id: '$modelId',
+                name: '$modelInfo.name',
+              },
+            },
+          },
+        ]);
+
+      const getRandomBikes = () =>
+        Bike.aggregate([
+          // Match active and non-deleted vehicles
+          {
+            $match: {
+              status: true,
+              isDeleted: false,
+            },
+          },
+          // Randomly select 12 vehicles
+          { $sample: { size: 12 } },
+          // Lookup category information
+          {
+            $lookup: {
+              from: 'categories',
+              localField: 'categoryId',
+              foreignField: '_id',
+              as: 'categoryInfo',
+            },
+          },
+          // Unwind categoryInfo
+          {
+            $unwind: {
+              path: '$categoryInfo',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          // Lookup make information
+          {
+            $lookup: {
+              from: 'makes',
+              localField: 'makeId',
+              foreignField: '_id',
+              as: 'makeInfo',
+            },
+          },
+          // Unwind makeInfo
+          {
+            $unwind: {
+              path: '$makeInfo',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+
+          // Project relevant fields with populated values in a nested object
+          {
+            $project: {
+              _id: 1,
+              name: 1,
+              year: 1,
+              vehicleType: 1,
+              image: 1,
+              category: {
+                _id: '$categoryId',
+                name: '$categoryInfo.name',
+              },
+              make: {
+                _id: '$makeId',
+                name: '$makeInfo.name',
+              },
+            },
+          },
+        ]);
+
       // Run all async tasks in parallel
-      const [postalCodeCountry, bankCodeCountry, randomSoftware, randomNames, randomSpecifications, randomBiographies, randomArticles] = await Promise.all([
-        getRandomCountries(),
-        getRandomCountries(),
-        getRandomSoftware(),
-        getRandomNames(),
-        getRandomSpecifications(),
-        getRandomBiographies(),
-        getRandomArticles(),
-      ]);
+      const [postalCodeCountry, bankCodeCountry, randomSoftware, randomNames, randomSpecifications, randomBiographies, randomArticles, randomVehicles, randomBikes] =
+        await Promise.all([
+          getRandomCountries(),
+          getRandomCountries(),
+          getRandomSoftware(),
+          getRandomNames(),
+          getRandomSpecifications(),
+          getRandomBiographies(),
+          getRandomArticles(),
+          getRandomVehicles(),
+          getRandomBikes(),
+        ]);
 
       return res.status(200).json({
         error: false,
@@ -240,6 +392,8 @@ class HomeController extends BaseController {
           randomSpecifications,
           randomBiographies,
           randomArticles,
+          randomVehicles,
+          randomBikes,
         },
       });
     } catch (error) {
