@@ -137,7 +137,9 @@ class CommonController extends BaseController {
 
   async make(req, res, next) {
     try {
-      const makes = await Make.find({ status: true }).select('name');
+      const { type = 'CAR' } = req.query;
+
+      const makes = await Make.find({ status: true, type }).select('name');
       return res.json({ error: false, data: makes });
     } catch (error) {
       return this.handleError(next, error.message, 500);
@@ -148,7 +150,7 @@ class CommonController extends BaseController {
     try {
       const { makeId } = req.query;
 
-      const filters = { status: true }
+      const filters = { status: true };
 
       if (makeId) {
         filters.makeId = makeId;
