@@ -22,6 +22,7 @@
     "seed:player": "node seeders/player.js",
     "seed:team": "node seeders/team.js",
     "seed:city": "node seeders/city.js",
+    "seed:bikes": "node seeders/bike.js",
     "seed:category": "node seeders/category.js"
   },
   "keywords": [],
