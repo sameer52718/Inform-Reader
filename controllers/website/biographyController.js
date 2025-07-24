@@ -1,5 +1,6 @@
 import BaseController from '../BaseController.js';
 import Biography from '../../models/Biography.js';
+import Category from '../../models/Category.js';
 
 class BiographyController extends BaseController {
   constructor() {
@@ -16,48 +17,88 @@ class BiographyController extends BaseController {
       const filters = { isDeleted: false };
       if (isDeleted) filters.isDeleted = true;
 
-      // Step 1: Get 25 random category IDs
-      const randomCategories = await Biography.aggregate([{ $match: filters }, { $group: { _id: '$categoryId' } }, { $sample: { size: 25 } }]);
-      const categoryIds = randomCategories.map((cat) => cat._id);
-
-      // Step 2: Match biographies in those categories, perform lookup, filter on search
+      // Apply search filter if provided
       const searchRegex = search ? new RegExp(search, 'i') : null;
+      if (searchRegex) {
+        filters.$or = [{ name: { $regex: searchRegex } }];
+      }
 
       const biographies = await Biography.aggregate([
-        { $match: { ...filters, categoryId: { $in: categoryIds } } },
+        // Match biographies based on filters
+        { $match: filters },
+        // Group biographies by categoryId
+        {
+          $group: {
+            _id: '$categoryId',
+            biographies: { $push: '$$ROOT' },
+          },
+        },
+        // Limit biographies per category to 12
+        {
+          $project: {
+            _id: 0,
+            categoryId: '$_id',
+            biographies: { $slice: ['$biographies', 12] },
+          },
+        },
+        // Lookup category information
         {
           $lookup: {
             from: 'categories',
             localField: 'categoryId',
             foreignField: '_id',
-            as: 'category',
+            as: 'categoryInfo',
           },
         },
-        { $unwind: '$category' },
-        // Filter based on search if provided
-        ...(search
-          ? [
-              {
-                $match: {
-                  $or: [{ name: { $regex: searchRegex } }, { 'category.name': { $regex: searchRegex } }],
-                },
-              },
-            ]
-          : []),
+        // Unwind categoryInfo to simplify structure
         {
-          $group: {
-            _id: '$categoryId',
-            categoryName: { $first: '$category.name' },
-            biographies: {
-              $push: { name: '$name', _id: '$_id', image: '$image' },
-            },
+          $unwind: {
+            path: '$categoryInfo',
+            preserveNullAndEmptyArrays: true,
           },
         },
+        // Sort by category order to maintain client-provided sequence
+        {
+          $sort: {
+            'categoryInfo.order': 1,
+          },
+        },
+        // Lookup subcategory information
+        {
+          $lookup: {
+            from: 'subcategories',
+            localField: 'biographies.subCategoryId',
+            foreignField: '_id',
+            as: 'subCategoryInfo',
+          },
+        },
+        // Final projection with mapped biographies
         {
           $project: {
-            _id: 1,
-            categoryName: 1,
-            biographies: { $slice: ['$biographies', 12] },
+            categoryId: 1,
+            categoryName: '$categoryInfo.name',
+            biographies: {
+              $map: {
+                input: '$biographies',
+                as: 'bio',
+                in: {
+                  _id: '$$bio._id',
+                  name: '$$bio.name',
+                  image: '$$bio.image',
+                  categoryId: '$$bio.categoryId',
+                  subCategoryId: '$$bio.subCategoryId',
+                  // Match subCategoryInfo with subCategoryId
+                  subCategoryName: {
+                    $arrayElemAt: [
+                      '$subCategoryInfo.name',
+                      {
+                        $indexOfArray: ['$subCategoryInfo._id', '$$bio.subCategoryId'],
+                      },
+                    ],
+                  },
+                },
+              },
+            },
           },
         },
       ]);

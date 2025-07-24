@@ -1,27 +1,32 @@
 import mongoose from 'mongoose';
-import Nationality from './Nationality.js';
 
-const generalInformationSchema = new mongoose.Schema({
-    name: { type: String, required: false, trim: true },
-    value: { type: String, required: false, trim: true }
+// Schema for key-value pairs used in nested arrays
+const infoSchema = new mongoose.Schema({
+  name: { type: String, required: false, trim: true },
+  value: { type: mongoose.Schema.Types.Mixed, required: false }, // Mixed to handle strings or arrays
 });
 
-const biohraphySchema = new mongoose.Schema(
-    {
-        adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-        nationalityId: { type: mongoose.Schema.Types.ObjectId, ref: 'Nationality', required: false },
-        categoryId: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: false },
-        name: { type: String, required: true, },
-        description: { type: String, required: false },
-        religion: { type: String, required: false },
-        image: { type: String, required: false },
-        generalInformation: [generalInformationSchema],
-        status: { type: Boolean, default: true },
-        isDeleted: { type: Boolean, default: false },
-    },
-    { timestamps: true }
+// Main Biography Schema
+const biographySchema = new mongoose.Schema(
+  {
+    adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    nationalityId: { type: String, required: false },
+    categoryId: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: false },
+    subCategoryId: { type: mongoose.Schema.Types.ObjectId, ref: 'SubCategory', required: false },
+    name: { type: String, required: true },
+    description: { type: String, required: false },
+    religion: { type: String, required: false },
+    image: { type: String, required: false },
+    personalInformation: [infoSchema],
+    professionalInformation: [infoSchema],
+    netWorthAndAssets: [infoSchema],
+    physicalAttributes: [infoSchema],
+    status: { type: Boolean, default: true },
+    isDeleted: { type: Boolean, default: false },
+  },
+  { timestamps: true },
 );
 
-const Biography = mongoose.model('Biography', biohraphySchema);
+const Biography = mongoose.model('Biography', biographySchema);
 
 export default Biography;
