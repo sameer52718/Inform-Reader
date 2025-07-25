@@ -10,6 +10,7 @@ import Model from '../../models/Model.js';
 import Make from '../../models/Make.js';
 import Config from '../../models/Config.js';
 import City from '../../models/City.js';
+import Nationality from '../../models/Nationality.js';
 
 class CommonController extends BaseController {
   constructor() {
@@ -26,6 +27,7 @@ class CommonController extends BaseController {
     this.getConfig = this.getConfig.bind(this);
     this.cities = this.cities.bind(this);
     this.translateContent = this.translateContent.bind(this);
+    this.nationality = this.nationality.bind(this);
   }
 
   async country(req, res, next) {
@@ -68,6 +70,15 @@ class CommonController extends BaseController {
     try {
       const types = await Type.find({ status: true }).select('name');
       return res.json({ error: false, types });
+    } catch (error) {
+      return this.handleError(next, error.message, 500);
+    }
+  }
+
+  async nationality(req, res, next) {
+    try {
+      const nationalities = await Nationality.find({ status: true }).select('name');
+      return res.json({ error: false, nationalities });
     } catch (error) {
       return this.handleError(next, error.message, 500);
     }

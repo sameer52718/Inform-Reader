@@ -1,6 +1,7 @@
 import BaseController from '../BaseController.js';
 import Biography from '../../models/Biography.js';
 import Category from '../../models/Category.js';
+import Nationality from '../../models/Nationality.js';
 
 class BiographyController extends BaseController {
   constructor() {
@@ -114,7 +115,7 @@ class BiographyController extends BaseController {
 
   async filterByCategory(req, res, next) {
     try {
-      let { page = 1, limit = 10, isDeleted, search } = req.query;
+      let { page = 1, limit = 10, isDeleted, search, subCategoryId, country, industry, gender } = req.query;
       const { categoryId } = req.params;
 
       page = parseInt(page);
@@ -130,16 +131,59 @@ class BiographyController extends BaseController {
       if (search) {
         filters.name = { $regex: search, $options: 'i' }; // Case-insensitive name filter
       }
+      if (subCategoryId) {
+        filters.subCategoryId = subCategoryId; // Filter by subCategoryId
+      }
+      //
+      if (country) {
+        const nationality = await Nationality.findOne({ name: { $regex: `^${country}$`, $options: 'i' } }).select('_id');
+        if (nationality) {
+          filters.nationalityId = nationality._id;
+        } else {
+          filters.nationalityId = null; // No matches if country not found
+        }
+      }
+      if (industry) {
+        filters['professionalInformation'] = {
+          $elemMatch: {
+            $or: [
+              { name: 'occupation', value: { $regex: industry, $options: 'i' } },
+              { name: 'industry', value: { $regex: industry, $options: 'i' } },
+            ],
+          },
+        };
+      }
+      if (gender) {
+        filters['personalInformation'] = {
+          $elemMatch: {
+            name: 'gender',
+            value: { $regex: `^${gender}$`, $options: 'i' },
+          },
+        };
+      }
 
-      // Query with filters, pagination, and optional search
-      const biographies = await Biography.find(filters).populate('categoryId', 'name').select('name image').skip(skip).limit(limit);
+      // Query with filters, pagination, and populate related fields
+      const biographies = await Biography.find(filters)
+        .populate('categoryId', 'name')
+        .populate('subCategoryId', 'name')
+        .populate('nationalityId', 'name')
+        .select('name image')
+        .skip(skip)
+        .limit(limit);
 
       const totalBiographies = await Biography.countDocuments(filters);
       const totalPages = Math.ceil(totalBiographies / limit);
 
       return res.status(200).json({
         error: false,
-        biographies,
+        biographies: biographies.map((bio) => ({
+          _id: bio._id,
+          name: bio.name,
+          image: bio.image,
+          categoryName: bio.categoryId?.name,
+          subCategoryName: bio.subCategoryId?.name,
+          nationality: bio.nationalityId?.name,
+        })),
         pagination: {
           totalItems: totalBiographies,
           currentPage: page,
@@ -173,7 +217,8 @@ class BiographyController extends BaseController {
         isDeleted: false,
       })
         .populate('nationalityId', 'name')
-        .populate('categoryId', 'name');
+        .populate('categoryId', 'name')
+        .limit(12);
 
       return res.status(200).json({
         error: false,

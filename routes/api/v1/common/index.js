@@ -13,6 +13,7 @@ router.get('/company', commonController.company);
 router.get('/make', commonController.make);
 router.get('/model', commonController.model);
 router.get('/config', commonController.getConfig);
-router.get("/city", commonController.cities);
+router.get('/city', commonController.cities);
+router.get('/nationality', commonController.nationality);
 router.post('/translate', commonController.translateContent);
 export default router;
