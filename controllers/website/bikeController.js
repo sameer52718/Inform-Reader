@@ -57,14 +57,6 @@ class VehicleController extends BaseController {
       if (makeId) filter.makeId = makeId;
       if (vehicleType) filter.vehicleType = vehicleType.toUpperCase(); // Ensure case consistency
 
-      if (category) {
-        const findedCategory = await Category.findOne({ name: category });
-        if (!findedCategory) {
-          return this.handleError(next, 'Category Not Found', 404);
-        }
-        filter.categoryId = findedCategory._id;
-      }
-
       // Apply name search if provided (case-insensitive)
       if (search) {
         filter.name = { $regex: search, $options: 'i' };
