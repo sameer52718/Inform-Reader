@@ -98,25 +98,39 @@ const seedBikes = async () => {
             categoryMap.set(bikeData.category, category);
           }
 
-          // Extract year from bike_title
+          // Extract year from bikeData.year or name
           let year = null;
-          if (bikeData.bike_title) {
-            const yearMatch = bikeData.bike_title.match(/(\d{4})/);
+          if (bikeData.year) {
+            year = parseInt(bikeData.year, 10);
+          } else if (bikeData.name) {
+            const yearMatch = bikeData.name.match(/(\d{4})/);
             if (yearMatch) {
               year = parseInt(yearMatch[1], 10);
             }
           }
-          if (!year && bikeData.Year) {
-            year = parseInt(bikeData.Year, 10);
-          }
 
           if (!year) {
-            console.log(`⚠️ Year not found for ${bikeData.bike_title}, skipping`);
+            console.log(`⚠️ Year not found for ${bikeData.name}, skipping`);
             continue;
           }
 
           // Normalize vehicle type
-          const vehicleType = normalizeVehicleType(bikeData.bike_type);
+          const vehicleType = normalizeVehicleType(bikeData.engine_specifications?.find((spec) => spec.name === 'powertrain architecture')?.value);
+
+          // Combine all specs into appropriate fields
+          const technicalSpecs = [
+            ...(bikeData.general_information || []),
+            ...(bikeData.engine_specifications || []),
+            ...(bikeData.performance || []),
+            ...(bikeData.fuel_economy_and_emissions || []),
+            ...(bikeData.drivetrain_and_transmission || []),
+            ...(bikeData.suspension_and_brakes || []),
+            ...(bikeData.steering_and_tires || []),
+          ].filter((spec) => spec.name && spec.value);
+
+          const featureAndSafety = (bikeData.additional_features || []).filter((spec) => ['headlight', 'seat height', 'frame type'].includes(spec.name.toLowerCase()));
+
+          const evsFeatures = (bikeData.engine_specifications || []).filter((spec) => ['battery capacity', 'charging time', 'battery type'].includes(spec.name.toLowerCase()));
 
           // Check for existing bike
           const bikeKey = `${bikeData.bike_title}:${year}:${vehicleType}`;
@@ -135,13 +149,13 @@ const seedBikes = async () => {
                 adminId: null,
                 makeId: make._id,
                 categoryId: category._id,
-                name: bikeData.bike_title || 'Unknown Bike',
+                name: bikeData.name || 'Unknown Bike',
                 year,
                 vehicleType,
                 image: bikeData.image || '',
-                technicalSpecs: bikeData.technicalSpecs || [],
-                featureAndSafety: bikeData.featureAndSafety || [],
-                evsFeatures: bikeData.evsFeatures || [],
+                technicalSpecs,
+                featureAndSafety,
+                evsFeatures,
                 status: true,
                 isDeleted: false,
               });
