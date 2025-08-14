@@ -8,7 +8,7 @@ import Type from '../models/Type.js';
 
 dotenv.config();
 
-const BATCH_SIZE = 100; // Set batch size for insertions
+const BATCH_SIZE = 1000; // Set batch size for insertions
 
 // Read and deduplicate software data from JSON files
 const platforms = ['Android', 'Mac', 'Windows', 'iOS'];
@@ -62,7 +62,7 @@ const seedSoftware = async () => {
             if (!type) {
               type = await Type.create({ name: 'Software', slug: 'software' });
             }
-            typeMap.set('Software', type); // Cache the type result
+            typeMap.set('Software', type);
           }
 
           category = await Category.create({
@@ -73,13 +73,19 @@ const seedSoftware = async () => {
           });
           console.log(`🆕 Created new category: ${item.platform}`);
         }
-        categoryMap.set(item.platform, category); // Cache the category result
+        categoryMap.set(item.platform, category);
       }
 
-      // Get or create subcategory based on the category field in the data
-      let subCategory = subCategoryMap.get(item.category);
+      // Get or create subcategory (fixed: cache key now includes categoryId)
+      const subCategoryKey = `${category._id.toString()}-${item.category}`;
+      let subCategory = subCategoryMap.get(subCategoryKey);
+
       if (!subCategory) {
-        subCategory = await SubCategory.findOne({ name: item.category, categoryId: category._id }).select('_id');
+        subCategory = await SubCategory.findOne({
+          name: item.category,
+          categoryId: category._id,
+        }).select('_id');
+
         if (!subCategory) {
           let type = typeMap.get('Software');
           if (!type) {
@@ -87,7 +93,7 @@ const seedSoftware = async () => {
             if (!type) {
               type = await Type.create({ name: 'Software', slug: 'software' });
             }
-            typeMap.set('Software', type); // Cache the type result
+            typeMap.set('Software', type);
           }
 
           subCategory = await SubCategory.create({
@@ -101,7 +107,8 @@ const seedSoftware = async () => {
           });
           console.log(`🆕 Created new subcategory: ${item.category} under ${item.platform}`);
         }
-        subCategoryMap.set(item.category, subCategory); // Cache the subcategory result
+
+        subCategoryMap.set(subCategoryKey, subCategory);
       }
 
       // Format software object
@@ -131,13 +138,6 @@ const seedSoftware = async () => {
         wishList: [],
       };
 
-      // Check if the software already exists in the database (slug + version)
-      // const exists = await Software.findOne({ slug: item.slug, version: item.version, categoryId: category._id });
-      // if (exists) {
-      //   console.log(`⚠️ Skipped (already exists in DB): ${item.name} v${item.version} ${category._id}`);
-      //   continue; // Skip this software if it already exists
-      // }
-
       // Add formatted software to the batch
       batchData.push(formatted);
 
@@ -146,7 +146,7 @@ const seedSoftware = async () => {
         await Software.insertMany(batchData);
         added += batchData.length;
         console.log(`✅ Inserted ${batchData.length} softwares into the database, total added: ${added}`);
-        batchData.length = 0; // Clear the batch after insertion
+        batchData.length = 0;
       }
     }
 

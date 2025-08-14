@@ -7,5 +7,4 @@ const router = Router();
 router.get('/', SoftwareController.get);
 router.get('/:id', SoftwareController.detail);
 
-
 export default router;

@@ -108,11 +108,29 @@ class CommonController extends BaseController {
   async subCategory(req, res, next) {
     try {
       const filter = { status: true, isDeleted: false };
+
       if (req.query.categoryId) {
         filter.categoryId = req.query.categoryId;
       }
 
-      const subCategories = await SubCategory.find(filter).select('name');
+      if (req.query.category) {
+        const category = await Category.findOne({
+          name: req.query.category,
+          status: true,
+          isDeleted: false,
+        }).select('name');
+        console.log(category, req.query.category);
+
+        if (!category) {
+          return res.json({ error: false, subCategories: [] });
+        }
+
+        filter.categoryId = category._id;
+      }
+      console.log(filter);
+
+      const subCategories = await SubCategory.find(filter).select('name ');
+
       return res.json({ error: false, subCategories });
     } catch (error) {
       return this.handleError(next, error.message, 500);
