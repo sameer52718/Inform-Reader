@@ -58,11 +58,11 @@ class SoftwareController extends BaseController {
 
   async detail(req, res) {
     try {
-      const { id } = req.params;
+      const { id:slug } = req.params;
 
       // Get the main software by ID
       const software = await Software.findOne({
-        _id: id,
+        slug: slug,
         status: true,
         isDeleted: false,
       })
@@ -77,7 +77,7 @@ class SoftwareController extends BaseController {
 
       // Fetch related software from the same category/subcategory
       const relatedSoftware = await Software.find({
-        _id: { $ne: id }, // Exclude the current software
+        _id: { $ne: software?._id }, // Exclude the current software
         status: true,
         isDeleted: false,
         $or: [{ categoryId: software.categoryId._id }],

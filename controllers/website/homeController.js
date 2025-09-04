@@ -47,6 +47,7 @@ class HomeController extends BaseController {
               overview: 1,
               version: 1,
               tag: 1,
+              slug:1,
             },
           },
         ]);
