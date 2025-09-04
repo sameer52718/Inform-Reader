@@ -23,7 +23,7 @@ class NamesController extends BaseController {
 
       // Paginate and get names
       const names = await Name.find(filter)
-        .select('name shortMeaning')
+        .select('name shortMeaning slug')
         .skip((page - 1) * limit) // Skip the records for pagination
         .limit(parseInt(limit)); // Limit the number of records per page
 
@@ -47,10 +47,10 @@ class NamesController extends BaseController {
   // Method for getting name detail
   async getNameDetail(req, res) {
     try {
-      const { nameId } = req.params; // Extract nameId from URL params
+      const { nameId: slug } = req.params; // Extract nameId from URL params
 
       // Find the name by its ID
-      const name = await Name.findById(nameId)
+      const name = await Name.findOne({ slug })
         .populate('religionId') // Optional: populate the 'religionId' field if necessary
         .populate('categoryId') // Optional: populate the 'categoryId' field if necessary
         .exec();

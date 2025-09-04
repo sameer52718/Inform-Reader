@@ -54,7 +54,7 @@ class PostalCodeController extends BaseController {
 
       // Fetch postal codes with pagination
       const postalCodes = await PostalCode.find(filter)
-        .select('countryId state area code')
+        .select('countryId state area code slug')
         .populate('countryId', 'name') // populate country name
         .skip((parsedPage - 1) * parsedLimit)
         .limit(parsedLimit);
@@ -138,10 +138,10 @@ class PostalCodeController extends BaseController {
   // Get single software detail by ID
   async detail(req, res) {
     try {
-      const { id } = req.params;
+      const { id:slug } = req.params;
 
       const postalCode = await PostalCode.findOne({
-        _id: id,
+        slug,
         status: true,
         isDeleted: false,
       })

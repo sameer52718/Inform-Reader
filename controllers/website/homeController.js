@@ -68,6 +68,7 @@ class HomeController extends BaseController {
               gender: 1,
               shortMeaning: 1,
               origion: 1,
+              slug:1
             },
           },
         ]);

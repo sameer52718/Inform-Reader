@@ -24,6 +24,7 @@ const nameSchema = new mongoose.Schema(
         nameLength: { type: Number, required: true },
         status: { type: Boolean, default: true },
         isDeleted: { type: Boolean, default: false },
+        slug: { type: String, trim: true, index: true, unique: true },
     },
     { timestamps: true }
 );
