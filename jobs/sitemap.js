@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import Name from '../models/Name.js';
 import Software from '../models/Software.js';
 import PostalCode from '../models/PostalCode.js';
+import BankCode from '../models/BankCode.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -170,7 +171,6 @@ const supportedCountries = {
   zm: 'en',
   zw: 'en',
 };
-
 // ================== HELPERS ==================
 const generateSitemap = async (type, country, batch, items) => {
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -186,6 +186,9 @@ ${items
       const countrySlug = item.countryId?.slug || country;
       const statePart = item.state ? encodeURIComponent(item.state) : '';
       loc = `https://${countrySlug}.informreaders.com/postalcode/${countrySlug}/${statePart}/${item.slug}`;
+    } else if (type === 'swiftcodes') {
+      const countrySlug = item.countryId?.slug || country;
+      loc = `https://${countrySlug}.informreaders.com/swiftcode/${countrySlug}/${item.slug}`;
     }
 
     return `
@@ -206,7 +209,7 @@ ${items
   await fs.writeFile(filePath, sitemap);
 
   console.log(`✅ Generated ${type} sitemap batch ${batch} for ${country} with ${items.length} records`);
-  return fileName; // return just file name for index
+  return fileName;
 };
 
 const generateGlobalSitemapIndex = async (sitemapFiles) => {
@@ -218,7 +221,7 @@ ${sitemapFiles
   <sitemap>
     <loc>https://api.informreaders.com/sitemaps/${file}</loc>
     <lastmod>${new Date().toISOString()}</lastmod>
-  </sitemap>`
+  </sitemap>`,
   )
   .join('')}
 </sitemapindex>`;
@@ -242,80 +245,83 @@ const pingGoogle = async (sitemapUrl) => {
 };
 
 // ================== BATCH PROCESSOR ==================
-const processInBatches = async (query, type, country, allFiles) => {
-  const cursor = query.cursor();
+const processInBatches = async (docs, type, country, allFiles) => {
   let batch = 1;
-  let chunk = [];
-
-  for await (const doc of cursor) {
-    chunk.push(doc);
-    if (chunk.length === BATCH_SIZE) {
-      const fileName = await generateSitemap(type, country, batch, chunk);
-      allFiles.push(fileName);
-      chunk = [];
-      batch++;
-    }
-  }
-
-  if (chunk.length > 0) {
+  for (let i = 0; i < docs.length; i += BATCH_SIZE) {
+    const chunk = docs.slice(i, i + BATCH_SIZE);
     const fileName = await generateSitemap(type, country, batch, chunk);
     allFiles.push(fileName);
+    batch++;
   }
 };
 
 // ================== MAIN ==================
+// ================== MAIN ==================
 const generateAllSitemaps = async () => {
   try {
+    console.log('🚀 Connecting to MongoDB...');
     await mongoose.connect(process.env.MONGO_DB_URL);
+    console.log('✅ MongoDB connected');
 
     const allFiles = [];
 
-    // Names
+    // ===== Names =====
+    console.log('🔄 Fetching names...');
+    const names = await Name.find({ isDeleted: false, status: true }).lean();
+    console.log(`📦 Total names fetched: ${names.length}`);
+
     for (const country of Object.keys(supportedCountries)) {
-      console.log(`🔄 Generating name sitemaps for ${country}...`);
-      await processInBatches(
-        Name.find({ isDeleted: false, status: true }).lean(),
-        'names',
-        country,
-        allFiles
-      );
+        console.log(`📝 Generating name sitemaps for ${country} (${countryNames.length} records)`);
+        await processInBatches(names, 'names', country, allFiles);
     }
 
-    // Software (same URLs for all countries)
+    // ===== Software =====
+    console.log('🔄 Fetching software...');
+    const softwares = await Software.find({ isDeleted: false, status: true }).lean();
+    console.log(`📦 Total software fetched: ${softwares.length}`);
+
     for (const country of Object.keys(supportedCountries)) {
-      console.log(`🔄 Generating software sitemaps for ${country}...`);
-      await processInBatches(
-        Software.find({ isDeleted: false, status: true }).lean(),
-        'software',
-        country,
-        allFiles
-      );
+      if (softwares.length > 0) {
+        console.log(`📝 Generating software sitemaps for ${country}`);
+        await processInBatches(softwares, 'software', country, allFiles);
+      }
     }
 
-    // Postal Codes
+    // ===== Postal Codes =====
+    console.log('🔄 Fetching postal codes...');
+    const postals = await PostalCode.find({ isDeleted: false, status: true }).populate('countryId', 'slug').lean();
+    console.log(`📦 Total postal codes fetched: ${postals.length}`);
+
     for (const country of Object.keys(supportedCountries)) {
-      console.log(`🔄 Generating postal code sitemaps for ${country}...`);
-      await processInBatches(
-        PostalCode.find({ isDeleted: false, status: true })
-          .populate('countryId', 'slug')
-          .lean(),
-        'postalcodes',
-        country,
-        allFiles
-      );
+      console.log(`📝 Generating postal code sitemaps for ${country} (${countryPostals.length} records)`);
+      await processInBatches(postals, 'postalcodes', country, allFiles);
     }
 
-    // Generate single global index
+    // ===== Swift Codes =====
+    console.log('🔄 Fetching bank codes...');
+    const banks = await BankCode.find({ isDeleted: false, status: true }).populate('countryId', 'slug').lean();
+    console.log(`📦 Total bank codes fetched: ${banks.length}`);
+
+    for (const country of Object.keys(supportedCountries)) {
+      console.log(`📝 Generating Swift Code sitemaps for ${country} (${countryBanks.length} records)`);
+      await processInBatches(banks, 'swiftcodes', country, allFiles);
+    }
+
+    // ===== Global Index =====
+    console.log('🗂 Generating global sitemap index...');
     const indexFile = await generateGlobalSitemapIndex(allFiles);
 
-    // Ping Google once
+    // ===== Ping Google =====
+    console.log('📡 Pinging Google with sitemap index...');
     await pingGoogle(`https://api.informreaders.com/sitemaps/${indexFile}`);
 
     console.log('🎉 All sitemaps and global index generated successfully!');
   } catch (err) {
     console.error('❌ Error generating sitemaps:', err);
   } finally {
+    console.log('🔌 Disconnecting MongoDB...');
     await mongoose.disconnect();
+    console.log('✅ MongoDB disconnected');
   }
 };
 
