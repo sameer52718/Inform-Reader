@@ -14,6 +14,9 @@ dotenv.config({
   path: path.resolve(__dirname, "../.env"),
 });
 
+const BATCH_SIZE = 5000;
+const PUBLIC_DIR = path.join(__dirname, "../public/sitemaps");
+
 const supportedCountries = {
   ae: 'ar',
   af: 'ps',
@@ -230,7 +233,6 @@ const generateAllSitemaps = async () => {
   try {
     await mongoose.connect(process.env.MONGO_DB_URL);
 
-    const supportedCountries = ["ae", "af"]; // add as needed
 
     for (const country of supportedCountries) {
       console.log(`🔄 Generating sitemaps for ${country}...`);
