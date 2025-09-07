@@ -1,21 +1,21 @@
-import mongoose from "mongoose";
-import fs from "fs/promises";
-import path from "path";
-import axios from "axios";
-import dotenv from "dotenv";
-import { fileURLToPath } from "url";
-import Name from "../models/Name.js";
+import mongoose from 'mongoose';
+import fs from 'fs/promises';
+import path from 'path';
+import axios from 'axios';
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import Name from '../models/Name.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Load .env (one folder back from current file)
 dotenv.config({
-  path: path.resolve(__dirname, "../.env"),
+  path: path.resolve(__dirname, '../.env'),
 });
 
 const BATCH_SIZE = 5000;
-const PUBLIC_DIR = path.join(__dirname, "../public/sitemaps");
+const PUBLIC_DIR = path.join(__dirname, '../public/sitemaps');
 
 const supportedCountries = {
   ae: 'ar',
@@ -181,9 +181,9 @@ ${items
     <lastmod>${new Date(item.updatedAt).toISOString()}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-  </url>`
+  </url>`,
   )
-  .join("")}
+  .join('')}
 </urlset>`;
 
   const fileName = `sitemap-names-${country}-batch-${batch}.xml`;
@@ -205,9 +205,9 @@ ${sitemapFiles
   <sitemap>
     <loc>https://api.informreaders.com/sitemaps/${file}</loc>
     <lastmod>${new Date().toISOString()}</lastmod>
-  </sitemap>`
+  </sitemap>`,
   )
-  .join("")}
+  .join('')}
 </sitemapindex>`;
 
   const fileName = `sitemap-names-${country}-index.xml`;
@@ -233,8 +233,7 @@ const generateAllSitemaps = async () => {
   try {
     await mongoose.connect(process.env.MONGO_DB_URL);
 
-
-    for (const country of supportedCountries) {
+    for (const country of Object.keys(supportedCountries)) {
       console.log(`🔄 Generating sitemaps for ${country}...`);
 
       const cursor = Name.find({ isDeleted: false, status: true }).cursor();
@@ -265,9 +264,9 @@ const generateAllSitemaps = async () => {
       await pingGoogle(`https://api.informreaders.com/sitemaps/${indexFile}`);
     }
 
-    console.log("🎉 All sitemaps and indexes generated successfully!");
+    console.log('🎉 All sitemaps and indexes generated successfully!');
   } catch (err) {
-    console.error("❌ Error generating sitemaps:", err);
+    console.error('❌ Error generating sitemaps:', err);
   } finally {
     await mongoose.disconnect();
   }
