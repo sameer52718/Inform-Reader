@@ -8,6 +8,7 @@ import Name from '../models/Name.js';
 import Software from '../models/Software.js';
 import PostalCode from '../models/PostalCode.js';
 import BankCode from '../models/BankCode.js';
+import Country from '../models/Country.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -265,6 +266,26 @@ const generateAllSitemaps = async () => {
 
     const allFiles = [];
 
+    // ===== Postal Codes =====
+    console.log('🔄 Fetching postal codes...');
+    const postals = await PostalCode.find({ isDeleted: false, status: true }).populate('countryId', 'slug').lean();
+    console.log(`📦 Total postal codes fetched: ${postals.length}`);
+
+    for (const country of Object.keys(supportedCountries)) {
+      console.log(`📝 Generating postal code sitemaps for ${country} (${postals.length} records)`);
+      await processInBatches(postals, 'postalcodes', country, allFiles);
+    }
+
+    // ===== Swift Codes =====
+    console.log('🔄 Fetching bank codes...');
+    const banks = await BankCode.find({ isDeleted: false, status: true }).populate('countryId', 'slug').lean();
+    console.log(`📦 Total bank codes fetched: ${banks.length}`);
+
+    for (const country of Object.keys(supportedCountries)) {
+      console.log(`📝 Generating Swift Code sitemaps for ${country} (${banks.length} records)`);
+      await processInBatches(banks, 'swiftcodes', country, allFiles);
+    }
+
     // ===== Names =====
     console.log('🔄 Fetching names...');
     const names = await Name.find({ isDeleted: false, status: true }).lean();
@@ -287,25 +308,7 @@ const generateAllSitemaps = async () => {
       }
     }
 
-    // ===== Postal Codes =====
-    console.log('🔄 Fetching postal codes...');
-    const postals = await PostalCode.find({ isDeleted: false, status: true }).populate('countryId', 'slug').lean();
-    console.log(`📦 Total postal codes fetched: ${postals.length}`);
-
-    for (const country of Object.keys(supportedCountries)) {
-      console.log(`📝 Generating postal code sitemaps for ${country} (${postals.length} records)`);
-      await processInBatches(postals, 'postalcodes', country, allFiles);
-    }
-
-    // ===== Swift Codes =====
-    console.log('🔄 Fetching bank codes...');
-    const banks = await BankCode.find({ isDeleted: false, status: true }).populate('countryId', 'slug').lean();
-    console.log(`📦 Total bank codes fetched: ${banks.length}`);
-
-    for (const country of Object.keys(supportedCountries)) {
-      console.log(`📝 Generating Swift Code sitemaps for ${country} (${banks.length} records)`);
-      await processInBatches(banks, 'swiftcodes', country, allFiles);
-    }
+    
 
     // ===== Global Index =====
     console.log('🗂 Generating global sitemap index...');
