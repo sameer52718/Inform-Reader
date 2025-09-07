@@ -10,6 +10,7 @@ import Category from '../models/Category.js';
 
 import { fetchAndSaveCurrencyRates } from '../utils/fetchCurrency.js';
 import { fetchAndSaveMetalPrices } from '../utils/fetchMetalPrice.js';
+import { generateAllSitemaps } from './sitemap.js';
 
 const parser = new Parser();
 
@@ -135,6 +136,13 @@ async function startCron() {
 
       fetchAndSaveMetalPrices();
     });
+
+    cron.schedule('0 0 * * *', () => {
+      console.log(`[Cron] Running Sitemap generation at ${new Date().toISOString()}`);
+
+      generateAllSitemaps();
+    });
+    
   } catch (err) {
     console.error(`[Startup Error] ${err.message}`);
   }

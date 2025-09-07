@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import fs from 'fs/promises';
 import path from 'path';
 import axios from 'axios';
@@ -270,12 +269,8 @@ const generateForAllCountries = async (docs, type, allFiles) => {
 };
 
 // ================== MAIN ==================
-const generateAllSitemaps = async () => {
+export const generateAllSitemaps = async () => {
   try {
-    console.log('🚀 Connecting to MongoDB...');
-    await mongoose.connect(process.env.MONGO_DB_URL);
-    console.log('✅ MongoDB connected');
-
     const allFiles = [];
 
     // ===== Postal Codes =====
@@ -317,11 +312,6 @@ const generateAllSitemaps = async () => {
     console.log('🎉 All sitemaps and global index generated successfully!');
   } catch (err) {
     console.error('❌ Error generating sitemaps:', err);
-  } finally {
-    console.log('🔌 Disconnecting MongoDB...');
-    await mongoose.disconnect();
-    console.log('✅ MongoDB disconnected');
   }
 };
 
-generateAllSitemaps();
