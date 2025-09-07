@@ -271,7 +271,7 @@ const generateAllSitemaps = async () => {
     console.log(`📦 Total names fetched: ${names.length}`);
 
     for (const country of Object.keys(supportedCountries)) {
-        console.log(`📝 Generating name sitemaps for ${country} (${countryNames.length} records)`);
+        console.log(`📝 Generating name sitemaps for ${country} (${names.length} records)`);
         await processInBatches(names, 'names', country, allFiles);
     }
 
@@ -293,7 +293,7 @@ const generateAllSitemaps = async () => {
     console.log(`📦 Total postal codes fetched: ${postals.length}`);
 
     for (const country of Object.keys(supportedCountries)) {
-      console.log(`📝 Generating postal code sitemaps for ${country} (${countryPostals.length} records)`);
+      console.log(`📝 Generating postal code sitemaps for ${country} (${postals.length} records)`);
       await processInBatches(postals, 'postalcodes', country, allFiles);
     }
 
@@ -303,7 +303,7 @@ const generateAllSitemaps = async () => {
     console.log(`📦 Total bank codes fetched: ${banks.length}`);
 
     for (const country of Object.keys(supportedCountries)) {
-      console.log(`📝 Generating Swift Code sitemaps for ${country} (${countryBanks.length} records)`);
+      console.log(`📝 Generating Swift Code sitemaps for ${country} (${banks.length} records)`);
       await processInBatches(banks, 'swiftcodes', country, allFiles);
     }
 
