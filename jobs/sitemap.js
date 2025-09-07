@@ -5,6 +5,8 @@ import axios from 'axios';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import Name from '../models/Name.js';
+import Software from '../models/Software.js';
+import PostalCode from '../models/PostalCode.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,7 +15,7 @@ dotenv.config({
   path: path.resolve(__dirname, '../.env'),
 });
 
-const BATCH_SIZE = 5000;
+const BATCH_SIZE = 20000;
 const PUBLIC_DIR = path.join(__dirname, '../public/sitemaps');
 
 const supportedCountries = {
@@ -169,48 +171,59 @@ const supportedCountries = {
   zw: 'en',
 };
 
-
-const generateSitemap = async (country, batch, items) => {
+// ================== HELPERS ==================
+const generateSitemap = async (type, country, batch, items) => {
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${items
-  .map(
-    (item) => `
+  .map((item) => {
+    let loc = '';
+    if (type === 'names') {
+      loc = `https://${country}.informreaders.com/names/${item.slug}`;
+    } else if (type === 'software') {
+      loc = `https://${country}.informreaders.com/software/${item.slug}`;
+    } else if (type === 'postalcodes') {
+      const countrySlug = item.countryId?.slug || country;
+      const statePart = item.state ? encodeURIComponent(item.state) : '';
+      loc = `https://${countrySlug}.informreaders.com/postalcode/${countrySlug}/${statePart}/${item.slug}`;
+    }
+
+    return `
   <url>
-    <loc>https://${country}.informreaders.com/names/${item.slug}</loc>
+    <loc>${loc}</loc>
     <lastmod>${new Date(item.updatedAt).toISOString()}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-  </url>`,
-  )
+  </url>`;
+  })
   .join('')}
 </urlset>`;
 
-  const fileName = `sitemap-names-${country}-batch-${batch}.xml`;
+  const fileName = `sitemap-${type}-${country}-batch-${batch}.xml`;
   const filePath = path.join(PUBLIC_DIR, fileName);
 
   await fs.mkdir(PUBLIC_DIR, { recursive: true });
   await fs.writeFile(filePath, sitemap);
 
-  console.log(`✅ Generated sitemap batch ${batch} for ${country} with ${items.length} names`);
-  return fileName; // return file name for global index
+  console.log(`✅ Generated ${type} sitemap batch ${batch} for ${country} with ${items.length} records`);
+  return fileName; // return just file name for index
 };
 
-const generateGlobalSitemapIndex = async (allFiles) => {
+const generateGlobalSitemapIndex = async (sitemapFiles) => {
   const index = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${allFiles
+${sitemapFiles
   .map(
     (file) => `
   <sitemap>
     <loc>https://api.informreaders.com/sitemaps/${file}</loc>
     <lastmod>${new Date().toISOString()}</lastmod>
-  </sitemap>`,
+  </sitemap>`
   )
   .join('')}
 </sitemapindex>`;
 
-  const fileName = `sitemap-index.xml`;
+  const fileName = 'sitemap-index.xml';
   const filePath = path.join(PUBLIC_DIR, fileName);
 
   await fs.writeFile(filePath, index);
@@ -228,40 +241,74 @@ const pingGoogle = async (sitemapUrl) => {
   }
 };
 
+// ================== BATCH PROCESSOR ==================
+const processInBatches = async (query, type, country, allFiles) => {
+  const cursor = query.cursor();
+  let batch = 1;
+  let chunk = [];
+
+  for await (const doc of cursor) {
+    chunk.push(doc);
+    if (chunk.length === BATCH_SIZE) {
+      const fileName = await generateSitemap(type, country, batch, chunk);
+      allFiles.push(fileName);
+      chunk = [];
+      batch++;
+    }
+  }
+
+  if (chunk.length > 0) {
+    const fileName = await generateSitemap(type, country, batch, chunk);
+    allFiles.push(fileName);
+  }
+};
+
 // ================== MAIN ==================
 const generateAllSitemaps = async () => {
   try {
     await mongoose.connect(process.env.MONGO_DB_URL);
 
-    let allSitemapFiles = [];
+    const allFiles = [];
 
+    // Names
     for (const country of Object.keys(supportedCountries)) {
-      console.log(`🔄 Generating sitemaps for ${country}...`);
-
-      const cursor = Name.find({ isDeleted: false, status: true }).cursor();
-      let batch = 1;
-      let chunk = [];
-
-      for await (const doc of cursor) {
-        chunk.push(doc);
-        if (chunk.length === BATCH_SIZE) {
-          const fileName = await generateSitemap(country, batch, chunk);
-          allSitemapFiles.push(fileName);
-          chunk = [];
-          batch++;
-        }
-      }
-
-      if (chunk.length > 0) {
-        const fileName = await generateSitemap(country, batch, chunk);
-        allSitemapFiles.push(fileName);
-      }
+      console.log(`🔄 Generating name sitemaps for ${country}...`);
+      await processInBatches(
+        Name.find({ isDeleted: false, status: true }).lean(),
+        'names',
+        country,
+        allFiles
+      );
     }
 
-    // Generate ONE global index for all countries
-    const indexFile = await generateGlobalSitemapIndex(allSitemapFiles);
+    // Software (same URLs for all countries)
+    for (const country of Object.keys(supportedCountries)) {
+      console.log(`🔄 Generating software sitemaps for ${country}...`);
+      await processInBatches(
+        Software.find({ isDeleted: false, status: true }).lean(),
+        'software',
+        country,
+        allFiles
+      );
+    }
 
-    // Ping Google with single index
+    // Postal Codes
+    for (const country of Object.keys(supportedCountries)) {
+      console.log(`🔄 Generating postal code sitemaps for ${country}...`);
+      await processInBatches(
+        PostalCode.find({ isDeleted: false, status: true })
+          .populate('countryId', 'slug')
+          .lean(),
+        'postalcodes',
+        country,
+        allFiles
+      );
+    }
+
+    // Generate single global index
+    const indexFile = await generateGlobalSitemapIndex(allFiles);
+
+    // Ping Google once
     await pingGoogle(`https://api.informreaders.com/sitemaps/${indexFile}`);
 
     console.log('🎉 All sitemaps and global index generated successfully!');
