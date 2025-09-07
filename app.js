@@ -15,6 +15,7 @@ const app = express();
 dotenv.config();
 process.env.GOOGLE_APPLICATION_CREDENTIALS = './teal-2a1a0-4eee03f2412b.json';
 
+app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
 app.use('/youtubeVideos', express.static('youtubeVideos'));
 
