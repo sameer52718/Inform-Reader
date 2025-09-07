@@ -9,7 +9,6 @@ import Name from '../models/Name.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load .env (one folder back from current file)
 dotenv.config({
   path: path.resolve(__dirname, '../.env'),
 });
@@ -170,6 +169,8 @@ const supportedCountries = {
   zw: 'en',
 };
 
+const supportedCountries = { ae: 'ar', af: 'ps', /* ... */ };
+
 const generateSitemap = async (country, batch, items) => {
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -193,13 +194,13 @@ ${items
   await fs.writeFile(filePath, sitemap);
 
   console.log(`✅ Generated sitemap batch ${batch} for ${country} with ${items.length} names`);
-  return fileName; // return just file name for index
+  return fileName; // return file name for global index
 };
 
-const generateSitemapIndex = async (country, sitemapFiles) => {
+const generateGlobalSitemapIndex = async (allFiles) => {
   const index = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${sitemapFiles
+${allFiles
   .map(
     (file) => `
   <sitemap>
@@ -210,11 +211,11 @@ ${sitemapFiles
   .join('')}
 </sitemapindex>`;
 
-  const fileName = `sitemap-names-${country}-index.xml`;
+  const fileName = `sitemap-index.xml`;
   const filePath = path.join(PUBLIC_DIR, fileName);
 
   await fs.writeFile(filePath, index);
-  console.log(`📑 Generated sitemap index for ${country}: ${fileName}`);
+  console.log(`📑 Generated global sitemap index: ${fileName}`);
   return fileName;
 };
 
@@ -233,38 +234,38 @@ const generateAllSitemaps = async () => {
   try {
     await mongoose.connect(process.env.MONGO_DB_URL);
 
+    let allSitemapFiles = [];
+
     for (const country of Object.keys(supportedCountries)) {
       console.log(`🔄 Generating sitemaps for ${country}...`);
 
       const cursor = Name.find({ isDeleted: false, status: true }).cursor();
       let batch = 1;
       let chunk = [];
-      const sitemapFiles = [];
 
       for await (const doc of cursor) {
         chunk.push(doc);
         if (chunk.length === BATCH_SIZE) {
           const fileName = await generateSitemap(country, batch, chunk);
-          sitemapFiles.push(fileName);
+          allSitemapFiles.push(fileName);
           chunk = [];
           batch++;
         }
       }
 
-      // last chunk
       if (chunk.length > 0) {
         const fileName = await generateSitemap(country, batch, chunk);
-        sitemapFiles.push(fileName);
+        allSitemapFiles.push(fileName);
       }
-
-      // Generate index
-      const indexFile = await generateSitemapIndex(country, sitemapFiles);
-
-      // Ping Google only once with index
-      await pingGoogle(`https://api.informreaders.com/sitemaps/${indexFile}`);
     }
 
-    console.log('🎉 All sitemaps and indexes generated successfully!');
+    // Generate ONE global index for all countries
+    const indexFile = await generateGlobalSitemapIndex(allSitemapFiles);
+
+    // Ping Google with single index
+    await pingGoogle(`https://api.informreaders.com/sitemaps/${indexFile}`);
+
+    console.log('🎉 All sitemaps and global index generated successfully!');
   } catch (err) {
     console.error('❌ Error generating sitemaps:', err);
   } finally {
