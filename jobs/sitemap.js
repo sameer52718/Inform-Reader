@@ -169,7 +169,6 @@ const supportedCountries = {
   zw: 'en',
 };
 
-const supportedCountries = { ae: 'ar', af: 'ps', /* ... */ };
 
 const generateSitemap = async (country, batch, items) => {
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
