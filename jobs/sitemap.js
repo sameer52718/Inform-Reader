@@ -167,8 +167,7 @@ const supportedCountries = {
   zw: 'en',
 };
 
-// Generate XML sitemap for a batch
-const generateSitemap = async (country, items, batchIndex) => {
+const generateSitemap = async (country, batch, items) => {
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${items
@@ -184,79 +183,92 @@ ${items
   .join("")}
 </urlset>`;
 
-  // save in /public/sitemaps instead of local folder
-  const dirPath = path.join(__dirname, "../public/sitemaps");
-  const fileName = `sitemap-names-${country}-batch-${batchIndex}.xml`;
-  const filePath = path.join(dirPath, fileName);
+  const fileName = `sitemap-names-${country}-batch-${batch}.xml`;
+  const filePath = path.join(PUBLIC_DIR, fileName);
 
-  await fs.mkdir(dirPath, { recursive: true });
+  await fs.mkdir(PUBLIC_DIR, { recursive: true });
   await fs.writeFile(filePath, sitemap);
 
-  return filePath;
+  console.log(`✅ Generated sitemap batch ${batch} for ${country} with ${items.length} names`);
+  return fileName; // return just file name for index
 };
 
+const generateSitemapIndex = async (country, sitemapFiles) => {
+  const index = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${sitemapFiles
+  .map(
+    (file) => `
+  <sitemap>
+    <loc>https://api.informreaders.com/sitemaps/${file}</loc>
+    <lastmod>${new Date().toISOString()}</lastmod>
+  </sitemap>`
+  )
+  .join("")}
+</sitemapindex>`;
 
-// Ping Google with sitemap URL
+  const fileName = `sitemap-names-${country}-index.xml`;
+  const filePath = path.join(PUBLIC_DIR, fileName);
+
+  await fs.writeFile(filePath, index);
+  console.log(`📑 Generated sitemap index for ${country}: ${fileName}`);
+  return fileName;
+};
+
 const pingGoogle = async (sitemapUrl) => {
   try {
     const encodedUrl = encodeURIComponent(sitemapUrl);
     await axios.get(`http://www.google.com/ping?sitemap=${encodedUrl}`);
-    console.log(`✅ Pinged Google for ${sitemapUrl}`);
-  } catch (error) {
-    console.error(`❌ Error pinging Google for ${sitemapUrl}:`, error.message);
+    console.log(`🚀 Pinged Google for ${sitemapUrl}`);
+  } catch (err) {
+    console.error(`❌ Error pinging Google for ${sitemapUrl}:`, err.message);
   }
 };
 
-// ===== Chunked Fetch & Sitemap Generator =====
-const generateNameSitemapsForCountry = async (country, batchSize = 5000) => {
-  let skip = 0;
-  let batchIndex = 1;
-  let hasMore = true;
-
-  while (hasMore) {
-    const names = await Name.find({ isDeleted: false, status: true })
-      .skip(skip)
-      .limit(batchSize)
-      .lean(); // lean() = faster, returns plain JS objects
-
-    if (!names.length) {
-      hasMore = false;
-      break;
-    }
-
-    const sitemapPath = await generateSitemap(country, names, batchIndex);
-    await pingGoogle(
-      `https://api.informreaders.com/sitemaps/${path.basename(
-        sitemapPath
-      )}`
-    );
-
-    console.log(
-      `✅ Generated sitemap batch ${batchIndex} for ${country} with ${names.length} names`
-    );
-
-    skip += batchSize;
-    batchIndex++;
-  }
-};
-
-// ===== Main Runner =====
-const generateAllNameSitemaps = async () => {
+// ================== MAIN ==================
+const generateAllSitemaps = async () => {
   try {
     await mongoose.connect(process.env.MONGO_DB_URL);
 
-    for (const country of Object.keys(supportedCountries)) {
+    const supportedCountries = ["ae", "af"]; // add as needed
+
+    for (const country of supportedCountries) {
       console.log(`🔄 Generating sitemaps for ${country}...`);
-      await generateNameSitemapsForCountry(country, 5000);
+
+      const cursor = Name.find({ isDeleted: false, status: true }).cursor();
+      let batch = 1;
+      let chunk = [];
+      const sitemapFiles = [];
+
+      for await (const doc of cursor) {
+        chunk.push(doc);
+        if (chunk.length === BATCH_SIZE) {
+          const fileName = await generateSitemap(country, batch, chunk);
+          sitemapFiles.push(fileName);
+          chunk = [];
+          batch++;
+        }
+      }
+
+      // last chunk
+      if (chunk.length > 0) {
+        const fileName = await generateSitemap(country, batch, chunk);
+        sitemapFiles.push(fileName);
+      }
+
+      // Generate index
+      const indexFile = await generateSitemapIndex(country, sitemapFiles);
+
+      // Ping Google only once with index
+      await pingGoogle(`https://api.informreaders.com/sitemaps/${indexFile}`);
     }
 
-    console.log("🎉 All name sitemaps generated and pinged successfully.");
-  } catch (error) {
-    console.error("❌ Error generating sitemaps:", error);
+    console.log("🎉 All sitemaps and indexes generated successfully!");
+  } catch (err) {
+    console.error("❌ Error generating sitemaps:", err);
   } finally {
     await mongoose.disconnect();
   }
 };
 
-// Run immediately
-generateAllNameSitemaps();
+generateAllSitemaps();
