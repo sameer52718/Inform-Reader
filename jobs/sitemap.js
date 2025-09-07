@@ -226,7 +226,7 @@ const generateNameSitemapsForCountry = async (country, batchSize = 5000) => {
 
     const sitemapPath = await generateSitemap(country, names, batchIndex);
     await pingGoogle(
-      `https://${country}.informreaders.com/sitemaps/${path.basename(
+      `https://api.informreaders.com/sitemaps/${path.basename(
         sitemapPath
       )}`
     );
