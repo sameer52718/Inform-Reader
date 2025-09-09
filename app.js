@@ -9,13 +9,14 @@ import ApiV1Router from './routes/api/v1/index.js';
 import connectDB from './db/index.js';
 import { initializeSocket } from './socket.js';
 import startCron from './jobs/feeds.js';
+import { getSitemap } from './controllers/website/SitemapController.js';
 
 const app = express();
 
 dotenv.config();
 process.env.GOOGLE_APPLICATION_CREDENTIALS = './teal-2a1a0-4eee03f2412b.json';
 
-app.use(express.static('public'));
+// app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
 app.use('/youtubeVideos', express.static('youtubeVideos'));
 
@@ -29,6 +30,7 @@ app.get('/', (req, res) => {
   res.send('Hello, world!');
 });
 
+app.get('/sitemaps/:filename', getSitemap);
 app.use('/api/v1', ApiV1Router);
 
 const PORT = process.env.PORT || 1000;
