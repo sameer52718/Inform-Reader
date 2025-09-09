@@ -1,13 +1,19 @@
-import fs from 'fs/promises';
-import path from 'path';
+import mongoose from 'mongoose';
 import axios from 'axios';
 import dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
 import Name from '../models/Name.js';
 import Software from '../models/Software.js';
 import PostalCode from '../models/PostalCode.js';
 import BankCode from '../models/BankCode.js';
 import Country from '../models/Country.js';
+import Sitemap from '../models/Sitemap.js';
+import { fileURLToPath } from 'url';
+import path from "path"
+
+dotenv.config();
+
+const BATCH_SIZE = 20000;
+const MAX_DOC_SIZE = 14 * 1024 * 1024; // 14 MB safe cap
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,9 +21,6 @@ const __dirname = path.dirname(__filename);
 dotenv.config({
   path: path.resolve(__dirname, '../.env'),
 });
-
-const BATCH_SIZE = 20000;
-const PUBLIC_DIR = path.join(__dirname, '../public/sitemaps');
 
 const supportedCountries = {
   ae: 'ar',
@@ -171,9 +174,10 @@ const supportedCountries = {
   zm: 'en',
   zw: 'en',
 };
+
 // ================== HELPERS ==================
-const generateSitemap = async (type, country, batch, items) => {
-  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+function buildXml(type, country, items) {
+  return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${items
   .map((item) => {
@@ -194,44 +198,79 @@ ${items
     return `
   <url>
     <loc>${loc}</loc>
-    <lastmod>${new Date(item.updatedAt).toISOString()}</lastmod>
+    <lastmod>${new Date(item.updatedAt || Date.now()).toISOString()}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>`;
   })
   .join('')}
 </urlset>`;
+}
 
-  const fileName = `sitemap-${type}-${country}-batch-${batch}.xml`;
-  const filePath = path.join(PUBLIC_DIR, fileName);
+const processInBatches = async (docs, type, country, allFiles) => {
+  let batch = 1;
+  let i = 0;
 
-  await fs.mkdir(PUBLIC_DIR, { recursive: true });
-  await fs.writeFile(filePath, sitemap);
+  while (i < docs.length) {
+    let currentBatchSize = BATCH_SIZE;
+    let chunk = docs.slice(i, i + currentBatchSize);
 
-  console.log(`✅ Generated ${type} sitemap batch ${batch} for ${country} with ${items.length} records`);
-  return fileName;
+    let xml = buildXml(type, country, chunk);
+
+    // shrink batch until XML fits
+    while (Buffer.byteLength(xml, 'utf-8') > MAX_DOC_SIZE && currentBatchSize > 1000) {
+      currentBatchSize = Math.floor(currentBatchSize / 2);
+      chunk = docs.slice(i, i + currentBatchSize);
+      xml = buildXml(type, country, chunk);
+    }
+
+    const fileName = `sitemap-${type}-${country}-batch-${batch}.xml`;
+
+    await Sitemap.findOneAndUpdate({ fileName }, { fileName, type, country, batch, xmlContent: xml }, { upsert: true, new: true });
+
+    console.log(`✅ Saved ${fileName} (${chunk.length} records, size ${Buffer.byteLength(xml, 'utf-8') / 1024 / 1024} MB)`);
+
+    allFiles.push(fileName);
+    i += currentBatchSize;
+    batch++;
+  }
 };
 
-const generateGlobalSitemapIndex = async (sitemapFiles) => {
+const generateForAllCountries = async (docs, type, allFiles) => {
+  const tasks = Object.keys(supportedCountries).map(async (country) => {
+    if (docs.length === 0) {
+      console.log(`⚠️ No ${type} records for ${country}, skipping...`);
+      return;
+    }
+    console.log(`📝 Generating ${type} sitemaps for ${country} (${docs.length} records)`);
+    await processInBatches(docs, type, country, allFiles);
+  });
+  await Promise.all(tasks);
+};
+
+const generateGlobalSitemapIndex = async () => {
+  const sitemaps = await Sitemap.find({}, 'fileName updatedAt').sort({ updatedAt: -1 });
+
   const index = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${sitemapFiles
+${sitemaps
   .map(
-    (file) => `
+    (sm) => `
   <sitemap>
-    <loc>https://api.informreaders.com/sitemaps/${file}</loc>
-    <lastmod>${new Date().toISOString()}</lastmod>
+    <loc>https://api.informreaders.com/sitemaps/${sm.fileName}</loc>
+    <lastmod>${new Date(sm.updatedAt).toISOString()}</lastmod>
   </sitemap>`,
   )
   .join('')}
 </sitemapindex>`;
 
-  const fileName = 'sitemap-index.xml';
-  const filePath = path.join(PUBLIC_DIR, fileName);
+  await Sitemap.findOneAndUpdate(
+    { fileName: 'sitemap-index.xml' },
+    { fileName: 'sitemap-index.xml', type: 'index', country: 'global', batch: 0, xmlContent: index },
+    { upsert: true, new: true },
+  );
 
-  await fs.writeFile(filePath, index);
-  console.log(`📑 Generated global sitemap index: ${fileName}`);
-  return fileName;
+  console.log('📑 Generated global sitemap index in DB');
 };
 
 const pingGoogle = async (sitemapUrl) => {
@@ -244,30 +283,6 @@ const pingGoogle = async (sitemapUrl) => {
   }
 };
 
-// ================== BATCH PROCESSOR ==================
-const processInBatches = async (docs, type, country, allFiles) => {
-  let batch = 1;
-  for (let i = 0; i < docs.length; i += BATCH_SIZE) {
-    const chunk = docs.slice(i, i + BATCH_SIZE);
-    const fileName = await generateSitemap(type, country, batch, chunk);
-    allFiles.push(fileName);
-    batch++;
-  }
-};
-
-
-const generateForAllCountries = async (docs, type, allFiles) => {
-  const tasks = Object.keys(supportedCountries).map(async (country) => {
-    if (docs.length === 0) {
-      console.log(`⚠️ No ${type} records for ${country}, skipping...`);
-      return;
-    }
-    console.log(`📝 Generating ${type} sitemaps for ${country} (${docs.length} records)`);
-    await processInBatches(docs, type, country, allFiles);
-  });
-  await Promise.all(tasks); // run all countries in parallel
-};
-
 // ================== MAIN ==================
 export const generateAllSitemaps = async () => {
   try {
@@ -275,17 +290,13 @@ export const generateAllSitemaps = async () => {
 
     // ===== Postal Codes =====
     console.log('🔄 Fetching postal codes...');
-    const postals = await PostalCode.find({ isDeleted: false, status: true })
-      .populate('countryId', 'slug')
-      .lean();
+    const postals = await PostalCode.find({ isDeleted: false, status: true }).populate('countryId', 'slug').lean();
     console.log(`📦 Total postal codes fetched: ${postals.length}`);
     await generateForAllCountries(postals, 'postalcodes', allFiles);
 
     // ===== Swift Codes =====
     console.log('🔄 Fetching bank codes...');
-    const banks = await BankCode.find({ isDeleted: false, status: true })
-      .populate('countryId', 'slug')
-      .lean();
+    const banks = await BankCode.find({ isDeleted: false, status: true }).populate('countryId', 'slug').lean();
     console.log(`📦 Total bank codes fetched: ${banks.length}`);
     await generateForAllCountries(banks, 'swiftcodes', allFiles);
 
@@ -303,11 +314,11 @@ export const generateAllSitemaps = async () => {
 
     // ===== Global Index =====
     console.log('🗂 Generating global sitemap index...');
-    const indexFile = await generateGlobalSitemapIndex(allFiles);
+    await generateGlobalSitemapIndex();
 
     // ===== Ping Google =====
     console.log('📡 Pinging Google with sitemap index...');
-    await pingGoogle(`https://api.informreaders.com/sitemaps/${indexFile}`);
+    await pingGoogle('https://api.informreaders.com/sitemaps/sitemap-index.xml');
 
     console.log('🎉 All sitemaps and global index generated successfully!');
   } catch (err) {
@@ -315,3 +326,4 @@ export const generateAllSitemaps = async () => {
   }
 };
 
+generateAllSitemaps()
