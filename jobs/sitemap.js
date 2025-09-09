@@ -325,5 +325,3 @@ export const generateAllSitemaps = async () => {
     console.error('❌ Error generating sitemaps:', err);
   }
 };
-
-generateAllSitemaps()
