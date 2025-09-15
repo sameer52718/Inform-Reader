@@ -10,6 +10,7 @@ class ArticleController extends BaseController {
     super();
     this.getByCountry = this.getByCountry.bind(this);
     this.getByCategory = this.getByCategory.bind(this);
+    this.getInfo = this.getInfo.bind(this);
   }
 
   async getByCountry(req, res, next) {
@@ -108,6 +109,29 @@ class ArticleController extends BaseController {
           totalPages,
           pageSize: limit,
         },
+      });
+    } catch (error) {
+      return this.handleError(next, error.message || 'An unexpected error occurred', 500);
+    }
+  }
+
+  async getInfo(req, res, next) {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        return this.handleError(next, 'Article ID is required.', 404);
+      }
+
+      const article = await Article.findById(id).populate('category', 'name');
+
+      if (!article) {
+        return this.handleError(next, 'Article not found.', 404);
+      }
+
+      return res.status(200).json({
+        error: false,
+        article,
       });
     } catch (error) {
       return this.handleError(next, error.message || 'An unexpected error occurred', 500);

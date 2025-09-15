@@ -4,5 +4,6 @@ import ArticleController from '../../../../controllers/website/ArticleController
 const router = Router();
 
 router.get('/', ArticleController.getByCountry);
+router.get('/:id', ArticleController.getInfo);
 
 export default router;
