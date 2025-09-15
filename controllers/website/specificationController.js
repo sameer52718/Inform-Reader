@@ -466,6 +466,14 @@ class SpecificationController extends BaseController {
     try {
       const { category, id } = req.params;
 
+      if (!this.isValidId(category)) {
+        return this.handleError(next, 'Invalid Category Id', 400);
+      }
+
+      if (!this.isValidId(id)) {
+        return this.handleError(next, 'Invalid Specification Id', 400);
+      }
+      
       // Build query with categoryId
       const query = {
         categoryId: category,
