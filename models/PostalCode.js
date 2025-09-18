@@ -14,4 +14,6 @@ const postalCodeSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+postalCodeSchema.index({ countryId: 1, state: 1 });
+
 export default mongoose.model('PostalCode', postalCodeSchema);
