@@ -9,6 +9,8 @@ const trafficSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+trafficSchema.index({ ip: 1, endpoint: 1, date: 1 });
+
 const Traffic = mongoose.model('Traffic', trafficSchema);
 
 export default Traffic;
