@@ -13,6 +13,7 @@ const vehicleSchema = new mongoose.Schema(
     categoryId: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
     name: { type: String, required: true, trim: true }, // Added for search functionality
     year: { type: Number, required: true },
+    slug: { type: String, required: false, unique: true, lowercase: true, trim: true },
     vehicleType: {
       type: String,
       enum: ['ELECTRIC', 'PETROL', 'HYBRID', 'DIESEL', 'OTHER'],
