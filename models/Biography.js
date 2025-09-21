@@ -23,6 +23,7 @@ const biographySchema = new mongoose.Schema(
     physicalAttributes: [infoSchema],
     status: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
+    slug: { type: String, required: true, unique: true, lowercase: true, trim: true },
   },
   { timestamps: true },
 );
