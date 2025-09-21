@@ -5,6 +5,7 @@ import Name from '../models/Name.js';
 import Software from '../models/Software.js';
 import PostalCode from '../models/PostalCode.js';
 import BankCode from '../models/BankCode.js';
+import Biography from '../models/Biography.js';
 import Country from '../models/Country.js';
 import Sitemap from '../models/Sitemap.js';
 import { fileURLToPath } from 'url';
@@ -24,7 +25,6 @@ dotenv.config({
   path: path.resolve(__dirname, '../.env'),
 });
 
-
 // ================== HELPERS ==================
 function buildXml(type, country, items) {
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -43,6 +43,8 @@ ${items
     } else if (type === 'swiftcodes') {
       const countrySlug = item.countryId?.slug || country;
       loc = `https://${countrySlug}.informreaders.com/swiftcode/${countrySlug}/${item.slug}`;
+    } else if (type === 'biographies') {
+      loc = `https://${country}.informreaders.com/biography/${item.slug}`;
     }
 
     return `
@@ -172,6 +174,11 @@ export const generateAllSitemaps = async () => {
     // ===== Static Pages =====
     logger.info('🔄 Generating static pages sitemaps...');
     await generateStaticPagesSitemap(allFiles);
+
+    logger.info('🔄 Fetching biographies...');
+    const biographies = await Biography.find({ isDeleted: false, status: true }).select('slug updatedAt').lean();
+    logger.info(`📦 Total biographies fetched: ${biographies.length}`);
+    await generateForAllCountries(biographies, 'biographies', allFiles);
 
     // ===== Postal Codes =====
     logger.info('🔄 Fetching postal codes...');

@@ -181,6 +181,7 @@ class BiographyController extends BaseController {
           _id: bio._id,
           name: bio.name,
           image: bio.image,
+          slug: bio.slug,
           categoryName: bio.categoryId?.name,
           subCategoryName: bio.subCategoryId?.name,
           nationality: bio.nationalityId?.name,
@@ -199,10 +200,10 @@ class BiographyController extends BaseController {
 
   async detail(req, res, next) {
     try {
-      const { biographyId } = req.params;
+      const { biographyId: slug } = req.params;
 
       // Fetch the primary biography
-      const biography = await Biography.findOne({ _id: biographyId, isDeleted: false }).populate('nationalityId', 'name').populate('categoryId', 'name');
+      const biography = await Biography.findOne({ slug: slug, isDeleted: false }).populate('nationalityId', 'name').populate('categoryId', 'name');
 
       if (!biography) {
         return res.status(404).json({
@@ -213,7 +214,7 @@ class BiographyController extends BaseController {
 
       // Fetch related biographies from the same category (excluding current one)
       const related = await Biography.find({
-        _id: { $ne: biographyId },
+        _id: { $ne: biography._id },
         categoryId: biography.categoryId,
         isDeleted: false,
       })
