@@ -88,6 +88,7 @@ class BiographyController extends BaseController {
                   image: '$$bio.image',
                   categoryId: '$$bio.categoryId',
                   subCategoryId: '$$bio.subCategoryId',
+                  slug: '$$bio.slug',
                   // Match subCategoryInfo with subCategoryId
                   subCategoryName: {
                     $arrayElemAt: [
@@ -167,7 +168,7 @@ class BiographyController extends BaseController {
         .populate('categoryId', 'name')
         .populate('subCategoryId', 'name')
         .populate('nationalityId', 'name')
-        .select('name image')
+        .select('name image slug')
         .skip(skip)
         .limit(limit);
 

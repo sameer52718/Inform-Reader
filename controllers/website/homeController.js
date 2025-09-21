@@ -183,6 +183,7 @@ class HomeController extends BaseController {
               _id: 1,
               name: 1,
               image: 1,
+              slug:1,
               categoryId: 1,
               categoryName: '$categoryInfo.name',
             },
