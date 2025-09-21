@@ -291,6 +291,7 @@ class HomeController extends BaseController {
               year: 1,
               vehicleType: 1,
               image: 1,
+              slug:1,
               category: {
                 _id: '$categoryId',
                 name: '$categoryInfo.name',
@@ -359,6 +360,7 @@ class HomeController extends BaseController {
               year: 1,
               vehicleType: 1,
               image: 1,
+              slug:1,
               category: {
                 _id: '$categoryId',
                 name: '$categoryInfo.name',

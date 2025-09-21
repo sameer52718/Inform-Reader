@@ -75,7 +75,7 @@ class VehicleController extends BaseController {
 
       // Query the database with pagination
       const vehicleList = await Vehicle.find(filter)
-        .select('name year vehicleType image')
+        .select('name year vehicleType image slug')
         .skip((parsedPage - 1) * parsedLimit)
         .limit(parsedLimit);
 
@@ -102,11 +102,11 @@ class VehicleController extends BaseController {
 
   async detail(req, res) {
     try {
-      const { id } = req.params;
+      const { id: slug } = req.params;
 
       // Get the main vehicle by ID
       const vehicle = await Vehicle.findOne({
-        _id: id,
+        slug: slug,
         status: true,
         isDeleted: false,
       })
@@ -120,13 +120,13 @@ class VehicleController extends BaseController {
 
       // Fetch related vehicles from the same category
       const relatedVehicles = await Vehicle.find({
-        _id: { $ne: id }, // Exclude the current vehicle
+        _id: { $ne: vehicle._id }, // Exclude the current vehicle
         status: true,
         isDeleted: false,
         categoryId: vehicle.categoryId._id,
       })
         .limit(20)
-        .select('name year vehicleType image')
+        .select('name year vehicleType image slug')
         .lean();
 
       return res.status(200).json({
