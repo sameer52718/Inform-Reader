@@ -14,6 +14,7 @@ class ArticleController extends BaseController {
   }
 
   async getByCountry(req, res, next) {
+    const { articleType } = req.query;
     try {
       const origin = req.headers.origin || req.get('origin') || '';
       let subdomainCountryCode = null;
@@ -51,8 +52,8 @@ class ArticleController extends BaseController {
       if (country) {
         filters.country = country._id;
       }
-      console.log("Aricle Filters",filters);
-      
+      console.log('Aricle Filters', filters);
+
       // ===== Type and Category Filters =====
       const type = await Type.findOne({ name: 'News' });
       if (!type) {
@@ -65,7 +66,9 @@ class ArticleController extends BaseController {
       const categories = await Category.find({ typeId: type._id });
       const categoryIds = categories.map((cat) => cat._id);
       filters.category = { $in: categoryIds };
-
+      if (articleType) {
+        filters.type = articleType.toLowerCase();
+      }
       // ===== Fetch Articles =====
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 10;
