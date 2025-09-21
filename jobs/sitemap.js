@@ -132,7 +132,11 @@ const generateStaticPagesSitemap = async (allFiles) => {
 };
 
 const generateGlobalSitemapIndex = async () => {
-  const sitemaps = await Sitemap.find({}, 'fileName updatedAt').sort({ updatedAt: -1 });
+  // ❌ Exclude the sitemap-index.xml itself
+  const sitemaps = await Sitemap.find(
+    { fileName: { $ne: 'sitemap-index.xml' } }, // ✅ exclude self
+    'fileName updatedAt',
+  ).sort({ updatedAt: -1 });
 
   const index = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -149,7 +153,13 @@ ${sitemaps
 
   await Sitemap.findOneAndUpdate(
     { fileName: 'sitemap-index.xml' },
-    { fileName: 'sitemap-index.xml', type: 'index', country: 'global', batch: 0, xmlContent: index },
+    {
+      fileName: 'sitemap-index.xml',
+      type: 'index',
+      country: 'global',
+      batch: 0,
+      xmlContent: index,
+    },
     { upsert: true, new: true },
   );
 
