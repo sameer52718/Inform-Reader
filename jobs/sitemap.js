@@ -9,7 +9,8 @@ import Country from '../models/Country.js';
 import Sitemap from '../models/Sitemap.js';
 import { fileURLToPath } from 'url';
 import path from 'path';
-import logger from "../logger.js"; 
+import logger from '../logger.js';
+import { staticPages, supportedCountries } from './data.js';
 
 dotenv.config();
 
@@ -23,158 +24,6 @@ dotenv.config({
   path: path.resolve(__dirname, '../.env'),
 });
 
-const supportedCountries = {
-  ae: 'ar',
-  af: 'ps',
-  al: 'sq',
-  am: 'hy',
-  ao: 'pt',
-  ar: 'es',
-  at: 'de',
-  au: 'en',
-  az: 'az',
-  ba: 'bs',
-  bd: 'bn',
-  be: 'nl',
-  bf: 'fr',
-  bg: 'bg',
-  bh: 'ar',
-  bj: 'fr',
-  bn: 'ms',
-  br: 'pt',
-  bt: 'dz',
-  bw: 'en',
-  by: 'be',
-  ca: 'en',
-  cd: 'fr',
-  cf: 'fr',
-  cg: 'fr',
-  ch: 'de',
-  ci: 'fr',
-  cl: 'es',
-  cm: 'fr',
-  cn: 'zh',
-  co: 'es',
-  cv: 'pt',
-  cy: 'el',
-  cz: 'cs',
-  de: 'de',
-  dj: 'fr',
-  dk: 'da',
-  dz: 'ar',
-  ee: 'et',
-  eg: 'ar',
-  er: 'ti',
-  es: 'es',
-  et: 'am',
-  fi: 'fi',
-  fj: 'en',
-  fr: 'fr',
-  ga: 'fr',
-  ge: 'ka',
-  gh: 'en',
-  gm: 'en',
-  gn: 'fr',
-  gq: 'es',
-  gr: 'el',
-  gw: 'pt',
-  hr: 'hr',
-  hu: 'hu',
-  id: 'id',
-  ie: 'en',
-  il: 'he',
-  in: 'hi',
-  iq: 'ar',
-  ir: 'fa',
-  is: 'is',
-  it: 'it',
-  jo: 'ar',
-  jp: 'ja',
-  ke: 'en',
-  kh: 'km',
-  ki: 'en',
-  kr: 'ko',
-  kw: 'ar',
-  kz: 'kk',
-  la: 'lo',
-  lk: 'ta',
-  lr: 'en',
-  ls: 'en',
-  lt: 'lt',
-  lu: 'fr',
-  lv: 'lv',
-  ma: 'ar',
-  md: 'ro',
-  me: 'sr',
-  mg: 'fr',
-  mk: 'mk',
-  ml: 'fr',
-  mm: 'my',
-  mn: 'mn',
-  mt: 'mt',
-  mu: 'en',
-  mv: 'dv',
-  mw: 'en',
-  mx: 'es',
-  my: 'ms',
-  mz: 'pt',
-  na: 'en',
-  ne: 'fr',
-  ng: 'en',
-  nl: 'nl',
-  no: 'no',
-  np: 'ne',
-  nr: 'na',
-  nz: 'en',
-  om: 'ar',
-  pe: 'es',
-  pg: 'en',
-  ph: 'tl',
-  pk: 'ur',
-  pl: 'pl',
-  pt: 'pt',
-  qa: 'ar',
-  ro: 'ro',
-  rs: 'sr',
-  ru: 'ru',
-  rw: 'rw',
-  sa: 'ar',
-  sb: 'en',
-  sc: 'en',
-  sd: 'ar',
-  se: 'sv',
-  sg: 'en',
-  si: 'sl',
-  sk: 'sk',
-  sl: 'en',
-  sn: 'fr',
-  so: 'so',
-  ss: 'en',
-  st: 'pt',
-  sy: 'ar',
-  sz: 'en',
-  td: 'fr',
-  th: 'th',
-  tj: 'tg',
-  tm: 'tk',
-  tn: 'ar',
-  to: 'to',
-  tr: 'tr',
-  tv: 'tv',
-  tz: 'sw',
-  ua: 'uk',
-  ug: 'en',
-  uk: 'en',
-  us: 'en',
-  uz: 'uz',
-  vn: 'vi',
-  vu: 'bi',
-  ws: 'sm',
-  ye: 'ar',
-  za: 'en',
-  zm: 'en',
-  zw: 'en',
-};
 
 // ================== HELPERS ==================
 function buildXml(type, country, items) {
@@ -204,6 +53,23 @@ ${items
     <priority>0.8</priority>
   </url>`;
   })
+  .join('')}
+</urlset>`;
+}
+
+function buildStaticPagesXml(country) {
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${staticPages
+  .map(
+    (page) => `
+  <url>
+    <loc>https://${country}.informreaders.com${page.path}</loc>
+    <lastmod>${new Date().toISOString()}</lastmod>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority}</priority>
+  </url>`,
+  )
   .join('')}
 </urlset>`;
 }
@@ -249,6 +115,20 @@ const generateForAllCountries = async (docs, type, allFiles) => {
   await Promise.all(tasks);
 };
 
+const generateStaticPagesSitemap = async (allFiles) => {
+  const tasks = Object.keys(supportedCountries).map(async (country) => {
+    const xml = buildStaticPagesXml(country);
+    const fileName = `sitemap-static-${country}.xml`;
+
+    await Sitemap.findOneAndUpdate({ fileName }, { fileName, type: 'static', country, batch: 0, xmlContent: xml }, { upsert: true, new: true });
+
+    logger.info(`✅ Saved ${fileName} (static pages for ${country})`);
+    allFiles.push(fileName);
+  });
+
+  await Promise.all(tasks);
+};
+
 const generateGlobalSitemapIndex = async () => {
   const sitemaps = await Sitemap.find({}, 'fileName updatedAt').sort({ updatedAt: -1 });
 
@@ -288,6 +168,10 @@ const pingGoogle = async (sitemapUrl) => {
 export const generateAllSitemaps = async () => {
   try {
     const allFiles = [];
+
+    // ===== Static Pages =====
+    logger.info('🔄 Generating static pages sitemaps...');
+    await generateStaticPagesSitemap(allFiles);
 
     // ===== Postal Codes =====
     logger.info('🔄 Fetching postal codes...');
