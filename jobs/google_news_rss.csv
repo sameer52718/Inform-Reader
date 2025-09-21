@@ -1,2 +1,294 @@
-Country,Country Code,Category,RSS Feed URL,source
-Pakistan,Pk,Crypto,https://cointelegraph.com/rss,cointelegraph
+Country,Country Code,source,RSS Feed URL,Category
+Afghanistan,AF,Khaama Press News Agency,https://www.khaama.com/category/afghanistan/feed/,National/Afghanistan
+Afghanistan,AF,Khaama Press News Agency,https://www.khaama.com/category/world/feed/,World/International
+Afghanistan,AF,Khaama Press News Agency,https://www.khaama.com/category/business/feed/,Business
+Afghanistan,AF,Khaama Press News Agency,https://www.khaama.com/category/sports/feed/,Sports
+Afghanistan,AF,Khaama Press News Agency,https://www.khaama.com/category/science/feed/,Science& technology
+Afghanistan,AF,Khaama Press News Agency,https://www.khaama.com/category/entertainment/feed/,Entertainment
+Albania,AL,Abc News,https://abcnews.al/feed/,MIX
+Algeria,DZ,APS News,http://feeds.aps.dz/aps-algerie,National
+Algeria,DZ,APS News,http://feeds.aps.dz/aps-monde,world
+Algeria,DZ,APS News,http://feeds.aps.dz/aps-sport,sports
+Algeria,DZ,APS News,http://feeds.aps.dz/aps-economie,Business
+Andorra,AD,Bondia News,https://www.bondia.ad/rss.xml,MIX
+Argentina,AR,Buenos Aries News,https://batimes.com.ar/feed,MIX
+Armenia,AM,Armenia Weekly,https://armenianweekly.com/feed/,Mix
+Australia,AU,The Age,https://www.theage.com.au/rss/national.xml,National
+Australia,AU,The Age,https://www.theage.com.au/rss/world.xml,World/International
+Australia,AU,The Age,https://www.theage.com.au/rss/business.xml,Business
+Australia,AU,The Age,https://www.theage.com.au/rss/technology.xml,Science& technology
+Australia,AU,The Age,https://www.theage.com.au/rss/sport.xml,Sports
+Austria,AT,Diepress,https://www.diepresse.com/rss,MIx
+Azerbaijan,AZ,Azer News,https://www.azernews.az/feed.php,MIX
+Bahamas,BS,Bahamas Press,https://www.bahamaspress.com/feed/,Mix
+Bahrain,BH,Baharain News Agency,https://bna.bh/GenerateRssFeed.aspx?categoryId=153,National/Baharain
+Bahrain,BH,Baharain News Agency,https://bna.bh/GenerateRssFeed.aspx?categoryId=181,World/International
+Bahrain,BH,Baharain News Agency,https://bna.bh/GenerateRssFeed.aspx?categoryId=177,Sports
+Bahrain,BH,Baharain News Agency,https://bna.bh/GenerateRssFeed.aspx?categoryId=176,Business
+Bangladesh,BD,BD 24live,https://www.bd24live.com/category/national/feed/,National/Bangladesh
+Bangladesh,BD,BD 24live,https://www.bd24live.com/category/worldnews/feed/,World/International
+Bangladesh,BD,BD 24live,https://www.bd24live.com/category/business/feed/,Business
+Bangladesh,BD,BD 24live,https://www.bd24live.com/category/entertainment/feed/,Entertainment
+Bangladesh,BD,BD 24live,https://www.bd24live.com/category/sports/feed/,Sports
+Bangladesh,BD,BD 24live,https://www.bd24live.com/category/technology-news/feed/,Science& technology
+Barbados,BB,Barbados Today,https://barbadostoday.bb/feed/,MIX
+Belarus,BY,The Minsk Herald News,https://minskherald.com/feed/,MIx
+Belgium,BE,HLN News,https://www.hln.be/home/rss.xml,MIX
+Benin,BJ,L- Integration,https://www.l-integration.com/category/actualite/actualite-nationale/feed/,National
+Benin,BJ,L- Integration,https://www.l-integration.com/category/actualites-internationales/feed/,world
+Benin,BJ,L- Integration,https://www.l-integration.com/category/societe/sante/feed/,Health
+Benin,BJ,L- Integration,https://www.l-integration.com/category/developpement/education/feed/,Education
+Benin,BJ,L- Integration,https://www.l-integration.com/category/economie/le-monde-des-affaires/feed/,Business
+Bermuda,BM,Bern News,https://feeds.feedburner.com/Bernewscom,Mix
+Bhutan,BT,The Bhutanese,https://thebhutanese.bt/category/gewogs-and-dzongkhags/feed/,National/Bhutan
+Bhutan,BT,The Bhutanese,https://thebhutanese.bt/category/business/feed/,Business
+Bhutan,BT,Bhutan News Network,https://bhutannewsnetwork.com/category/sports/feed/,Sports
+Bhutan,BT,Bhutan Broadcast Service,https://www.bbs.bt/category/education/feed/,Education
+Bolivia,BO,Opinion News,https://www.opinion.com.bo/rss/noticias/,National
+Bolivia,BO,Opinion News,https://www.opinion.com.bo/rss/mundo/,World
+Bolivia,BO,Opinion News,https://www.opinion.com.bo/rss/tecnologia/,Science& technology
+Bolivia,BO,Opinion News,https://www.opinion.com.bo/rss/salud/,Healrh
+Bolivia,BO,Opinion News,https://www.opinion.com.bo/rss/deportes/,Sports
+Bosnia and Herzegovina,BA,Mondo News,https://mondo.ba/rss/629/Naslovna,MIX
+Botsanava,BW,Guardian News,https://guardiansun.co.bw/rssFeed/49,Business
+Botsanava,BW,Guardian News,https://guardiansun.co.bw/rssFeed/48,National
+Botsanava,BW,Guardian News,https://guardiansun.co.bw/rssFeed/55,Sports
+Brazil,BR,UOL News,https://rss.uol.com.br/feed/noticias.xml,NAtional
+Brazil,BR,UOL News,https://rss.uol.com.br/feed/economia.xml,Business
+Brunei,BN,Borneo Bulletin,https://borneobulletin.com.bn/category/national/feed/,National/Brunei
+Brunei,BN,Borneo Bulletin,https://borneobulletin.com.bn/category/world/feed/,World/International
+Brunei,BN,Borneo Bulletin,https://borneobulletin.com.bn/category/business/feed/,Business
+Brunei,BN,Borneo Bulletin,https://borneobulletin.com.bn/category/tech/feed/,Science& technology
+Brunei,BN,Borneo Bulletin,https://borneobulletin.com.bn/category/sports/feed/,Sports
+Brunei,BN,Borneo Bulletin,https://borneobulletin.com.bn/category/entertainment/feed/,Entertainment
+Bukrina Faso,BF,Sidwaya,https://www.sidwaya.info/feed/,MIx
+Bulgaria,BG,Dnevnik News,https://www.dnevnik.bg/rss/,Mix
+Cambodia,KH,Camboja News,http://cambojanews.com/category/business/feed/,Business
+Cambodia,KH,Camboja News,https://cambojanews.com/category/world/feed/,World/International
+Cambodia,KH,Camboja News,https://cambojanews.com/category/national/feed/,National/Cambodia
+Canada,CA,CBC,https://www.cbc.ca/webfeed/rss/rss-canada,National
+Canada,CA,CBC,https://www.cbc.ca/webfeed/rss/rss-world,World/International
+Canada,CA,CBC,https://www.cbc.ca/webfeed/rss/rss-business,Business
+Canada,CA,CBC,https://www.cbc.ca/webfeed/rss/rss-health,Health
+Canada,CA,CBC,https://www.cbc.ca/webfeed/rss/rss-technology,Science& technology
+Canada,CA,CBC,https://www.cbc.ca/webfeed/rss/rss-sports,Sports
+Cape Verde,CV,Brava News,https://www.brava.news/rss/category/educacao,Education
+Cape Verde,CV,Brava News,https://www.brava.news/rss/category/desporto,Sports
+Cape Verde,CV,Brava News,https://www.brava.news/rss/category/general,National
+Cape Verde,CV,Brava News,https://www.brava.news/rss/category/saude,Health
+Chile,CL,The Clinic News,https://www.theclinic.cl/feed/,Mix
+China,CN,South China Morning Post,https://www.scmp.com/rss/4/feed,National/China
+China,CN,South China Morning Post,https://www.scmp.com/rss/92/feed,Business
+China,CN,South China Morning Post,https://www.scmp.com/rss/36/feed,Science& technology
+China,CN,South China Morning Post,https://www.scmp.com/rss/95/feed,Sports
+Colombia,CO,Eltiempo News,https://www.eltiempo.com/rss/colombia.xml,National
+Colombia,CO,Eltiempo News,https://www.eltiempo.com/rss/mundo.xml,National
+Colombia,CO,Eltiempo News,https://www.eltiempo.com/rss/economia.xml,Business
+Colombia,CO,Eltiempo News,https://www.eltiempo.com/rss/deportes.xml,Sports
+Colombia,CO,Eltiempo News,https://www.eltiempo.com/rss/tecnosfera.xml,Science& technology
+Costa Rica,CR,Tico Times,https://ticotimes.net/feed,MIX
+Croatia,HR,Coratia Week,https://www.croatiaweek.com/feed/,Mix
+Cyprus,CY,Cyprus TOdaty,http://cyprustodayonline.com/rss/category/news,National
+Cyprus,CY,Cyprus TOdaty,https://cyprustodayonline.com/rss/category/sports,Sports
+Czech Republic,CZ,Prague Post,https://www.praguepost.com/feed,MIX
+Denmark,DK,JV News,https://jv.dk/feed/forside,Mix
+Ecuador,EC,La Republica,https://www.larepublica.ec/feed/,MIX
+Egypt,EG,Egypt independent ,https://egyptindependent.com/feed/,Mix
+Estonia,EE,Post times News,https://www.postimees.ee/rss,MIX
+Fiji,FJ,FBC News,https://www.fbcnews.com.fj/feed/,MIX
+Finland,FI,Helsinki Times,https://www.helsinkitimes.fi/?format=feed,Mix
+France,FR,France 24,https://www.france24.com/fr/rss,World
+France,FR,France 25,https://www.france24.com/fr/%C3%A9co-tech/rss,Business
+France,FR,France 26,https://www.france24.com/fr/sports/rss,SPorts
+Gabon,GA,Gabona CTU,https://gabonactu.com/feed/,MIX
+Georgia,GE,Cov News,https://www.covnews.com/rss/,Mix
+Germany,DE,Spiegel News,https://www.spiegel.de/schlagzeilen/index.rss,MIX
+Ghana,GH,My Joy Online,https://www.myjoyonline.com/feed/,Mix
+Gibraltar,GI,The Oliver Press,https://www.theolivepress.es/feed/,MIX
+Greece,GR,Eleftherostypos News,https://eleftherostypos.gr/feed,Mix
+Guatemala,GT,Noticiero News,https://noticieroelvigilante.com/feed/,MIX
+Guyana,GY,Stabroek News,https://www.stabroeknews.com/feed/,MIX
+Hongkong,HK,South China Morning Post,http://scmp.com/rss/2/feed,National/Honkkong
+Hongkong,HK,South China Morning Post,https://www.scmp.com/rss/92/feed,Business
+Hongkong,HK,South China Morning Post,https://www.scmp.com/rss/36/feed,Science& technology
+Hongkong,HK,South China Morning Post,https://www.scmp.com/rss/94/feed,Life style
+Hongkong,HK,South China Morning Post,https://www.scmp.com/rss/38/feed,Sports
+Hungary,HU,Hungary Today,https://hungarytoday.hu/feed/,Mix
+Iceland,IS,MBL News,https://www.mbl.is/feeds/fp/,MIX
+India,IN,Times of India,https://timesofindia.indiatimes.com/rssfeeds/-2128936835.cms,National/India
+India,IN,Times of India,https://timesofindia.indiatimes.com/rssfeeds/296589292.cms,World/International
+India,IN,Times of India,https://timesofindia.indiatimes.com/rssfeeds/4719148.cms,Sports
+India,IN,Times of India,https://timesofindia.indiatimes.com/rssfeeds/66949542.cms,Technology
+India,IN,Times of India,https://timesofindia.indiatimes.com/rssfeeds/1081479906.cms,Entertainment
+Indonesia,ID,Faja co.id,https://fajar.co.id/category/nasional/feed/,National/Indonesia
+Indonesia,ID,Faja co.id,https://fajar.co.id/category/hiburan/feed/,Entertainment
+Indonesia,ID,Faja co.id,https://fajar.co.id/category/kesehatan/feed/,Health
+Indonesia,ID,Faja co.id,https://fajar.co.id/category/internasional/feed/,World/International
+Indonesia,ID,Faja co.id,https://fajar.co.id/category/olahraga/feed/,Sports
+Indonesia,ID,Faja co.id,https://fajar.co.id/category/teknologi/feed/,Science& technology
+Iran,IR,KhabarOnline,https://www.khabaronline.ir/rss/tp/27,Business
+Iran,IR,KhabarOnline,https://www.khabaronline.ir/rss/tp/43,Education
+Iran,IR,KhabarOnline,https://www.khabaronline.ir/rss/tp/52,Entertainment
+Iran,IR,KhabarOnline,https://www.khabaronline.ir/rss/tp/5,World/International
+Iran,IR,KhabarOnline,https://www.khabaronline.ir/rss/tp/6,Sports
+Iran,IR,KhabarOnline,https://www.khabaronline.ir/rss/tp/7,Science& technology
+Iraq,IQ,Al Hewar,https://www.ahewar.org/rss/default.asp?lt=22&i=0,National/Iraq
+Iraq,IQ,Al Hewar,https://www.ahewar.org/rss/default.asp?lt=22&i=7,Sports
+Iraq,IQ,Al Hewar,https://www.ahewar.org/rss/default.asp?lt=22&i=8,Business
+Italy,IT,Repubblica News,https://www.repubblica.it/rss/homepage/rss2.0.xml,MIX
+Jamica,JM,Gleaner,https://jamaica-star.com/feed/news.xml,National
+Jamica,JM,Gleaner,https://jamaica-gleaner.com/feed/business.xml,Business
+Jamica,JM,Gleaner,https://jamaica-gleaner.com/feed/ent.xml,Entertainment
+Jamica,JM,Gleaner,https://jamaica-gleaner.com/feed/sports.xml,Sports
+Japan,JP,Japan Today,https://japantoday.com/category/national/feed,National/Japan
+Japan,JP,Japan Today,https://japantoday.com/category/business/feed,Business
+Japan,JP,Japan Today,https://japantoday.com/category/world/feed,World/International
+Japan,JP,Japan Today,https://japantoday.com/category/sports/feed,Sports
+Japan,JP,Japan Today,https://japantoday.com/category/tech/feed,Science& technology
+Japan,JP,Japan Today,https://japantoday.com/category/entertainment/feed,Entertainment
+Jordan,JO,Ammon News,http://ammonnews.net/rss.php?type=news&id=50,National/Jordan
+Jordan,JO,Ammon News,https://www.ammonnews.net/rss.php?type=news&id=21,Health
+Jordan,JO,Ammon News,https://www.ammonnews.net/rss.php?type=news&id=47,Sports
+Jordan,JO,Ammon News,https://www.ammonnews.net/rss.php?type=news&id=77,Science& technology
+Jordan,JO,Ammon News,https://www.ammonnews.net/rss.php?type=news&id=16,Education
+Kazakhstan,KZ,Astana Times,https://astanatimes.com/category/nation/feed/,National
+Kazakhstan,KZ,Astana Times,https://astanatimes.com/category/international/feed/,International
+Kazakhstan,KZ,Astana Times,https://astanatimes.com/category/business/feed/,Business
+Kazakhstan,KZ,Astana Times,https://astanatimes.com/category/sports/feed/,Sports
+Kenya,KE,Nairobi Wire,https://nairobiwire.com/feed,Mix
+Kosovo,XK,Kosovo Online News,https://www.kosovo-online.com/rss.xml,
+Kuwait,KW,Kuwait News,https://kuwaitnews.com/category/kuwait-commute/feed/,National
+Kuwait,KW,Kuwait News,https://kuwaitnews.com/category/sience-tech/feed/,Science& technology
+Kuwait,KW,Kuwait News,https://kuwaitnews.com/category/health/feed/,Health
+Kuwait,KW,Kuwait News,https://kuwaitnews.com/category/sports/feed/,Sports
+Kuwait,KW,Kuwait News,https://kuwaitnews.com/category/education/feed/,Education
+Kuwait,KW,Kuwait News,https://kuwaitnews.com/category/world/feed/,World/International
+Kyrgyzstan,KG,AKI Press,https://akipress.com/reg:4/rss,National
+Kyrgyzstan,KG,AKI Press,https://akipress.com/cat:6/rss,Business
+Kyrgyzstan,KG,AKI Press,https://akipress.com/cat:10/rss,Sports
+Kyrgyzstan,KG,AKI Press,https://akipress.com/cat:16/rss,Education
+Kyrgyzstan,KG,AKI Press,https://akipress.com/cat:11/rss,Health
+Kyrgyzstan,KG,AKI Press,https://akipress.com/cat:12/rss,Science& technology
+Laos,LA,Laotian Times,https://laotiantimes.com/feed/,Mix
+Latvia,LV,Apollo News,https://www.apollo.lv/rss,MIx
+Lebanon,LB,AL Manar,https://english.almanar.com.lb/cat/news/lebanon/rss,National
+Lebanon,LB,AL Manar,https://www.almanar.com.lb/cat/international/rss,International
+Lebanon,LB,AL Manar,https://www.almanar.com.lb/cat/misc/%D8%A7%D9%82%D8%AA%D8%B5%D8%A7%D8%AF/rss,Business
+Libya,LY,Berniq News,https://brnieq.ly/?feed=rss2,Mix
+Liechtenstein,LI,Landesspiegel News,https://landesspiegel.li/feed/,MIX
+Lithuania,LT,Lrytas News,https://www.lrytas.lt/rss,MIx
+Macau,MO,Macao News,https://macaonews.org/news/business/feed/,Business
+Macau,MO,Macao News,https://macaonews.org/news/politics/feed/,National
+Macau,MO,Macao News,https://macaonews.org/life/sports/feed/,Sports
+Macau,MO,Macao News,https://macaonews.org/life/entertainment/feed/,Entertainment
+Malaysia,MY,Malay Mail,https://www.malaymail.com/feed/rss/malaysia,Natiaonal
+Malaysia,MY,Malay Mail,https://www.malaymail.com/feed/rss/world,World/International
+Malaysia,MY,Malay Mail,https://www.malaymail.com/feed/rss/showbiz,Showbiz
+Malaysia,MY,Malay Mail,https://www.malaymail.com/feed/rss/sports,Sports
+Malaysia,MY,Malay Mail,https://www.malaymail.com/feed/rss/tech-gadgets,Science& technology
+Malta,MT,Independent News,https://www.independent.com.mt/newsfeed,MIX
+Mauritus,MA,Maurice info,https://www.maurice-info.mu/feed,MIX
+Maxico,MX,Mexico News,https://mexiconewsdaily.com/feed/,Mix
+Moldova,MD,Moldpress News,https://www.moldpres.md/config/rss.php?lang=rom,MIX
+Monaco,MC,Monaco Tribune News,https://www.monaco-tribune.com/feed/,MIX
+Mongolia,MN,MNB,https://www.mnb.mn/rss,Mix
+Montenegro,ME,CDM News,https://www.cdm.me/feed/,MIX
+Moroco,MA,Oujda News,https://www.oujdacity.net/feed,MIX
+Myanmar,MM,GNLM,https://www.gnlm.com.mm/category/national/feed/,National
+Myanmar,MM,GNLM,https://www.gnlm.com.mm/category/business/feed/,Business
+Myanmar,MM,GNLM,https://www.gnlm.com.mm/category/sports/feed/,sports
+Myanmar,MM,GNLM,https://www.gnlm.com.mm/category/world/entertainment/feed/,Entertainment
+Namibia,NA,Informante,https://informante.web.na/?feed=rss2,MIX
+Nepal,NP,ONLINE KHABAR,https://www.onlinekhabar.com/content/news/rastiya/feed,National
+Nepal,NP,ONLINE KHABAR,https://www.onlinekhabar.com/business/feed,Business
+Nepal,NP,ONLINE KHABAR,https://www.onlinekhabar.com/entertainment/feed,Entertainment
+Netherlands,NL,Telegraaf News,https://www.telegraaf.nl/rss/,MIX
+New Zealand,NZ,RNZ News,https://www.rnz.co.nz/rss/national.xml,National
+New Zealand,NZ,RNZ News,https://www.rnz.co.nz/rss/world.xml,world
+New Zealand,NZ,RNZ News,https://www.rnz.co.nz/rss/business.xml,Business
+New Zealand,NZ,RNZ News,https://www.rnz.co.nz/rss/sport.xml,Sports
+North Korea,KP,North Korea Times,https://feeds.northkoreatimes.com/rss/08aysdf7tga9s7f7,Mix
+North Macedonia,MK,Balkaninsight News,https://balkaninsight.com/feed/,MIX
+Norway,NO,The Norwegain News,https://www.aftenposten.no/rss,MIx
+Oman,OM,Oman Daily,https://www.omandaily.om/rssFeed/39,Business
+Oman,OM,Oman Daily,https://www.omandaily.om/rssFeed/40,sports
+Oman,OM,Oman Daily,https://www.omandaily.om/rssFeed/-10,World
+Pakistan,PK,Express News,https://www.express.pk/feed/pakistan,National
+Pakistan,PK,Express News,https://www.express.pk/feed/sports,sports
+Pakistan,PK,Express News,https://www.express.pk/feed/world,world
+Pakistan,PK,Express News,https://www.express.pk/feed/saqafat,Entertainment
+Pakistan,PK,Express News,https://www.express.pk/feed/health,Health
+Palistine,PS,Pal Info,https://palinfo.com/feed/,Mix
+Panama,PA,News Room Panama,https://newsroompanama.com/feed/,Mix
+Paraguay,PY,Noticiascde,https://noticiascde.com.py/feed/,Mix
+Peru,PE,Caretas NEws,https://caretas.pe/feed/,MIx
+Philippines,PH,Manila Times,https://www.manilatimes.net/news/rssfeed,National
+Philippines,PH,Manila Times,https://www.manilatimes.net/world/rssfeed,world
+Philippines,PH,Manila Times,https://www.manilatimes.net/business/rssfeed,Business
+Philippines,PH,Manila Times,https://www.manilatimes.net/sports/rssfeed,sports
+Philippines,PH,Manila Times,https://www.manilatimes.net/entertainment-lifestyle/show-times/feed,Entertainment
+Poland,PL,Dziennikwschodni News,https://www.dziennikwschodni.pl/rss,Mix
+Portugal,PT,Portugul Resident,https://www.portugalresident.com/feed/,MIX
+Qatar,QA,Doha News,https://dohanews.co/category/news/feed/,National
+Qatar,QA,Doha News,https://dohanews.co/category/sports/feed/,sports
+Qatar,QA,Doha News,https://dohanews.co/category/science-technology/feed/,Health & Technology, ,,,,,,,,,,,,,,,,,,,,
+Romania,RO,Hot News,https://hotnews.ro/feed,MIX
+Rwanda,RW,Taarifa News,https://taarifa.rw/index.php/category/national/feed/,National
+Rwanda,RW,Taarifa News,https://taarifa.rw/index.php/category/business/feed/,Business
+Rwanda,RW,Taarifa News,https://taarifa.rw/index.php/category/politics/feed/,Politics
+Samoa,WS,Samoa News,https://samoanews.com/rss.xml,MIX
+Saudia arabia,SA,Saudia Gazette,https://saudigazette.com.sa/rssFeed/74,National
+Saudia arabia,SA,Saudia Gazette,https://saudigazette.com.sa/rssFeed/31,World
+Saudia arabia,SA,Saudia Gazette,https://saudigazette.com.sa/rssFeed/73,Business
+Saudia arabia,SA,Saudia Gazette,https://saudigazette.com.sa/rssFeed/45,Sports
+Saudia arabia,SA,Saudia Gazette,https://saudigazette.com.sa/rssFeed/72,Technology
+Serbia,RS,B92 News,https://www.b92.net/rss/lokal,National
+Serbia,RS,B92 News,https://www.b92.net/rss/b92/zdravlje,Health
+Serbia,RS,B92 News,https://www.b92.net/rss/b92/tehnopolis,Science& technology
+Serbia,RS,B92 News,https://www.b92.net/rss/biz,Business
+Serbia,RS,B92 News,https://www.b92.net/rss/sport,sports
+Seychelles,SC,Seychelles News,http://www.seychellesnewsagency.com/rss,MIX
+Singapore,SG,Singapore News,https://feeds.singaporenews.net/rss/a677a0718b69db72,Mix
+Slovakia,SK,Dennikn News,https://dennikn.sk/feed,Mix
+Slovenia,SI,24 Ur News,https://www.24ur.com/rss,MIX
+Solomon Islands,SB,Solomon Star,https://www.solomonstarnews.com/feed/,MIX
+South Africa,ZA,Mg News,https://mg.co.za/feed/,MIX
+South Korea,KR,Yonhap News,https://en.yna.co.kr/RSS/national.xml,NAtional
+South Korea,KR,Yonhap News,https://en.yna.co.kr/RSS/biz.xml,Business
+South Korea,KR,Yonhap News,https://en.yna.co.kr/RSS/sports.xml,Sports
+Spain,ES,EL Pias News Spain,https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/portada,MIX
+Srilanka,LK,Ada Derana,https://www.adaderana.lk/rss.php,MIX
+Suriname,SR,Star News,https://www.starnieuws.com/rss/starnieuws.rss,MIX
+Sweden,SE,Dagens Nyheter News,https://www.dn.se/rss/,MIX
+Switzerland,CH,The Local Switzerland,https://feeds.thelocal.com/rss/ch,MIX
+Syria,SY,Syria News,https://syria.news/rss.php,MIX
+Taiwan,TW,Taipei News,https://www.taipeitimes.com/xml/index.rss,MIX
+Tajikistan,TJ,Khovar News,https://khovar.tj/feed/,MIX
+Thailand,TH,Sanook News,https://rssfeeds.sanook.com/rss/feeds/sanook/news.index.xml,MIX
+Timor-Leste,TL,Tatoli 9,https://tatoli.tl/feed/,MIX
+Tonga,TO,TOT News,https://talanoaotonga.to/feed/,MIX
+Trinidad and Tobago,TT,News Day,https://newsday.co.tt/feed/,Mix
+Tunisia,TN,Web Manga center,https://www.webmanagercenter.com/feed/,Mix
+Turkmenistan,TM,Arzuw News,https://arzuw.news/category/sports/feed,Sports
+Turkmenistan,TM,Arzuw News,https://arzuw.news/category/economics/business/feed,Business
+Turkmenistan,TM,Arzuw News,https://arzuw.news/category/society/science-edu/feed,Science& technology
+Turkmenistan,TM,Arzuw News,https://arzuw.news/category/world/feed,world
+Turkmenistan,TM,Arzuw News,https://arzuw.news/category/politics/feed,national
+UAE,AE,Dubai Chronicle,https://www.dubaichronicle.com/feed/,MIX
+Uganda,UG,Independent News,https://www.independent.co.ug/feed/,Mix
+Ukraine,UA,Ulrinform News,https://www.ukrinform.net/rss/block-lastnews,Mix
+United Kingdom,UK,Sky News,http://feeds.skynews.com/feeds/rss/uk.xml,National
+United Kingdom,UK,Sky News,http://feeds.skynews.com/feeds/rss/world.xml,World/International
+United Kingdom,UK,Sky News,https://feeds.skynews.com/feeds/rss/business.xml,Business
+United Kingdom,UK,Sky News,https://feeds.skynews.com/feeds/rss/technology.xml,Science& technology
+United Kingdom,UK,Sky News,https://feeds.skynews.com/feeds/rss/entertainment.xml,Entertainment
+United State,US,US News,https://www.usnews.com/rss/news,National & WOrld
+United State,US,US News,https://www.usnews.com/rss/education,Educatiom
+United State,US,US News,https://www.usnews.com/rss/health,Health
+Uruguay,UY,EL Pias News,https://www.elpais.com.uy/rss/latest,MIX
+Uzbekistan,UZ,Nuz News,https://nuz.uz/feed/,Mix
+Vanuatu,VU,Vanuatu News Network,https://vanuatunewsnetwork.com/feed/,MIX
+Vietnam,VN,Tuoi Tre News,https://tuoitre.vn/rss/tin-moi-nhat.rss,Mix
+Yemen,YE,Yemenet Newa,https://yemenat.net/feed,Mix
+zimbabwe ,ZW,Heraldonline News,https://www.heraldonline.co.zw/feed/,MIx
+Pakistan,Pk,cointelegraph,https://cointelegraph.com/rss,Crypto

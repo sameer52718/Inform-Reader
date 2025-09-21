@@ -15,6 +15,12 @@ const bankCodeSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+bankCodeSchema.index({ slug: 1 }, { unique: true });
+bankCodeSchema.index({ countryId: 1, status: 1, isDeleted: 1 });
+bankCodeSchema.index({ countryId: 1, bank: 1 });
+bankCodeSchema.index({ swiftCode: 1 });
+bankCodeSchema.index({ bank: "text", city: "text" });
+
 const BankCode = mongoose.model('BankCode', bankCodeSchema);
 
 export default BankCode;

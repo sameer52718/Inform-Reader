@@ -27,6 +27,19 @@ const biographySchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+biographySchema.index({ isDeleted: 1, categoryId: 1 });
+biographySchema.index({ isDeleted: 1, subCategoryId: 1 });
+biographySchema.index({ isDeleted: 1, nationalityId: 1 });
+biographySchema.index({ name: 'text' });
+biographySchema.index({
+  'professionalInformation.name': 1,
+  'professionalInformation.value': 1,
+});
+biographySchema.index({
+  'personalInformation.name': 1,
+  'personalInformation.value': 1,
+});
+
 const Biography = mongoose.model('Biography', biographySchema);
 
 export default Biography;

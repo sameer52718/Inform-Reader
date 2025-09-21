@@ -9,6 +9,7 @@ const articleSchema = new mongoose.Schema(
     category: { type: mongoose.Types.ObjectId, ref: 'Category' },
     content: { type: String },
     source: { type: String, default: 'Google' },
+    type: {type: String, enum: ['news', 'blog'], default: 'blog' },
   },
   { timestamps: true },
 );

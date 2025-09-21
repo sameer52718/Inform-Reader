@@ -8,7 +8,8 @@ import BankCode from '../models/BankCode.js';
 import Country from '../models/Country.js';
 import Sitemap from '../models/Sitemap.js';
 import { fileURLToPath } from 'url';
-import path from "path"
+import path from 'path';
+import logger from "../logger.js"; 
 
 dotenv.config();
 
@@ -228,7 +229,7 @@ const processInBatches = async (docs, type, country, allFiles) => {
 
     await Sitemap.findOneAndUpdate({ fileName }, { fileName, type, country, batch, xmlContent: xml }, { upsert: true, new: true });
 
-    console.log(`✅ Saved ${fileName} (${chunk.length} records, size ${Buffer.byteLength(xml, 'utf-8') / 1024 / 1024} MB)`);
+    logger.info(`✅ Saved ${fileName} (${chunk.length} records, size ${(Buffer.byteLength(xml, 'utf-8') / 1024 / 1024).toFixed(2)} MB)`);
 
     allFiles.push(fileName);
     i += currentBatchSize;
@@ -239,10 +240,10 @@ const processInBatches = async (docs, type, country, allFiles) => {
 const generateForAllCountries = async (docs, type, allFiles) => {
   const tasks = Object.keys(supportedCountries).map(async (country) => {
     if (docs.length === 0) {
-      console.log(`⚠️ No ${type} records for ${country}, skipping...`);
+      logger.warn(`⚠️ No ${type} records for ${country}, skipping...`);
       return;
     }
-    console.log(`📝 Generating ${type} sitemaps for ${country} (${docs.length} records)`);
+    logger.info(`📝 Generating ${type} sitemaps for ${country} (${docs.length} records)`);
     await processInBatches(docs, type, country, allFiles);
   });
   await Promise.all(tasks);
@@ -270,16 +271,16 @@ ${sitemaps
     { upsert: true, new: true },
   );
 
-  console.log('📑 Generated global sitemap index in DB');
+  logger.info('📑 Generated global sitemap index in DB');
 };
 
 const pingGoogle = async (sitemapUrl) => {
   try {
     const encodedUrl = encodeURIComponent(sitemapUrl);
     await axios.get(`http://www.google.com/ping?sitemap=${encodedUrl}`);
-    console.log(`🚀 Pinged Google for ${sitemapUrl}`);
+    logger.info(`🚀 Pinged Google for ${sitemapUrl}`);
   } catch (err) {
-    console.error(`❌ Error pinging Google for ${sitemapUrl}:`, err.message);
+    logger.error(`❌ Error pinging Google for ${sitemapUrl}: ${err.message}`);
   }
 };
 
@@ -289,39 +290,39 @@ export const generateAllSitemaps = async () => {
     const allFiles = [];
 
     // ===== Postal Codes =====
-    console.log('🔄 Fetching postal codes...');
+    logger.info('🔄 Fetching postal codes...');
     const postals = await PostalCode.find({ isDeleted: false, status: true }).populate('countryId', 'slug').lean();
-    console.log(`📦 Total postal codes fetched: ${postals.length}`);
+    logger.info(`📦 Total postal codes fetched: ${postals.length}`);
     await generateForAllCountries(postals, 'postalcodes', allFiles);
 
     // ===== Swift Codes =====
-    console.log('🔄 Fetching bank codes...');
+    logger.info('🔄 Fetching bank codes...');
     const banks = await BankCode.find({ isDeleted: false, status: true }).populate('countryId', 'slug').lean();
-    console.log(`📦 Total bank codes fetched: ${banks.length}`);
+    logger.info(`📦 Total bank codes fetched: ${banks.length}`);
     await generateForAllCountries(banks, 'swiftcodes', allFiles);
 
     // ===== Names =====
-    console.log('🔄 Fetching names...');
+    logger.info('🔄 Fetching names...');
     const names = await Name.find({ isDeleted: false, status: true }).lean();
-    console.log(`📦 Total names fetched: ${names.length}`);
+    logger.info(`📦 Total names fetched: ${names.length}`);
     await generateForAllCountries(names, 'names', allFiles);
 
     // ===== Software =====
-    console.log('🔄 Fetching software...');
+    logger.info('🔄 Fetching software...');
     const softwares = await Software.find({ isDeleted: false, status: true }).lean();
-    console.log(`📦 Total software fetched: ${softwares.length}`);
+    logger.info(`📦 Total software fetched: ${softwares.length}`);
     await generateForAllCountries(softwares, 'software', allFiles);
 
     // ===== Global Index =====
-    console.log('🗂 Generating global sitemap index...');
+    logger.info('🗂 Generating global sitemap index...');
     await generateGlobalSitemapIndex();
 
     // ===== Ping Google =====
-    console.log('📡 Pinging Google with sitemap index...');
+    logger.info('📡 Pinging Google with sitemap index...');
     await pingGoogle('https://api.informreaders.com/sitemaps/sitemap-index.xml');
 
-    console.log('🎉 All sitemaps and global index generated successfully!');
+    logger.info('🎉 All sitemaps and global index generated successfully!');
   } catch (err) {
-    console.error('❌ Error generating sitemaps:', err);
+    logger.error(`❌ Error generating sitemaps: ${err.message}`);
   }
 };

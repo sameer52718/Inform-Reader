@@ -9,11 +9,20 @@ const postalCodeSchema = new mongoose.Schema(
     code: { type: String, required: true, uppercase: true, trim: true },
     status: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
-    slug: { type: String, trim: true, index: true, unique: true },
+    slug: { type: String, trim: true, index: true },
   },
   { timestamps: true },
 );
 
-postalCodeSchema.index({ countryId: 1, state: 1 });
+postalCodeSchema.index({
+  countryId: 1,
+  state: 1,
+  status: 1,
+  isDeleted: 1,
+});
+postalCodeSchema.index({ code: 1 });
+postalCodeSchema.index({ area: 1 });
+postalCodeSchema.index({ slug: 1 });
+
 
 export default mongoose.model('PostalCode', postalCodeSchema);

@@ -28,6 +28,24 @@ const bikeSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+bikeSchema.index({
+  status: 1,
+  isDeleted: 1,
+  makeId: 1,
+  vehicleType: 1,
+  year: 1,
+});
+
+bikeSchema.index({
+  status: 1,
+  isDeleted: 1,
+  categoryId: 1,
+});
+
+bikeSchema.index({
+  name: 'text',
+});
+
 const Vehicle = mongoose.model('Bike', bikeSchema);
 
 export default Vehicle;

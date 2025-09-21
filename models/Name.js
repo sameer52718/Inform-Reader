@@ -39,7 +39,14 @@ nameSchema.index({
 });
 
 nameSchema.index({ slug: 1 }, { unique: true });
+nameSchema.index({
+  categoryId: 1,
+  gender: 1,
+  initialLetter: 1,
+  status: 1,
+  isDeleted: 1,
+});
+nameSchema.index({ name: 1 });
 
 const Name = mongoose.model('Name', nameSchema);
-
 export default Name;

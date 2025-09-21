@@ -15,26 +15,45 @@ class ArticleController extends BaseController {
 
   async getByCountry(req, res, next) {
     try {
-      const clientIP = req.headers['x-forwarded-for']?.split(',')[0] || req.ip;
-      console.log(clientIP, req.ip, req.headers['x-forwarded-for']?.split(',')[0]);
+      const origin = req.headers.origin || req.get('origin') || '';
+      let subdomainCountryCode = null;
 
-      const geo = geoip.lookup(clientIP);
-      const countryCode = geo?.country?.toUpperCase();
-
-      const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 10;
-      const skip = (page - 1) * limit;
+      if (origin) {
+        try {
+          const hostname = new URL(origin).hostname; // e.g., pk.informreaders.com
+          const parts = hostname.split('.');
+          if (parts.length > 2) {
+            subdomainCountryCode = parts[0].toUpperCase(); // "pk", "in", "us"
+          }
+        } catch (parseErr) {
+          // If origin is not a valid URL, ignore
+        }
+      }
 
       let country = null;
       const filters = {};
 
-      if (countryCode) {
-        country = await Country.findOne({ countryCode });
-        if (country) {
-          filters.country = country._id;
+      if (subdomainCountryCode) {
+        country = await Country.findOne({ countryCode: subdomainCountryCode.toLowerCase() });
+      }
+
+      // Fallback to IP-based lookup if subdomain country not found
+      if (!country) {
+        const clientIP = req.headers['x-forwarded-for']?.split(',')[0] || req.ip;
+        const geo = geoip.lookup(clientIP);
+        const ipCountryCode = geo?.country?.toUpperCase();
+
+        if (ipCountryCode) {
+          country = await Country.findOne({ countryCode: ipCountryCode.toLowerCase() });
         }
       }
 
+      if (country) {
+        filters.country = country._id;
+      }
+      console.log("Aricle Filters",filters);
+      
+      // ===== Type and Category Filters =====
       const type = await Type.findOne({ name: 'News' });
       if (!type) {
         return res.status(404).json({
@@ -45,8 +64,12 @@ class ArticleController extends BaseController {
 
       const categories = await Category.find({ typeId: type._id });
       const categoryIds = categories.map((cat) => cat._id);
-
       filters.category = { $in: categoryIds };
+
+      // ===== Fetch Articles =====
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
 
       const totalArticles = await Article.countDocuments(filters);
       const totalPages = Math.ceil(totalArticles / limit);
@@ -56,7 +79,7 @@ class ArticleController extends BaseController {
       return res.status(200).json({
         error: false,
         country: country?.name || 'Unknown',
-        categories: articles,
+        articles,
         pagination: {
           totalItems: totalArticles,
           currentPage: page,
