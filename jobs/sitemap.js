@@ -6,7 +6,8 @@ import Software from '../models/Software.js';
 import PostalCode from '../models/PostalCode.js';
 import BankCode from '../models/BankCode.js';
 import Biography from '../models/Biography.js';
-import Country from '../models/Country.js';
+import Bike from '../models/Bike.js';
+import Car from '../models/Vehicle.js';
 import Sitemap from '../models/Sitemap.js';
 import { fileURLToPath } from 'url';
 import path from 'path';
@@ -45,6 +46,10 @@ ${items
       loc = `https://${countrySlug}.informreaders.com/swiftcode/${countrySlug}/${item.slug}`;
     } else if (type === 'biographies') {
       loc = `https://${country}.informreaders.com/biography/${item.slug}`;
+    } else if (type === 'bikes') {
+      loc = `https://${country}.informreaders.com/bikes/${item.slug}`;
+    } else if (type === 'cars') {
+      loc = `https://${country}.informreaders.com/cars/${item.slug}`;
     }
 
     return `
@@ -86,7 +91,6 @@ const processInBatches = async (docs, type, country, allFiles) => {
 
     let xml = buildXml(type, country, chunk);
 
-    // shrink batch until XML fits
     while (Buffer.byteLength(xml, 'utf-8') > MAX_DOC_SIZE && currentBatchSize > 1000) {
       currentBatchSize = Math.floor(currentBatchSize / 2);
       chunk = docs.slice(i, i + currentBatchSize);
@@ -132,11 +136,7 @@ const generateStaticPagesSitemap = async (allFiles) => {
 };
 
 const generateGlobalSitemapIndex = async () => {
-  // ❌ Exclude the sitemap-index.xml itself
-  const sitemaps = await Sitemap.find(
-    { fileName: { $ne: 'sitemap-index.xml' } }, // ✅ exclude self
-    'fileName updatedAt',
-  ).sort({ updatedAt: -1 });
+  const sitemaps = await Sitemap.find({ fileName: { $ne: 'sitemap-index.xml' } }, 'fileName updatedAt').sort({ updatedAt: -1 });
 
   const index = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -153,13 +153,7 @@ ${sitemaps
 
   await Sitemap.findOneAndUpdate(
     { fileName: 'sitemap-index.xml' },
-    {
-      fileName: 'sitemap-index.xml',
-      type: 'index',
-      country: 'global',
-      batch: 0,
-      xmlContent: index,
-    },
+    { fileName: 'sitemap-index.xml', type: 'index', country: 'global', batch: 0, xmlContent: index },
     { upsert: true, new: true },
   );
 
@@ -185,10 +179,23 @@ export const generateAllSitemaps = async () => {
     logger.info('🔄 Generating static pages sitemaps...');
     await generateStaticPagesSitemap(allFiles);
 
+    // ===== Biographies =====
     logger.info('🔄 Fetching biographies...');
     const biographies = await Biography.find({ isDeleted: false, status: true }).select('slug updatedAt').lean();
     logger.info(`📦 Total biographies fetched: ${biographies.length}`);
     await generateForAllCountries(biographies, 'biographies', allFiles);
+
+    // ===== Bikes =====
+    logger.info('🔄 Fetching bikes...');
+    const bikes = await Bike.find({ isDeleted: false, status: true }).select('slug updatedAt').lean();
+    logger.info(`📦 Total bikes fetched: ${bikes.length}`);
+    await generateForAllCountries(bikes, 'bikes', allFiles);
+
+    // ===== Cars =====
+    logger.info('🔄 Fetching cars...');
+    const cars = await Car.find({ isDeleted: false, status: true }).select('slug updatedAt').lean();
+    logger.info(`📦 Total cars fetched: ${cars.length}`);
+    await generateForAllCountries(cars, 'cars', allFiles);
 
     // ===== Postal Codes =====
     logger.info('🔄 Fetching postal codes...');
