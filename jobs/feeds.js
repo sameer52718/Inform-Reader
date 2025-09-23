@@ -70,7 +70,7 @@ async function startCron() {
     });
 
     // News fetching cron job
-    cron.schedule("0 0 * * *", async () => {
+    cron.schedule("0 */4 * * *", async () => {
       logger.info(`[Cron] Running feed fetch at ${new Date().toISOString()}`);
 
       for (const feed of feeds) {
