@@ -1,18 +1,19 @@
-import fs from "fs";
-import csv from "csv-parser";
-import Parser from "rss-parser";
-import cron from "node-cron";
+import fs from 'fs';
+import csv from 'csv-parser';
+import Parser from 'rss-parser';
+import cron from 'node-cron';
 
-import Article from "../models/Article.js";
-import Country from "../models/Country.js";
-import Type from "../models/Type.js";
-import Category from "../models/Category.js";
+import Article from '../models/Article.js';
+import Country from '../models/Country.js';
+import Type from '../models/Type.js';
+import Category from '../models/Category.js';
 
-import { fetchAndSaveCurrencyRates } from "../utils/fetchCurrency.js";
-import { fetchAndSaveMetalPrices } from "../utils/fetchMetalPrice.js";
-import { generateAllSitemaps } from "./sitemap.js";
+import { fetchAndSaveCurrencyRates } from '../utils/fetchCurrency.js';
+import { fetchAndSaveMetalPrices } from '../utils/fetchMetalPrice.js';
+import { generateAllSitemaps } from './sitemap.js';
+import * as cheerio from 'cheerio';
 
-import logger from "../logger.js"; // ✅ Import Winston logger
+import logger from '../logger.js';
 
 const parser = new Parser();
 
@@ -21,9 +22,9 @@ function parseCsv(filePath) {
     const feeds = [];
     fs.createReadStream(filePath)
       .pipe(csv())
-      .on("data", (row) => feeds.push(row))
-      .on("end", () => resolve(feeds))
-      .on("error", (err) => {
+      .on('data', (row) => feeds.push(row))
+      .on('end', () => resolve(feeds))
+      .on('error', (err) => {
         logger.error(`[CSV] Failed to parse file ${filePath}: ${err.message}`);
         reject(err);
       });
@@ -32,30 +33,28 @@ function parseCsv(filePath) {
 
 function cleanContentSnippet(snippet, removeSources = false) {
   const lines = snippet
-    .split("\n")
+    .split('\n')
     .map((line) => line.trim())
     .filter((line) => line.length > 0);
 
   const uniqueLines = [...new Set(lines)];
 
   if (removeSources) {
-    return uniqueLines.map((line) =>
-      line.replace(/\s{2,}.*$/, "").replace(/\s*[-|–]\s*.*$/, "")
-    );
+    return uniqueLines.map((line) => line.replace(/\s{2,}.*$/, '').replace(/\s*[-|–]\s*.*$/, ''));
   }
 
-  return uniqueLines.join(" ");
+  return uniqueLines.join(' ');
 }
 
 async function startCron() {
   try {
-    const feeds = await parseCsv("./jobs/google_news_rss.csv");
+    const feeds = await parseCsv('./jobs/google_news_rss.csv');
     logger.info(`[Init] Loaded ${feeds.length} RSS feed entries.`);
 
     const countryMap = new Map();
     const categoryMap = new Map();
 
-    const type = await Type.findOne({ name: "News" });
+    const type = await Type.findOne({ name: 'News' });
     if (!type) throw new Error("Type 'News' not found in database.");
 
     const categories = await Category.find({ typeId: type._id });
@@ -70,19 +69,17 @@ async function startCron() {
     });
 
     // News fetching cron job
-    cron.schedule("0 */4 * * *", async () => {
+    cron.schedule('0 */4 * * *', async () => {
       logger.info(`[Cron] Running feed fetch at ${new Date().toISOString()}`);
 
       for (const feed of feeds) {
-        const feedUrl = feed["RSS Feed URL"];
-        const feedCategoryName = feed["Category"]?.trim() || "General";
-        const countryCode = feed["Country Code"]?.toUpperCase();
+        const feedUrl = feed['RSS Feed URL'];
+        const feedCategoryName = feed['Category']?.trim() || 'General';
+        const countryCode = feed['Country Code']?.toUpperCase();
         const country = countryMap.get(countryCode);
 
         if (!country) {
-          logger.warn(
-            `[Warn] Country code '${countryCode}' not found. Skipping feed: ${feedUrl}`
-          );
+          logger.warn(`[Warn] Country code '${countryCode}' not found. Skipping feed: ${feedUrl}`);
           continue;
         }
 
@@ -112,6 +109,20 @@ async function startCron() {
                 categoryMap.set(feedCategoryName.toLowerCase(), category);
               }
 
+              let imageUrl = null;
+
+              for (const [key, value] of Object.entries(item)) {
+                if (typeof value === 'string' && value.includes('<img')) {
+                  const $ = cheerio.load(value);
+                  const imgTag = $('img').first(); // pick first <img>
+                  if (imgTag && imgTag.attr('src')) {
+                    imageUrl = imgTag.attr('src');
+                    logger.info(`[Image] Found in key "${key}": ${imageUrl}`);
+                    break; // stop after first match
+                  }
+                }
+              }
+
               const articleData = {
                 title: item.title,
                 link: item.link,
@@ -119,21 +130,18 @@ async function startCron() {
                 country: country._id,
                 category: category._id,
                 content: cleanContentSnippet(item.contentSnippet),
-                source: feed["source"] || "Google",
-                type: feedCategoryName === "Crypto" ? "blog" : "news",
+                source: feed['source'] || 'Google',
+                type: feedCategoryName === 'Crypto' ? 'blog' : 'news',
+                image: imageUrl,
               };
 
               await Article.create(articleData);
               logger.info(`[Add] Article added: ${item.title}`);
             } catch (createErr) {
               if (createErr.code === 11000) {
-                logger.warn(
-                  `[Duplicate] Skipped duplicate article: ${item.link} [${countryCode}]`
-                );
+                logger.warn(`[Duplicate] Skipped duplicate article: ${item.link} [${countryCode}]`);
               } else {
-                logger.error(
-                  `[Error] Failed to save article '${item.title}': ${createErr.message}`
-                );
+                logger.error(`[Error] Failed to save article '${item.title}': ${createErr.message}`);
               }
             }
           }
@@ -145,19 +153,19 @@ async function startCron() {
     });
 
     // Currency cron job
-    cron.schedule("0 0 * * *", () => {
+    cron.schedule('0 0 * * *', () => {
       logger.info(`[Cron] Running Currency fetch at ${new Date().toISOString()}`);
       fetchAndSaveCurrencyRates();
     });
 
     // Metals cron job
-    cron.schedule("0 0 * * *", () => {
+    cron.schedule('0 0 * * *', () => {
       logger.info(`[Cron] Running Metals fetch at ${new Date().toISOString()}`);
       fetchAndSaveMetalPrices();
     });
 
     // Sitemap cron job
-    cron.schedule("0 0 * * *", () => {
+    cron.schedule('0 0 * * *', () => {
       logger.info(`[Cron] Running Sitemap generation at ${new Date().toISOString()}`);
       generateAllSitemaps();
     });
