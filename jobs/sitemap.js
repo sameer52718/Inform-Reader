@@ -50,6 +50,12 @@ ${items
       loc = `https://${country}.informreaders.com/bikes/${item.slug}`;
     } else if (type === 'cars') {
       loc = `https://${country}.informreaders.com/cars/${item.slug}`;
+    } else if (type === 'leagues') {
+      loc = `https://${country}.informreaders.com/sports/leagues/${item.idLeague}`;
+    } else if (type === 'teams') {
+      loc = `https://${country}.informreaders.com/sports/teams/${item.idTeam}`;
+    } else if (type === 'players') {
+      loc = `https://${country}.informreaders.com/sports/players/${item.idPlayer}`;
     }
 
     return `
@@ -178,6 +184,24 @@ export const generateAllSitemaps = async () => {
     // ===== Static Pages =====
     logger.info('🔄 Generating static pages sitemaps...');
     await generateStaticPagesSitemap(allFiles);
+
+    // ===== Leagues =====
+    logger.info('🔄 Fetching leagues...');
+    const leagues = await League.find({ status: true }).select('idLeague updatedAt').lean();
+    logger.info(`📦 Total leagues fetched: ${leagues.length}`);
+    await generateForAllCountries(leagues, 'leagues', allFiles);
+
+    // ===== Teams =====
+    logger.info('🔄 Fetching teams...');
+    const teams = await Team.find({ status: true }).select('idTeam updatedAt').lean();
+    logger.info(`📦 Total teams fetched: ${teams.length}`);
+    await generateForAllCountries(teams, 'teams', allFiles);
+
+    // ===== Players =====
+    logger.info('🔄 Fetching players...');
+    const players = await Player.find({ status: 'Active' }).select('idPlayer updatedAt').lean();
+    logger.info(`📦 Total players fetched: ${players.length}`);
+    await generateForAllCountries(players, 'players', allFiles);
 
     // ===== Biographies =====
     logger.info('🔄 Fetching biographies...');

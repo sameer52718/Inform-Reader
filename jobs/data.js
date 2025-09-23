@@ -54,6 +54,10 @@ export const staticPages = [
   { path: '/weather', priority: 0.8, changefreq: 'hourly' },
   { path: '/blogs', priority: 0.8, changefreq: 'hourly' },
   { path: '/biography', priority: 0.8, changefreq: 'weekly' },
+  { path: '/sports', priority: 0.8, changefreq: 'weekly' },
+  { path: '/sports/leagues', priority: 0.8, changefreq: 'weekly' },
+  { path: '/sports/teams', priority: 0.8, changefreq: 'weekly' },
+  { path: '/sports/players', priority: 0.8, changefreq: 'weekly' },
   {
     path: '/tools/image-tools/remove-watermark',
     priority: 0.5,
