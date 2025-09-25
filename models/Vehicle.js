@@ -30,6 +30,14 @@ const vehicleSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+vehicleSchema.index({ slug: 1, status: 1, isDeleted: 1 }, { unique: true });
+vehicleSchema.index({ status: 1, isDeleted: 1, categoryId: 1 });
+vehicleSchema.index({ status: 1, isDeleted: 1, makeId: 1 });
+vehicleSchema.index({ status: 1, isDeleted: 1, modelId: 1 });
+vehicleSchema.index({ status: 1, isDeleted: 1, vehicleType: 1 });
+vehicleSchema.index({ status: 1, isDeleted: 1, year: 1 });
+vehicleSchema.index({ name: 'text' }); 
+
 const Vehicle = mongoose.model('Vehicle', vehicleSchema);
 
 export default Vehicle;
