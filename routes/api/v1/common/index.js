@@ -16,4 +16,10 @@ router.get('/config', commonController.getConfig);
 router.get('/city', commonController.cities);
 router.get('/nationality', commonController.nationality);
 router.post('/translate', commonController.translateContent);
+
+
+router.get('/advertiser', commonController.advertiser);
+router.get('/coupon', commonController.coupon);
+
+
 export default router;

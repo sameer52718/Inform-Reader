@@ -34,42 +34,42 @@ function buildXml(type, country, items) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${items
-  .map((item) => {
-    let loc = '';
-    if (type === 'names') {
-      loc = `https://${country}.informreaders.com/names/${item.slug}`;
-    } else if (type === 'software') {
-      loc = `https://${country}.informreaders.com/software/${item.slug}`;
-    } else if (type === 'postalcodes') {
-      const countrySlug = item.countryId?.slug || country;
-      const statePart = item.state ? encodeURIComponent(item.state) : '';
-      loc = `https://${countrySlug}.informreaders.com/postalcode/${countrySlug}/${statePart}/${item.slug}`;
-    } else if (type === 'swiftcodes') {
-      const countrySlug = item.countryId?.slug || country;
-      loc = `https://${countrySlug}.informreaders.com/swiftcode/${countrySlug}/${item.slug}`;
-    } else if (type === 'biographies') {
-      loc = `https://${country}.informreaders.com/biography/${item.slug}`;
-    } else if (type === 'bikes') {
-      loc = `https://${country}.informreaders.com/bikes/${item.slug}`;
-    } else if (type === 'cars') {
-      loc = `https://${country}.informreaders.com/cars/${item.slug}`;
-    } else if (type === 'leagues') {
-      loc = `https://${country}.informreaders.com/sports/leagues/${item.idLeague}`;
-    } else if (type === 'teams') {
-      loc = `https://${country}.informreaders.com/sports/teams/${item.idTeam}`;
-    } else if (type === 'players') {
-      loc = `https://${country}.informreaders.com/sports/players/${item.idPlayer}`;
-    }
+      .map((item) => {
+        let loc = '';
+        if (type === 'names') {
+          loc = `https://${country}.informreaders.com/names/${item.slug}`;
+        } else if (type === 'software') {
+          loc = `https://${country}.informreaders.com/software/${item.slug}`;
+        } else if (type === 'postalcodes') {
+          const countrySlug = item.countryId?.slug || country;
+          const statePart = item.state ? encodeURIComponent(item.state) : '';
+          loc = `https://${countrySlug}.informreaders.com/postalcode/${countrySlug}/${statePart}/${item.slug}`;
+        } else if (type === 'swiftcodes') {
+          const countrySlug = item.countryId?.slug || country;
+          loc = `https://${countrySlug}.informreaders.com/swiftcode/${countrySlug}/${item.slug}`;
+        } else if (type === 'biographies') {
+          loc = `https://${country}.informreaders.com/biography/${item.slug}`;
+        } else if (type === 'bikes') {
+          loc = `https://${country}.informreaders.com/bikes/${item.slug}`;
+        } else if (type === 'cars') {
+          loc = `https://${country}.informreaders.com/cars/${item.slug}`;
+        } else if (type === 'leagues') {
+          loc = `https://${country}.informreaders.com/sports/leagues/${item.idLeague}`;
+        } else if (type === 'teams') {
+          loc = `https://${country}.informreaders.com/sports/teams/${item.idTeam}`;
+        } else if (type === 'players') {
+          loc = `https://${country}.informreaders.com/sports/players/${item.idPlayer}`;
+        }
 
-    return `
+        return `
   <url>
     <loc>${loc}</loc>
     <lastmod>${new Date(item.updatedAt || Date.now()).toISOString()}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>`;
-  })
-  .join('')}
+      })
+      .join('')}
 </urlset>`;
 }
 
@@ -77,16 +77,16 @@ function buildStaticPagesXml(country) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${staticPages
-  .map(
-    (page) => `
+      .map(
+        (page) => `
   <url>
     <loc>https://${country}.informreaders.com${page.path}</loc>
     <lastmod>${new Date().toISOString()}</lastmod>
     <changefreq>${page.changefreq}</changefreq>
     <priority>${page.priority}</priority>
   </url>`,
-  )
-  .join('')}
+      )
+      .join('')}
 </urlset>`;
 }
 
@@ -150,14 +150,14 @@ const generateGlobalSitemapIndex = async () => {
   const index = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${sitemaps
-  .map(
-    (sm) => `
+      .map(
+        (sm) => `
   <sitemap>
     <loc>https://api.informreaders.com/sitemaps/${sm.fileName}</loc>
     <lastmod>${new Date(sm.updatedAt).toISOString()}</lastmod>
   </sitemap>`,
-  )
-  .join('')}
+      )
+      .join('')}
 </sitemapindex>`;
 
   await Sitemap.findOneAndUpdate(
