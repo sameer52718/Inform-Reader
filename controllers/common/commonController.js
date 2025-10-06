@@ -17,6 +17,8 @@ import { parseStringPromise } from 'xml2js';
 import qs from "qs";
 import { XMLParser } from "fast-xml-parser";
 import dotenv from 'dotenv';
+import CouponFeed from "../../models/CouponFeed.js";
+
 dotenv.config();
 
 class CommonController extends BaseController {
@@ -132,7 +134,7 @@ class CommonController extends BaseController {
         scope: "4571385",
       });
 
-      // Step 1: get token
+      // Step 1: Get token
       const tokenResponse = await axios.post("https://api.linksynergy.com/token", data, {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -142,18 +144,16 @@ class CommonController extends BaseController {
 
       const accessToken = tokenResponse.data.access_token;
 
-      // Step 2: get coupons
+      // Step 2: Get coupons
       const couponUrl = "https://api.linksynergy.com/coupon/1.0";
       const couponParams = {
         sid: process.env.RAKUTEN_PUBLISHER_SID,
-        // resultsperpage: 10,
-        // pagenumber: 1,
       };
 
       const couponResponse = await axios.get(couponUrl, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          Accept: "application/xml", // it gives XML anyway
+          Accept: "application/xml",
         },
         params: couponParams,
       });
@@ -162,10 +162,42 @@ class CommonController extends BaseController {
       const parser = new XMLParser();
       const couponData = parser.parse(couponResponse.data);
 
-      const advertiseResponse = await axios.get('https://api.linksynergy.com/v2/advertisers', {
+      // Extract coupons
+      const links = couponData?.couponfeed?.link || [];
+
+      if (links.length > 0) {
+        // Step 4: Save each coupon to DB
+        for (const link of links) {
+          const existing = await CouponFeed.findOne({
+            advertiserid: link.advertiserid,
+            offerdescription: link.offerdescription,
+            couponcode: link.couponcode,
+          });
+
+          // Avoid duplicates
+          if (!existing) {
+            await CouponFeed.create({
+              categories: link.categories || {},
+              promotiontypes: link.promotiontypes || {},
+              offerdescription: link.offerdescription,
+              offerstartdate: link.offerstartdate,
+              offerenddate: link.offerenddate,
+              couponcode: link.couponcode || null,
+              clickurl: link.clickurl,
+              impressionpixel: link.impressionpixel,
+              advertiserid: link.advertiserid,
+              advertisername: link.advertisername,
+              network: link.network,
+            });
+          }
+        }
+      }
+
+      // Step 5: Fetch advertiser info (optional)
+      const advertiseResponse = await axios.get("https://api.linksynergy.com/v2/advertisers", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          Accept: "application/xml", // it gives XML anyway
+          Accept: "application/xml",
         },
       });
       const advertiseData = parser.parse(advertiseResponse.data);
@@ -174,7 +206,7 @@ class CommonController extends BaseController {
         error: false,
         token: tokenResponse.data,
         coupons: couponData,
-        advertiseData
+        advertiseData,
       });
     } catch (error) {
       console.error("Error:", error.response?.data || error.message);
