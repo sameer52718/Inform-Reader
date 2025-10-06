@@ -21,6 +21,22 @@ app.use('/uploads', express.static('uploads'));
 app.use('/youtubeVideos', express.static('youtubeVideos'));
 
 connectDB();
+
+const allowedOrigins = ['http://localhost:3000', 'https://informreaders.com', 'https://*.informreaders.com'];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin) || allowedOrigins.some((o) => o.includes('*') && origin.endsWith(o.replace('*.', '')))) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  credentials: true,
+};
+
 app.use(cors());
 app.use(morgan('common'));
 app.use(express.json({ limit: '100mb' }));
