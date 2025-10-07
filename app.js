@@ -9,6 +9,7 @@ import ApiV1Router from './routes/api/v1/index.js';
 import connectDB from './db/index.js';
 import { initializeSocket } from './socket.js';
 import startCron from './jobs/feeds.js';
+import { runSyncJob, startCronJob } from './jobs/murchant.js';
 import { getSitemap } from './controllers/website/SitemapController.js';
 
 const app = express();
@@ -46,6 +47,16 @@ app.get('/', (req, res) => {
   res.send('Hello, world!');
 });
 
+
+app.get('/sync-merchants', async (req, res) => {
+  try {
+    await runSyncJob();
+    res.status(200).json({ message: 'Merchant sync job completed successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to run merchant sync job', details: error.message });
+  }
+});
+
 app.get('/sitemaps/:filename', getSitemap);
 app.use('/api/v1', ApiV1Router);
 
@@ -67,6 +78,7 @@ function getLocalIP() {
   }
   return 'localhost';
 }
+
 
 startCron();
 server.listen(PORT, () => {

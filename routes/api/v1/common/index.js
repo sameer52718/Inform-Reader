@@ -20,6 +20,8 @@ router.post('/translate', commonController.translateContent);
 
 router.get('/advertiser', commonController.advertiser);
 router.get('/coupon', commonController.coupon);
+router.get('/myAdvertiser', commonController.myAdvertiser);
+router.get('/offer', commonController.getAllOffers);
 
 
 export default router;

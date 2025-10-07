@@ -1,0 +1,21 @@
+import mongoose from "mongoose";
+
+const merchantSchema = new mongoose.Schema({
+    advertiserId: { type: Number, required: true, unique: true },
+    name: String,
+    url: String,
+    description: String,
+    can_partner: Boolean,
+    contact: {
+        name: String,
+        job_title: String,
+        email: String,
+        phone: String,
+        country: String,
+    },
+    policies: Object,
+    features: Object,
+    network: Object,
+}, { timestamps: true });
+
+export default mongoose.model("Merchant", merchantSchema);

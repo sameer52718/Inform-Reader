@@ -18,7 +18,7 @@ import qs from "qs";
 import { XMLParser } from "fast-xml-parser";
 import dotenv from 'dotenv';
 import CouponFeed from "../../models/CouponFeed.js";
-
+import Merchant from "../../models/Merchant.js";
 dotenv.config();
 
 class CommonController extends BaseController {
@@ -38,7 +38,9 @@ class CommonController extends BaseController {
     this.translateContent = this.translateContent.bind(this);
     this.nationality = this.nationality.bind(this);
     this.advertiser = this.advertiser.bind(this);
+    this.myAdvertiser = this.myAdvertiser.bind(this);
     this.coupon = this.coupon.bind(this);
+    this.getAllOffers = this.getAllOffers.bind(this);
   }
 
   async advertiser(req, res, next) {
@@ -123,6 +125,179 @@ class CommonController extends BaseController {
       });
     }
   }
+
+  async myAdvertiser(req, res, next) {
+    try {
+      const bearerToken =
+        "TVhIUmdPenFyUVdJRTREOUttQ3k2ZE1FZ0xhc1VwMTY6QUlUemxGQjk4b0dBY0VneVdWVnpPRWFoR1BCZGNVNGk=";
+
+      const data = qs.stringify({
+        grant_type: "password",
+        scope: "4571385",
+      });
+
+      // Step 1: Get token
+      const tokenResponse = await axios.post("https://api.linksynergy.com/token", data, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer ${bearerToken}`,
+        },
+      });
+
+      const accessToken = tokenResponse.data.access_token;
+
+
+      const keyword = req.query.keyword || ''; // Optional: from query string
+      const status = 'approved'; // Fetch only approved advertisers
+      const headers = {
+        authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json', // v2 uses JSON
+      };
+
+      const response = await axios.get(`https://api.linksynergy.com/advertisersearch/1.0?merchantname=${keyword}`, { headers, });
+      // const response = await axios.get(`https://api.linksynergy.com/v2/advertisers/815`, { headers, });
+
+      const parser = new XMLParser();
+      const advertisers = parser.parse(response.data);
+      console.log(advertisers.result.midlist.merchant);
+      
+      for (const ad of advertisers.result.midlist.merchant) {
+        try {
+          const response = await axios.get(
+            `https://api.linksynergy.com/v2/advertisers/${ad.mid}`,
+            { headers }
+          );
+          const advertiserInfo = response.data?.advertiser;
+          console.log(advertiserInfo);
+          await Merchant.findOneAndUpdate(
+            { advertiserId: advertiserInfo.id },
+            {
+              advertiserId: advertiserInfo.id,
+              name: advertiserInfo.name,
+              url: advertiserInfo.url,
+              description: advertiserInfo.description,
+              can_partner: advertiserInfo.can_partner,
+              contact: advertiserInfo.contact || {},
+              policies: advertiserInfo.policies || {},
+              features: advertiserInfo.features || {},
+              network: advertiserInfo.network || {},
+            },
+            { upsert: true, new: true }
+          );
+          console.log(`Stored/Updated: ${advertiserInfo.name}`);
+        } catch (innerErr) {
+          console.error(`Failed to fetch advertiser ${ad.mid}:`, innerErr.message);
+        }
+      }
+
+      return res.json({
+        error: false,
+        data: advertisers, // JSON data directly
+      });
+
+    } catch (error) {
+      console.error('Error:', error.response?.data || error.message);
+      return res.status(error.response?.status || 500).json({
+        error: true,
+        message: error.message || 'Internal Server Error',
+      });
+    }
+  }
+
+  // async myAdvertiser(req, res, next) {
+  //   try {
+  //     // 1️⃣ Generate Access Token
+  //     const bearerToken =
+  //       "TVhIUmdPenFyUVdJRTREOUttQ3k2ZE1FZ0xhc1VwMTY6QUlUemxGQjk4b0dBY0VneVdWVnpPRWFoR1BCZGNVNGk=";
+
+  //     const tokenData = qs.stringify({
+  //       grant_type: "password",
+  //       scope: "4571385",
+  //     });
+
+  //     const tokenResponse = await axios.post("https://api.linksynergy.com/token", tokenData, {
+  //       headers: {
+  //         "Content-Type": "application/x-www-form-urlencoded",
+  //         Authorization: `Basic ${bearerToken}`, // ✅ must be Basic
+  //       },
+  //     });
+
+  //     const accessToken = tokenResponse.data.access_token;
+
+  //     if (!accessToken) throw new Error("Failed to retrieve access token");
+
+  //     let keyword;
+  //     // 2️⃣ Fetch Advertiser List
+  //     const listResponse = await axios.get(
+  //       `https://api.linksynergy.com/advertisersearch/1.0?merchantname=${keyword}`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //           Accept: "application/json",
+  //         },
+  //       }
+  //     );
+
+
+  //     // const advertisers = listResponse.data?.advertisers || [];
+  //     const parser = new XMLParser();
+  //     const advertisers = parser.parse(listResponse.data) || [];
+  //     if (advertisers.length === 0) {
+  //       return res.json({ error: false, message: "No advertisers found." });
+  //     }
+  //     console.log(advertisers);
+
+  //     // 3️⃣ Loop through each advertiser & fetch full info
+  //     for (const ad of advertisers) {
+  //       try {
+  //         const infoResponse = await axios.get(
+  //           `https://api.linksynergy.com/v2/advertisers/${ad.mid}`,
+  //           {
+  //             headers: {
+  //               Authorization: `Bearer ${accessToken}`,
+  //               Accept: "application/json",
+  //             },
+  //           }
+  //         );
+
+  //         const advertiserInfo = infoResponse.data?.advertiser;
+
+  //         if (advertiserInfo) {
+  //           await Merchant.findOneAndUpdate(
+  //             { advertiserId: advertiserInfo.id },
+  //             {
+  //               advertiserId: advertiserInfo.id,
+  //               name: advertiserInfo.name,
+  //               url: advertiserInfo.url,
+  //               description: advertiserInfo.description,
+  //               can_partner: advertiserInfo.can_partner,
+  //               contact: advertiserInfo.contact || {},
+  //               policies: advertiserInfo.policies || {},
+  //               features: advertiserInfo.features || {},
+  //               network: advertiserInfo.network || {},
+  //             },
+  //             { upsert: true, new: true }
+  //           );
+  //         }
+  //       } catch (innerErr) {
+  //         console.error(`Failed to fetch advertiser ${ad.mid}:`, innerErr.message);
+  //       }
+  //     }
+
+  //     // 4️⃣ Return success response
+  //     return res.json({
+  //       error: false,
+  //       message: "Merchant data synced successfully",
+  //     });
+
+  //   } catch (error) {
+  //     console.error('Error:', error.response?.data || error.message);
+  //     return res.status(error.response?.status || 500).json({
+  //       error: true,
+  //       message: error.message || 'Internal Server Error',
+  //     });
+  //   }
+  // }
 
   async coupon(req, res, next) {
     try {
@@ -211,6 +386,49 @@ class CommonController extends BaseController {
     } catch (error) {
       console.error("Error:", error.response?.data || error.message);
       return this.handleError(next, error, 500);
+    }
+  }
+
+  async getAllOffers(req, res, next) {
+    try {
+
+      const bearerToken =
+        "TVhIUmdPenFyUVdJRTREOUttQ3k2ZE1FZ0xhc1VwMTY6QUlUemxGQjk4b0dBY0VneVdWVnpPRWFoR1BCZGNVNGk=";
+
+      const data = qs.stringify({
+        grant_type: "password",
+        scope: "4571385",
+      });
+
+      // Step 1: Get token
+      const tokenResponse = await axios.post("https://api.linksynergy.com/token", data, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer ${bearerToken}`,
+        },
+      });
+
+      const accessToken = tokenResponse.data.access_token;
+
+      const headers = {
+        accept: "application/json",
+        authorization: `Bearer ${accessToken}`,
+      };
+  
+      const response = await axios.get(
+        "https://api.linksynergy.com/v1/offers?offer_status=active",
+        { headers }
+      );
+      
+      return res.json({
+        error: false,
+        offer: response.data,
+      });
+
+      console.log("✅ Offers fetched:", response.data);
+      return response.data;
+    } catch (err) {
+      console.error("❌ Failed to fetch offers:", err.message);
     }
   }
 

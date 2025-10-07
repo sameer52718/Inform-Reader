@@ -1,0 +1,14 @@
+{"level":"info","message":"Starting Merchant Sync Job","timestamp":"2025-10-07T19:07:12.452Z"}
+{"level":"info","message":"MongoDB Connected","timestamp":"2025-10-07T19:07:12.455Z"}
+{"error":"Failed to get access token: Request failed with status code 401","level":"error","message":"Sync Job Error:","timestamp":"2025-10-07T19:07:13.568Z"}
+{"level":"info","message":"Starting Merchant Sync Job","timestamp":"2025-10-07T19:07:57.171Z"}
+{"level":"info","message":"MongoDB Connected","timestamp":"2025-10-07T19:07:57.179Z"}
+{"level":"info","message":"Stored 2265 merchants in DB","modified":104,"timestamp":"2025-10-07T19:08:09.317Z","upserted":2161}
+{"level":"info","message":"Starting merchant details fetch (1 per minute)","timestamp":"2025-10-07T19:08:09.318Z"}
+{"level":"info","message":"Starting Merchant Sync Job","timestamp":"2025-10-07T19:08:24.838Z"}
+{"level":"info","message":"MongoDB Connected","timestamp":"2025-10-07T19:08:24.839Z"}
+{"level":"info","message":"Stored 2265 merchants in DB","modified":2265,"timestamp":"2025-10-07T19:08:32.464Z","upserted":0}
+{"level":"info","message":"Starting merchant details fetch (1 per minute)","timestamp":"2025-10-07T19:08:32.465Z"}
+{"level":"info","message":"All merchants processed","timestamp":"2025-10-07T19:09:09.416Z"}
+{"level":"info","message":"All merchant details stored successfully","timestamp":"2025-10-07T19:09:09.416Z"}
+{"level":"info","message":"MongoDB connection closed","timestamp":"2025-10-07T19:09:09.423Z"}
