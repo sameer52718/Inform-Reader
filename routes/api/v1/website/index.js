@@ -19,6 +19,7 @@ import leagueRouter from './leagues.js';
 import teamRouter from './teams.js';
 import playerRouter from './player.js';
 import bikeRouter from './bike.js';
+import merchantRouter from './merchant.js';
 const router = Router();
 
 router.use('/bankCode', bankCodeRouter);
@@ -41,5 +42,6 @@ router.use('/league', leagueRouter);
 router.use('/team', teamRouter);
 router.use('/player', playerRouter);
 router.use('/bike', bikeRouter);
+router.use('/merchant', merchantRouter);
 
 export default router;
