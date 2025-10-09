@@ -1,16 +1,179 @@
 import BaseController from '../BaseController.js';
 import Coupon from '../../models/Coupon.js';
 import Offer from '../../models/Offer.js';
+import Merchant from '../../models/Merchant.js';
+import SubCategory from '../../models/SubCategory.js';
 import mongoose from "mongoose";
 
 class CouponController extends BaseController {
     constructor() {
         super();
+        this.home = this.home.bind(this);
+        this.category = this.category.bind(this);
         this.get = this.get.bind(this);
         this.filter = this.filter.bind(this);
         this.detail = this.detail.bind(this);
         this.offerFilter = this.offerFilter.bind(this);
         this.offerDetail = this.offerDetail.bind(this);
+    }
+
+    async home(req, res, next) {
+        try {
+            // Fetch 12 random active coupons
+            const coupons = await Coupon.aggregate([
+                {
+                    $match: {
+                        isDeleted: false,
+                        status: true
+                    }
+                },
+                {
+                    // Add a stage to validate categoryId
+                    $addFields: {
+                        isValidCategoryId: {
+                            $cond: {
+                                if: {
+                                    $and: [
+                                        { $ne: ["$categoryId", null] },
+                                        { $ne: ["$categoryId", ""] },
+                                        { $eq: [{ $type: "$categoryId" }, "objectId"] }
+                                    ]
+                                },
+                                then: true,
+                                else: false
+                            }
+                        }
+                    }
+                },
+                {
+                    $match: {
+                        // Only include documents with valid or null categoryId
+                        $or: [
+                            { isValidCategoryId: true },
+                            { categoryId: { $exists: false } },
+                            { categoryId: null }
+                        ]
+                    }
+                },
+                { $sample: { size: 12 } },
+                {
+                    $lookup: {
+                        from: "categories",
+                        localField: "categoryId",
+                        foreignField: "_id",
+                        as: "category"
+                    }
+                },
+                { $unwind: { path: "$category", preserveNullAndEmptyArrays: true } },
+                {
+                    $project: {
+                        _id: 1,
+                        couponcode: 1,
+                        offerdescription: 1,
+                        advertisername: 1,
+                        offerstartdate: 1,
+                        offerenddate: 1,
+                        categoryName: "$category.name",
+                        clickurl: 1
+                    }
+                }
+            ]);
+
+            // Log coupons with invalid categoryId for debugging
+            const invalidCoupons = await Coupon.find({
+                isDeleted: false,
+                status: true,
+                categoryId: {
+                    $exists: true,
+                    $ne: null,
+                    $not: { $type: "objectId" }
+                }
+            })
+                .select('_id categoryId')
+                .limit(5)
+                .lean();
+
+            if (invalidCoupons.length > 0) {
+                console.warn("⚠️ Found coupons with invalid categoryId:", invalidCoupons);
+            }
+
+            // Fetch 12 random active offers
+            const offers = await Offer.aggregate([
+                { $match: { is_active: true, status: "Active" } },
+                { $sample: { size: 12 } },
+                {
+                    $project: {
+                        _id: 1,
+                        goid: 1,
+                        offer_number: 1,
+                        name: 1,
+                        type: 1,
+                        start_datetime: 1,
+                        end_datetime: 1,
+                        "advertiser.id": 1,
+                        "advertiser.name": 1,
+                        "advertiser.network": 1
+                    }
+                }
+            ]);
+
+            // Fetch 12 random partnerable merchants
+            const merchants = await Merchant.aggregate([
+                { $match: { can_partner: true } },
+                { $sample: { size: 12 } },
+                {
+                    $project: {
+                        _id: 1,
+                        advertiserId: 1,
+                        name: 1,
+                        url: 1,
+                        description: 1,
+                        "contact.name": 1,
+                        "contact.country": 1
+                    }
+                }
+            ]);
+
+            return res.status(200).json({
+                error: false,
+                coupons,
+                offers,
+                merchants
+            });
+        } catch (error) {
+            console.error("❌ Error in home function:", error.message, error.stack);
+            return this.handleError(next, error.message || 'An unexpected error occurred', 500);
+        }
+    }
+
+    async category(req, res, next) {
+        try {
+            // Step 1: Find all distinct subCategoryIds used in active, non-deleted coupons
+            const subCategoryIds = await Coupon.distinct("subCategoryId", {
+                isDeleted: false,
+                status: true,
+                subCategoryId: { $ne: null }
+            });
+
+            // Step 2: Fetch corresponding subcategory details
+            const subCategories = await SubCategory.find({
+                _id: { $in: subCategoryIds },
+            })
+                .select("_id name categoryId order createdAt updatedAt")
+                .sort({ order: 1 })
+                .lean();
+
+            // Step 3: Return result
+            return res.status(200).json({
+                error: false,
+                message: "Subcategories fetched successfully",
+                count: subCategories.length,
+                subCategories
+            });
+        } catch (error) {
+            console.error("❌ Error in category function:", error.message, error.stack);
+            return this.handleError(next, error.message || "An unexpected error occurred", 500);
+        }
     }
 
     async get(req, res, next) {
@@ -280,8 +443,8 @@ class CouponController extends BaseController {
             const filters = { is_active: true };
 
             if (isActive === 'false') filters.is_active = false;
-            filters.goid =Number(offerId);
-    
+            filters.goid = Number(offerId);
+
             const offer = await Offer.findOne(filters).lean();
 
             if (!offer) {
