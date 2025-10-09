@@ -1,5 +1,6 @@
 import BaseController from '../BaseController.js';
 import Coupon from '../../models/Coupon.js';
+import Offer from '../../models/Offer.js';
 import mongoose from "mongoose";
 
 class CouponController extends BaseController {
@@ -8,6 +9,8 @@ class CouponController extends BaseController {
         this.get = this.get.bind(this);
         this.filter = this.filter.bind(this);
         this.detail = this.detail.bind(this);
+        this.offerFilter = this.offerFilter.bind(this);
+        this.offerDetail = this.offerDetail.bind(this);
     }
 
     async get(req, res, next) {
@@ -185,6 +188,109 @@ class CouponController extends BaseController {
             return res.status(200).json({
                 error: false,
                 coupon
+            });
+        } catch (error) {
+            return this.handleError(next, error.message || 'An unexpected error occurred', 500);
+        }
+    }
+
+    async offerFilter(req, res, next) {
+        try {
+            let {
+                advertiserId,
+                advertiserName,
+                status,
+                type,
+                startDatetime,
+                endDatetime,
+                isActive,
+                page = 1,
+                limit = 10,
+                sort = 'createdAt',
+                order = 'desc'
+            } = req.query;
+
+            const filters = { is_active: true };
+
+            if (isActive === 'false') filters.is_active = false;
+            if (advertiserId) filters['advertiser.id'] = Number(advertiserId);
+            if (advertiserName) filters['advertiser.name'] = { $regex: advertiserName, $options: 'i' };
+            if (status) filters.status = { $regex: status, $options: 'i' };
+            if (type) filters.type = { $regex: type, $options: 'i' };
+            if (startDatetime) filters.start_datetime = { $gte: new Date(startDatetime) };
+            if (endDatetime) filters.end_datetime = { $lte: new Date(endDatetime) };
+
+            // Pagination
+            const pageNum = parseInt(page, 10);
+            const limitNum = parseInt(limit, 10);
+            const skip = (pageNum - 1) * limitNum;
+
+            // Sorting
+            const sortOrder = order === 'desc' ? -1 : 1;
+            const sortQuery = { [sort]: sortOrder };
+
+            const offers = await Offer.aggregate([
+                { $match: filters },
+                {
+                    $project: {
+                        _id: 1,
+                        goid: 1,
+                        advertiser: {
+                            id: 1,
+                            name: 1,
+                            network: 1,
+                            status: 1
+                        },
+                        offer_number: 1,
+                        name: 1,
+                        type: 1,
+                        status: 1,
+                        start_datetime: 1,
+                        end_datetime: 1,
+                        createdAt: 1
+                    }
+                },
+                { $sort: sortQuery },
+                { $skip: skip },
+                { $limit: limitNum }
+            ]);
+
+            const total = await Offer.countDocuments(filters);
+
+            return res.status(200).json({
+                error: false,
+                offers,
+                pagination: {
+                    page: pageNum,
+                    limit: limitNum,
+                    total,
+                    totalPages: Math.ceil(total / limitNum)
+                }
+            });
+        } catch (error) {
+            return this.handleError(next, error.message || 'An unexpected error occurred', 500);
+        }
+    }
+
+    async offerDetail(req, res, next) {
+        try {
+            let { isActive } = req.query;
+            let { offerId } = req.params;
+
+            const filters = { is_active: true };
+
+            if (isActive === 'false') filters.is_active = false;
+            filters.goid =Number(offerId);
+    
+            const offer = await Offer.findOne(filters).lean();
+
+            if (!offer) {
+                return this.handleError(next, 'Offer not found', 404);
+            }
+
+            return res.status(200).json({
+                error: false,
+                offer
             });
         } catch (error) {
             return this.handleError(next, error.message || 'An unexpected error occurred', 500);

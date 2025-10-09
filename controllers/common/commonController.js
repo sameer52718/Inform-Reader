@@ -19,6 +19,7 @@ import { XMLParser } from "fast-xml-parser";
 import dotenv from 'dotenv';
 import Coupon from "../../models/Coupon.js";
 import Merchant from "../../models/Merchant.js";
+import Offer from "../../models/Offer.js";
 dotenv.config();
 
 class CommonController extends BaseController {
@@ -460,7 +461,6 @@ class CommonController extends BaseController {
 
   async getAllOffers(req, res, next) {
     try {
-
       const bearerToken =
         "TVhIUmdPenFyUVdJRTREOUttQ3k2ZE1FZ0xhc1VwMTY6QUlUemxGQjk4b0dBY0VneVdWVnpPRWFoR1BCZGNVNGk=";
 
@@ -484,20 +484,101 @@ class CommonController extends BaseController {
         authorization: `Bearer ${accessToken}`,
       };
 
-      const response = await axios.get(
-        "https://api.linksynergy.com/v1/offers?offer_status=active",
-        { headers }
-      );
+      let allOffers = [];
+      let totalOffers = 0;
+      let currentPage = 1;
+      let hasMorePages = true;
+      const limit = 100; // Higher limit for efficiency
 
+      console.log("🚀 Starting to fetch all offers from API...");
+
+      // Step 2: Fetch all pages
+      while (hasMorePages) {
+        try {
+          const url = `https://api.linksynergy.com/v1/offers?offer_status=active&page=${currentPage}&limit=${limit}`;
+          console.log(`📄 Fetching page ${currentPage}...`);
+
+          const response = await axios.get(url, { headers });
+          const apiData = response.data;
+          const currentPageOffers = apiData.offers || [];
+          const metadata = apiData.metadata || {};
+
+          console.log(`✅ Page ${currentPage}: Found ${currentPageOffers.length} offers`);
+
+          // Check if there are more pages
+          const totalFromMetadata = metadata.total || 0;
+          const totalPages = Math.ceil(totalFromMetadata / limit);
+          hasMorePages = currentPage < totalPages && currentPageOffers.length > 0;
+
+          if (currentPageOffers.length === 0) {
+            hasMorePages = false;
+            break;
+          }
+
+          // Transform and prepare offers for storage
+          const processedOffers = currentPageOffers.map(offer => ({
+            ...offer,
+            metadata: {
+              ...metadata,
+              page: currentPage,
+              total_pages: totalPages
+            }
+          }));
+
+          // Store in database
+          await Offer.insertMany(processedOffers, { ordered: false })
+            .then(result => {
+              allOffers = allOffers.concat(result);
+              totalOffers += result.length;
+              console.log(`💾 Stored ${result.length} offers from page ${currentPage}`);
+            })
+            .catch(err => {
+              console.error(`⚠️ Error storing offers from page ${currentPage}:`, err.message);
+              // Continue with next page even if some inserts fail
+            });
+
+          totalOffers = totalFromMetadata;
+          currentPage++;
+
+          // Small delay to avoid rate limiting
+          await new Promise(resolve => setTimeout(resolve, 100));
+
+        } catch (pageError) {
+          console.error(`❌ Error fetching page ${currentPage}:`, pageError.message);
+          if (pageError.response?.status === 429) {
+            console.log("⏳ Rate limited, waiting 1 minute...");
+            await new Promise(resolve => setTimeout(resolve, 60000));
+            // Retry the same page
+            currentPage--;
+          } else {
+            throw pageError; // Rethrow other errors
+          }
+        }
+      }
+
+      console.log(`🎉 Successfully fetched and stored ${totalOffers} offers from ${currentPage - 1} pages`);
+
+      // Step 3: Return response
       return res.json({
         error: false,
-        offer: response.data,
+        offer: {
+          metadata: {
+            api_name_version: "offers-v1.4.0",
+            total: totalOffers,
+            total_pages: currentPage - 1,
+            last_fetched_at: new Date()
+          },
+          offers: allOffers.slice(0, 5) // Return first 5 as sample
+        },
+        message: `Successfully stored ${totalOffers} offers`
       });
 
-      console.log("✅ Offers fetched:", response.data);
-      return response.data;
     } catch (err) {
       console.error("❌ Failed to fetch offers:", err.message);
+      return res.status(500).json({
+        error: true,
+        message: err.message || "Failed to fetch and store offers"
+      });
     }
   }
 

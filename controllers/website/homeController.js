@@ -47,7 +47,7 @@ class HomeController extends BaseController {
               overview: 1,
               version: 1,
               tag: 1,
-              slug:1,
+              slug: 1,
             },
           },
         ]);
@@ -68,7 +68,7 @@ class HomeController extends BaseController {
               gender: 1,
               shortMeaning: 1,
               origion: 1,
-              slug:1
+              slug: 1
             },
           },
         ]);
@@ -183,7 +183,7 @@ class HomeController extends BaseController {
               _id: 1,
               name: 1,
               image: 1,
-              slug:1,
+              slug: 1,
               categoryId: 1,
               categoryName: '$categoryInfo.name',
             },
@@ -291,7 +291,7 @@ class HomeController extends BaseController {
               year: 1,
               vehicleType: 1,
               image: 1,
-              slug:1,
+              slug: 1,
               category: {
                 _id: '$categoryId',
                 name: '$categoryInfo.name',
@@ -360,7 +360,7 @@ class HomeController extends BaseController {
               year: 1,
               vehicleType: 1,
               image: 1,
-              slug:1,
+              slug: 1,
               category: {
                 _id: '$categoryId',
                 name: '$categoryInfo.name',

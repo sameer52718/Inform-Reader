@@ -7,4 +7,7 @@ router.get('/', CouponController.get);
 router.get('/filter', CouponController.filter);
 router.get('/:couponId', CouponController.detail);
 
+router.get('/offer/filter', CouponController.offerFilter);
+router.get('/offer/detail/:offerId', CouponController.offerDetail);
+
 export default router;
