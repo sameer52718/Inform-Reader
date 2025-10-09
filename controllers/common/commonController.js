@@ -17,7 +17,7 @@ import { parseStringPromise } from 'xml2js';
 import qs from "qs";
 import { XMLParser } from "fast-xml-parser";
 import dotenv from 'dotenv';
-import CouponFeed from "../../models/CouponFeed.js";
+import Coupon from "../../models/Coupon.js";
 import Merchant from "../../models/Merchant.js";
 dotenv.config();
 
@@ -160,7 +160,7 @@ class CommonController extends BaseController {
       const parser = new XMLParser();
       const advertisers = parser.parse(response.data);
       console.log(advertisers.result.midlist.merchant);
-      
+
       for (const ad of advertisers.result.midlist.merchant) {
         try {
           const response = await axios.get(
@@ -301,92 +301,161 @@ class CommonController extends BaseController {
 
   async coupon(req, res, next) {
     try {
-      const bearerToken =
-        "TVhIUmdPenFyUVdJRTREOUttQ3k2ZE1FZ0xhc1VwMTY6QUlUemxGQjk4b0dBY0VneVdWVnpPRWFoR1BCZGNVNGk=";
-
-      const data = qs.stringify({
+      // --- Step 1: Get Access Token ---
+      const bearerToken = process.env.RAKUTEN_BEARER_TOKEN;
+      const tokenData = qs.stringify({
         grant_type: "password",
         scope: "4571385",
       });
 
-      // Step 1: Get token
-      const tokenResponse = await axios.post("https://api.linksynergy.com/token", data, {
+      const tokenResponse = await axios.post("https://api.linksynergy.com/token", tokenData, {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
           Authorization: `Bearer ${bearerToken}`,
         },
       });
 
-      const accessToken = tokenResponse.data.access_token;
+      const accessToken = tokenResponse?.data?.access_token;
+      if (!accessToken) throw new Error("Failed to get access token from Rakuten API");
 
-      // Step 2: Get coupons
-      const couponUrl = "https://api.linksynergy.com/coupon/1.0";
-      const couponParams = {
-        sid: process.env.RAKUTEN_PUBLISHER_SID,
-      };
-
-      const couponResponse = await axios.get(couponUrl, {
+      // --- Step 2: Fetch Coupons ---
+      const couponResponse = await axios.get("https://api.linksynergy.com/coupon/1.0", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           Accept: "application/xml",
         },
-        params: couponParams,
+        params: { sid: process.env.RAKUTEN_PUBLISHER_SID },
       });
 
-      // Step 3: Parse XML → JSON
-      const parser = new XMLParser();
+      // --- Step 3: Parse XML ---
+      const parser = new XMLParser({
+        ignoreAttributes: false,
+        parseAttributeValue: true,
+        removeNSPrefix: true,
+      });
       const couponData = parser.parse(couponResponse.data);
-
-      // Extract coupons
       const links = couponData?.couponfeed?.link || [];
 
-      if (links.length > 0) {
-        // Step 4: Save each coupon to DB
-        for (const link of links) {
-          const existing = await CouponFeed.findOne({
-            advertiserid: link.advertiserid,
-            offerdescription: link.offerdescription,
-            couponcode: link.couponcode,
-          });
-
-          // Avoid duplicates
-          if (!existing) {
-            await CouponFeed.create({
-              categories: link.categories || {},
-              promotiontypes: link.promotiontypes || {},
-              offerdescription: link.offerdescription,
-              offerstartdate: link.offerstartdate,
-              offerenddate: link.offerenddate,
-              couponcode: link.couponcode || null,
-              clickurl: link.clickurl,
-              impressionpixel: link.impressionpixel,
-              advertiserid: link.advertiserid,
-              advertisername: link.advertisername,
-              network: link.network,
-            });
-          }
-        }
+      if (!Array.isArray(links) || links.length === 0) {
+        return res.status(200).json({ success: true, message: "No coupons found." });
       }
 
-      // Step 5: Fetch advertiser info (optional)
-      const advertiseResponse = await axios.get("https://api.linksynergy.com/v2/advertisers", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          Accept: "application/xml",
-        },
-      });
-      const advertiseData = parser.parse(advertiseResponse.data);
+      // --- Step 4: Ensure "Coupons" category exists ---
+      let category = await Category.findOne({ name: "Coupons" });
+      if (!category) {
+        category = await Category.create({ name: "Coupons", slug: "coupons" });
+      }
 
-      return res.json({
-        error: false,
-        token: tokenResponse.data,
-        coupons: couponData,
-        advertiseData,
+      let inserted = 0;
+      let skipped = 0;
+
+      // --- Step 5: Process Coupons ---
+      const couponPromises = links.map(async (link) => {
+        try {
+          const advertiserId = link?.advertiserid;
+          const offerDescription = link?.offerdescription;
+          const couponCode = link?.couponcode || null;
+
+          // 🧩 Category Name
+          let categoryName = "Uncategorized";
+          const rawCategory = link?.categories?.category;
+          if (rawCategory) {
+            if (Array.isArray(rawCategory)) {
+              categoryName = rawCategory[0]["#text"]?.trim() || "Uncategorized";
+            } else if (typeof rawCategory === "object" && rawCategory["#text"]) {
+              categoryName = rawCategory["#text"].trim();
+            } else if (typeof rawCategory === "string") {
+              categoryName = rawCategory.trim();
+            }
+          }
+
+          // 🧩 Promotion Type
+          let promotionType = "";
+          const rawPromo = link?.promotiontypes?.promotiontype;
+          if (rawPromo) {
+            if (typeof rawPromo === "object" && rawPromo["#text"]) {
+              promotionType = rawPromo["#text"].trim();
+            } else if (typeof rawPromo === "string") {
+              promotionType = rawPromo.trim();
+            }
+          }
+
+          // 🧩 Network Name
+          let networkName = "";
+          const rawNetwork = link?.network;
+          if (rawNetwork) {
+            if (typeof rawNetwork === "object" && rawNetwork["#text"]) {
+              networkName = rawNetwork["#text"].trim();
+            } else if (typeof rawNetwork === "string") {
+              networkName = rawNetwork.trim();
+            }
+          }
+
+          // --- Skip duplicates
+          const existing = await Coupon.findOne({
+            advertiserid: advertiserId,
+            offerdescription: offerDescription,
+            couponcode: couponCode,
+          });
+
+          if (existing) {
+            skipped++;
+            return null;
+          }
+
+          // --- Ensure SubCategory exists
+          let subCategory = await SubCategory.findOne({
+            name: categoryName,
+            categoryId: category._id,
+          });
+          if (!subCategory) {
+            subCategory = await SubCategory.create({
+              name: categoryName,
+              categoryId: category._id,
+            });
+          }
+
+          // --- Create Coupon
+          await Coupon.create({
+            categoryId: category._id,
+            subCategoryId: subCategory._id,
+            promotiontypes: { promotiontype: promotionType },
+            offerdescription: offerDescription,
+            offerstartdate: link?.offerstartdate ? new Date(link.offerstartdate) : null,
+            offerenddate: link?.offerenddate ? new Date(link.offerenddate) : null,
+            couponcode: couponCode,
+            clickurl: link?.clickurl,
+            impressionpixel: link?.impressionpixel,
+            advertiserid: advertiserId,
+            advertisername: link?.advertisername,
+            network: networkName,
+          });
+
+          inserted++;
+        } catch (err) {
+          console.warn("Skipping invalid coupon:", err.message);
+        }
+      });
+
+      await Promise.all(couponPromises);
+
+      // --- Step 6: Respond ---
+      return res.status(200).json({
+        success: true,
+        message: "Coupons fetched and saved successfully.",
+        totalFetched: links.length,
+        inserted,
+        skipped,
       });
     } catch (error) {
-      console.error("Error:", error.response?.data || error.message);
-      return this.handleError(next, error, 500);
+      console.error("Error in coupon import:", error.response?.data || error.message);
+      return next({
+        status: 500,
+        message: "Failed to fetch or save coupons.",
+        error: error.message,
+      });
     }
+
   }
 
   async getAllOffers(req, res, next) {
@@ -414,12 +483,12 @@ class CommonController extends BaseController {
         accept: "application/json",
         authorization: `Bearer ${accessToken}`,
       };
-  
+
       const response = await axios.get(
         "https://api.linksynergy.com/v1/offers?offer_status=active",
         { headers }
       );
-      
+
       return res.json({
         error: false,
         offer: response.data,

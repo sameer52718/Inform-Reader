@@ -15,7 +15,7 @@ class CouponController extends BaseController {
             let { isDeleted } = req.query;
 
             const filters = { isDeleted: false };
-            if (isDeleted) filters.isDeleted = true;
+            if (isDeleted === 'true') filters.isDeleted = true;
 
             const latestCouponsByCategory = await Coupon.aggregate([
                 { $match: filters },
@@ -28,16 +28,18 @@ class CouponController extends BaseController {
                         as: "category"
                     }
                 },
-                { $unwind: "$category" },
+                { $unwind: { path: "$category", preserveNullAndEmptyArrays: true } },
                 {
                     $group: {
                         _id: "$categoryId",
                         categoryName: { $first: "$category.name" },
                         coupons: {
                             $push: {
-                                name: "$name",
-                                discount: "$discount",
-                                image: "$image"
+                                couponcode: "$couponcode",
+                                offerdescription: "$offerdescription",
+                                advertisername: "$advertisername",
+                                offerstartdate: "$offerstartdate",
+                                offerenddate: "$offerenddate"
                             }
                         }
                     }
@@ -49,37 +51,62 @@ class CouponController extends BaseController {
                 error: false,
                 latestCouponsByCategory
             });
-
         } catch (error) {
-            return this.handleError(next, error.message || "An unexpected error occurred", 500);
+            return this.handleError(next, error.message || 'An unexpected error occurred', 500);
         }
     }
+
     async filter(req, res, next) {
         try {
-            let { categoryId, subCategoryId, brandId, discount, name } = req.query;
+            let {
+                categoryId,
+                subCategoryId,
+                adminId,
+                promotiontype,
+                offerdescription,
+                offerstartdate,
+                offerenddate,
+                couponcode,
+                clickurl,
+                impressionpixel,
+                advertiserid,
+                advertisername,
+                network,
+                status,
+                isDeleted,
+                page = 1,
+                limit = 10,
+                sort = 'createdAt',
+                order = 'desc'
+            } = req.query;
 
             const filters = { isDeleted: false };
 
-            if (categoryId) {
-                filters.categoryId = new mongoose.Types.ObjectId(categoryId);
-            }
+            if (isDeleted === 'true') filters.isDeleted = true;
+            if (categoryId) filters.categoryId = new mongoose.Types.ObjectId(categoryId);
+            if (subCategoryId) filters.subCategoryId = new mongoose.Types.ObjectId(subCategoryId);
+            if (adminId) filters.adminId = new mongoose.Types.ObjectId(adminId);
+            if (promotiontype) filters['promotiontypes.promotiontype'] = { $regex: promotiontype, $options: 'i' };
+            if (offerdescription) filters.offerdescription = { $regex: offerdescription, $options: 'i' };
+            if (offerstartdate) filters.offerstartdate = { $gte: new Date(offerstartdate) };
+            if (offerenddate) filters.offerenddate = { $lte: new Date(offerenddate) };
+            if (couponcode) filters.couponcode = { $regex: couponcode, $options: 'i' };
+            if (clickurl) filters.clickurl = { $regex: clickurl, $options: 'i' };
+            if (impressionpixel) filters.impressionpixel = { $regex: impressionpixel, $options: 'i' };
+            if (advertiserid) filters.advertiserid = Number(advertiserid);
+            if (advertisername) filters.advertisername = { $regex: advertisername, $options: 'i' };
+            if (network) filters.network = { $regex: network, $options: 'i' };
+            if (status !== undefined) filters.status = status === 'true';
 
-            if (subCategoryId) {
-                filters.subCategoryId = new mongoose.Types.ObjectId(subCategoryId);
-            }
+            // Pagination
+            const pageNum = parseInt(page, 10);
+            const limitNum = parseInt(limit, 10);
+            const skip = (pageNum - 1) * limitNum;
 
-            if (brandId) {
-                filters.brandId = new mongoose.Types.ObjectId(brandId);
-            }
+            // Sorting
+            const sortOrder = order === 'desc' ? -1 : 1;
+            const sortQuery = { [sort]: sortOrder };
 
-            if (discount) {
-                filters.discount = { $gte: parseFloat(discount) };
-            }
-
-            if (name) {
-                filters.name = { $regex: name, $options: "i" }; // Case-insensitive search
-            }
-            
             const coupons = await Coupon.aggregate([
                 { $match: filters },
                 {
@@ -94,24 +121,43 @@ class CouponController extends BaseController {
                 {
                     $project: {
                         _id: 1,
+                        adminId: 1,
                         categoryId: 1,
                         categoryName: "$category.name",
                         subCategoryId: 1,
-                        brandId: 1,
-                        name: 1,
-                        discount: 1,
-                        image: 1
+                        promotiontypes: 1,
+                        offerdescription: 1,
+                        offerstartdate: 1,
+                        offerenddate: 1,
+                        couponcode: 1,
+                        clickurl: 1,
+                        impressionpixel: 1,
+                        advertiserid: 1,
+                        advertisername: 1,
+                        network: 1,
+                        status: 1,
+                        createdAt: 1
                     }
-                }
+                },
+                { $sort: sortQuery },
+                { $skip: skip },
+                { $limit: limitNum }
             ]);
+
+            const total = await Coupon.countDocuments(filters);
 
             return res.status(200).json({
                 error: false,
-                coupons
+                coupons,
+                pagination: {
+                    page: pageNum,
+                    limit: limitNum,
+                    total,
+                    totalPages: Math.ceil(total / limitNum)
+                }
             });
-
         } catch (error) {
-            return this.handleError(next, error.message || "An unexpected error occurred", 500);
+            return this.handleError(next, error.message || 'An unexpected error occurred', 500);
         }
     }
 
@@ -122,15 +168,15 @@ class CouponController extends BaseController {
 
             const filters = {
                 isDeleted: false,
-                _id: couponId
+                _id: new mongoose.Types.ObjectId(couponId)
             };
-            if (isDeleted) filters.isDeleted = true;
+            if (isDeleted === 'true') filters.isDeleted = true;
 
             const coupon = await Coupon.findOne(filters)
                 .populate('categoryId', 'name')
-                .populate('brandId', 'name')
                 .populate('subCategoryId', 'name')
-                .select('name discount code image status createdAt');
+                .populate('adminId', 'name email')
+                .select('adminId categoryId subCategoryId promotiontypes offerdescription offerstartdate offerenddate couponcode clickurl impressionpixel advertiserid advertisername network status createdAt');
 
             if (!coupon) {
                 return this.handleError(next, 'Coupon not found', 404);
@@ -140,13 +186,10 @@ class CouponController extends BaseController {
                 error: false,
                 coupon
             });
-
         } catch (error) {
-            return this.handleError(next, error.message || "An unexpected error occurred", 500);
+            return this.handleError(next, error.message || 'An unexpected error occurred', 500);
         }
     }
-
-
 }
 
 export default new CouponController();
