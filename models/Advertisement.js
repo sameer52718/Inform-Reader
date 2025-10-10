@@ -18,7 +18,7 @@ const actionSchema = new mongoose.Schema({
 
 const advertisementSchema = new mongoose.Schema(
     {
-        advertiserId: { type: String, required: true, unique: true },
+        advertiserId: { type: String, required: true },
         advertiserName: { type: String, required: true },
         programName: String,
         programUrl: String,
