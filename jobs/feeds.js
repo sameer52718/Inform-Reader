@@ -177,25 +177,25 @@ async function startCron() {
     });
 
     // Merchant sync cron job
-    cron.schedule('0 */6 * * *', () => {
+    cron.schedule('0 */4 * * *', () => {
       logger.info(`[Cron] Running Merchant sync job at ${new Date().toISOString()}`);
       runSyncJob();
     });
 
     // Coupon sync cron job
-    cron.schedule('0 */4 * * *', () => {
+    cron.schedule('0 */2 * * *', () => {
       logger.info(`[Cron] Running Coupon sync job at ${new Date().toISOString()}`);
       runCouponSync();
     });
 
     // Coupon sync cron job
-    cron.schedule('0 */4 * * *', () => {
+    cron.schedule('0 */2 * * *', () => {
       logger.info(`[Cron] Running Coupon sync job at ${new Date().toISOString()}`);
       runOfferSync();
     });
 
     // Coupon sync cron job
-    cron.schedule('0 */4 * * *', () => {
+    cron.schedule('0 */2 * * *', () => {
       logger.info(`[Cron] Running Coupon sync job at ${new Date().toISOString()}`);
       runAdvertiserSync();
     });
