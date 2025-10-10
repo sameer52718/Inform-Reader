@@ -9,7 +9,6 @@ import ApiV1Router from './routes/api/v1/index.js';
 import connectDB from './db/index.js';
 import { initializeSocket } from './socket.js';
 import startCron from './jobs/feeds.js';
-import { runSyncJob, startCronJob } from './jobs/murchant.js';
 import { getSitemap } from './controllers/website/SitemapController.js';
 
 const app = express();

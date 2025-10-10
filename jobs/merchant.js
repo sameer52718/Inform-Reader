@@ -92,8 +92,8 @@ class LinkSynergyAPI {
 
       const parser = new XMLParser();
       const parsed = parser.parse(response.data);
-      const merchants = Array.isArray(parsed?.result?.midlist?.merchant) 
-        ? parsed.result.midlist.merchant 
+      const merchants = Array.isArray(parsed?.result?.midlist?.merchant)
+        ? parsed.result.midlist.merchant
         : [parsed?.result?.midlist?.merchant].filter(Boolean);
 
       return merchants;
@@ -163,67 +163,67 @@ class MerchantService {
 
 // Export the runSyncJob function
 export const runSyncJob = async () => {
-    logger.info('Starting Merchant Sync Job');
-    const api = new LinkSynergyAPI();
-  
-    try {
-      await connectToMongoDB();
-      const accessToken = await api.getAccessToken();
-      const merchants = await api.fetchMerchantList(accessToken);
-      await MerchantService.updateMerchantList(merchants);
-  
-      logger.info('Starting merchant details fetch (1 per minute)');
-  
-      const processNextMerchant = async () => {
-        const merchant = await Merchant.findOne({ detailsFetched: false });
-        if (!merchant) {
-          logger.info('All merchants processed');
-          return false;
-        }
-  
-        try {
-          const info = await api.fetchMerchantDetails(merchant.advertiserId, accessToken);
-          if (info) {
-            await MerchantService.updateMerchantDetails(merchant, info);
-          }
-        } catch (error) {
-          logger.error(`Error processing merchant ${merchant.advertiserId}:`, { error: error.message });
-        }
-        return true;
-      };
-  
-      // Process merchants with rate limiting
-      const interval = setInterval(async () => {
-        const stillPending = await processNextMerchant();
-        if (!stillPending) {
-          clearInterval(interval);
-          logger.info('All merchant details stored successfully');
-          await mongoose.connection.close();
-          logger.info('MongoDB connection closed');
-        }
-      }, 60 * 1000);
-  
-    } catch (error) {
-      logger.error('Sync Job Error:', { error: error.message });
-      await mongoose.connection.close();
-      throw error;
-    }
-  };
-  
-  // Optionally export the cron job setup
-  export const startCronJob = () => {
-    cron.schedule('0 0 * * *', async () => {
-      try {
-        await runSyncJob();
-      } catch (error) {
-        logger.error('Cron Job Error:', { error: error.message });
+  logger.info('Starting Merchant Sync Job');
+  const api = new LinkSynergyAPI();
+
+  try {
+    await connectToMongoDB();
+    const accessToken = await api.getAccessToken();
+    const merchants = await api.fetchMerchantList(accessToken);
+    await MerchantService.updateMerchantList(merchants);
+
+    logger.info('Starting merchant details fetch (1 per minute)');
+
+    const processNextMerchant = async () => {
+      const merchant = await Merchant.findOne({ detailsFetched: false });
+      if (!merchant) {
+        logger.info('All merchants processed');
+        return false;
       }
-    });
-  };
-  
-  // Handle process termination
-  process.on('SIGTERM', async () => {
-    logger.info('Received SIGTERM. Closing MongoDB connection');
+
+      try {
+        const info = await api.fetchMerchantDetails(merchant.advertiserId, accessToken);
+        if (info) {
+          await MerchantService.updateMerchantDetails(merchant, info);
+        }
+      } catch (error) {
+        logger.error(`Error processing merchant ${merchant.advertiserId}:`, { error: error.message });
+      }
+      return true;
+    };
+
+    // Process merchants with rate limiting
+    const interval = setInterval(async () => {
+      const stillPending = await processNextMerchant();
+      if (!stillPending) {
+        clearInterval(interval);
+        logger.info('All merchant details stored successfully');
+        await mongoose.connection.close();
+        logger.info('MongoDB connection closed');
+      }
+    }, 60 * 1000);
+
+  } catch (error) {
+    logger.error('Sync Job Error:', { error: error.message });
     await mongoose.connection.close();
-    process.exit(0);
-  });
+    throw error;
+  }
+};
+
+// Optionally export the cron job setup
+// export const startCronJob = () => {
+//   cron.schedule('0 0 * * *', async () => {
+//     try {
+//       await runSyncJob();
+//     } catch (error) {
+//       logger.error('Cron Job Error:', { error: error.message });
+//     }
+//   });
+// };
+
+// Handle process termination
+process.on('SIGTERM', async () => {
+  logger.info('Received SIGTERM. Closing MongoDB connection');
+  await mongoose.connection.close();
+  process.exit(0);
+});
