@@ -1,50 +1,17 @@
 import axios from 'axios';
 import qs from 'qs';
-import mongoose from 'mongoose';
 import cron from 'node-cron';
 import { XMLParser } from 'fast-xml-parser';
 import Merchant from '../models/Merchant.js';
 import dotenv from 'dotenv';
 import { RateLimiter } from 'limiter';
-import winston from 'winston';
+import logger from '../logger.js';
 
 // Load environment variables
 dotenv.config();
 
-// Configure logging
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
-  ),
-  transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({ filename: 'merchant-sync.log' })
-  ]
-});
-
 // Configure rate limiter (100 requests per minute)
 const rateLimiter = new RateLimiter({ tokensPerInterval: 100, interval: 'minute' });
-
-// MongoDB connection with optimized settings
-const connectToMongoDB = async (jobId) => {
-  try {
-    await mongoose.connect(process.env.MONGO_DB_URL, {
-      maxPoolSize: 10,
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
-    });
-    logger.info(`[Merchant][Job:${jobId}] MongoDB Connected`);
-    return true;
-  } catch (error) {
-    logger.error(`[Merchant][Job:${jobId}] MongoDB Connection Error`, {
-      error: error.message,
-      stack: error.stack,
-    });
-    return false;
-  }
-};
 
 // API Client with error handling
 class LinkSynergyAPI {
@@ -103,9 +70,7 @@ class LinkSynergyAPI {
 
       const parser = new XMLParser();
       const parsed = parser.parse(response.data);
-      const merchants = Array.isArray(parsed?.result?.midlist?.merchant)
-        ? parsed.result.midlist.merchant
-        : [parsed?.result?.midlist?.merchant].filter(Boolean);
+      const merchants = Array.isArray(parsed?.result?.midlist?.merchant) ? parsed.result.midlist.merchant : [parsed?.result?.midlist?.merchant].filter(Boolean);
 
       if (!merchants.length) {
         logger.warn(`[Merchant][Job:${jobId}] No merchants found in API response`);
@@ -150,7 +115,7 @@ class LinkSynergyAPI {
 class MerchantService {
   static async updateMerchantList(merchants, jobId) {
     try {
-      const bulkOps = merchants.map(ad => ({
+      const bulkOps = merchants.map((ad) => ({
         updateOne: {
           filter: { advertiserId: ad.mid },
           update: {
@@ -225,17 +190,6 @@ export const runSyncJob = async () => {
   const api = new LinkSynergyAPI();
 
   try {
-    // Connect to MongoDB
-    mongoConnected = await connectToMongoDB(jobId);
-    if (!mongoConnected) {
-      return {
-        success: false,
-        message: 'Failed to connect to MongoDB',
-        merchantsProcessed: 0,
-        detailsFetched: 0,
-      };
-    }
-
     // Get access token
     const accessToken = await api.getAccessToken(jobId);
     if (!accessToken) {
@@ -310,7 +264,6 @@ export const runSyncJob = async () => {
   } finally {
     if (mongoConnected) {
       try {
-        await mongoose.connection.close();
         logger.info(`[Merchant][Job:${jobId}] MongoDB connection closed`);
       } catch (closeError) {
         logger.error(`[Merchant][Job:${jobId}] Failed to close MongoDB connection`, {
@@ -366,7 +319,6 @@ process.on('unhandledRejection', (error) => {
 process.on('SIGTERM', async () => {
   logger.info('Received SIGTERM. Closing MongoDB connection');
   try {
-    await mongoose.connection.close();
     logger.info('MongoDB connection closed');
   } catch (closeError) {
     logger.error('Failed to close MongoDB connection on SIGTERM', {
