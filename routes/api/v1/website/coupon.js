@@ -10,5 +10,8 @@ router.get('/get/home', CouponController.home);
 router.get('/get/category', CouponController.category);
 router.get('/offer/filter', CouponController.offerFilter);
 router.get('/offer/detail/:offerId', CouponController.offerDetail);
+router.get('/advertisement/filter', CouponController.advertisementFilter);
+router.get('/advertisement/detail/:advertisementId', CouponController.advertisementDetail);
+
 
 export default router;

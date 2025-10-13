@@ -2,6 +2,7 @@ import BaseController from '../BaseController.js';
 import Coupon from '../../models/Coupon.js';
 import Offer from '../../models/Offer.js';
 import Merchant from '../../models/Merchant.js';
+import Advertisement from '../../models/Advertisement.js';
 import SubCategory from '../../models/SubCategory.js';
 import mongoose from "mongoose";
 
@@ -457,6 +458,119 @@ class CouponController extends BaseController {
             });
         } catch (error) {
             return this.handleError(next, error.message || 'An unexpected error occurred', 500);
+        }
+    }
+
+    async advertisementFilter(req, res, next) {
+        try {
+            let {
+                advertiserId,
+                advertiserName,
+                programName,
+                accountStatus,
+                relationshipStatus,
+                language,
+                performanceIncentives,
+                isActive,
+                startDatetime,
+                endDatetime,
+                page = 1,
+                limit = 10,
+                sort = 'createdAt',
+                order = 'desc'
+            } = req.query;
+
+            const filters = {};
+
+            // ✅ Boolean filter
+            if (isActive === 'true') filters.is_active = true;
+            if (isActive === 'false') filters.is_active = false;
+
+            // ✅ Simple filters
+            if (advertiserId) filters.advertiserId = advertiserId;
+            if (advertiserName) filters.advertiserName = { $regex: advertiserName, $options: 'i' };
+            if (programName) filters.programName = { $regex: programName, $options: 'i' };
+            if (accountStatus) filters.accountStatus = { $regex: accountStatus, $options: 'i' };
+            if (relationshipStatus) filters.relationshipStatus = { $regex: relationshipStatus, $options: 'i' };
+            if (language) filters.language = { $regex: language, $options: 'i' };
+
+            // ✅ Boolean filters
+            if (performanceIncentives !== undefined) {
+                filters.performanceIncentives = performanceIncentives === 'true';
+            }
+
+            // ✅ Date range filters (if you want created range)
+            if (startDatetime || endDatetime) {
+                filters.createdAt = {};
+                if (startDatetime) filters.createdAt.$gte = new Date(startDatetime);
+                if (endDatetime) filters.createdAt.$lte = new Date(endDatetime);
+            }
+
+            // ✅ Pagination
+            const pageNum = parseInt(page, 10);
+            const limitNum = parseInt(limit, 10);
+            const skip = (pageNum - 1) * limitNum;
+
+            // ✅ Sorting
+            const sortOrder = order === 'desc' ? -1 : 1;
+            const sortQuery = { [sort]: sortOrder };
+
+            // ✅ Query
+            const advertisements = await Advertisement.find(filters)
+                .select(
+                    'advertiserId advertiserName programName accountStatus relationshipStatus language networkRank performanceIncentives primaryCategory createdAt'
+                )
+                .sort(sortQuery)
+                .skip(skip)
+                .limit(limitNum)
+                .lean();
+
+            const total = await Advertisement.countDocuments(filters);
+
+            return res.status(200).json({
+                error: false,
+                data: advertisements,
+                pagination: {
+                    page: pageNum,
+                    limit: limitNum,
+                    total,
+                    totalPages: Math.ceil(total / limitNum),
+                },
+            });
+        } catch (error) {
+            return next({
+                status: 500,
+                message: error.message || 'An unexpected error occurred',
+            });
+        }
+    }
+
+    // 📄 GET SINGLE ADVERTISEMENT DETAIL
+    async advertisementDetail(req, res, next) {
+        try {
+            const { advertiserId } = req.params;
+
+            const filters = {};
+            if (advertiserId) filters.advertiserId = advertiserId;
+
+            const advertisement = await Advertisement.findOne(filters).lean();
+
+            if (!advertisement) {
+                return next({
+                    status: 404,
+                    message: 'Advertisement not found',
+                });
+            }
+
+            return res.status(200).json({
+                error: false,
+                data: advertisement,
+            });
+        } catch (error) {
+            return next({
+                status: 500,
+                message: error.message || 'An unexpected error occurred',
+            });
         }
     }
 }
