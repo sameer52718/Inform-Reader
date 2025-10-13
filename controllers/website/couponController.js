@@ -137,11 +137,37 @@ class CouponController extends BaseController {
                 }
             ]);
 
+            const advertisements = await Advertisement.aggregate([
+                {
+                    $match: {
+                        advertiserId: { $exists: true, $ne: null },
+                        accountStatus: { $regex: 'Active', $options: 'i' }
+                    }
+                },
+                { $sample: { size: 12 } },
+                {
+                    $project: {
+                        _id: 1,
+                        advertiserId: 1,
+                        advertiserName: 1,
+                        programName: 1,
+                        accountStatus: 1,
+                        relationshipStatus: 1,
+                        performanceIncentives: 1,
+                        language: 1,
+                        'primaryCategory.parent': 1,
+                        'primaryCategory.child': 1,
+                        createdAt: 1
+                    }
+                }
+            ]);
+
             return res.status(200).json({
                 error: false,
                 coupons,
                 offers,
-                merchants
+                merchants,
+                advertisements
             });
         } catch (error) {
             console.error("❌ Error in home function:", error.message, error.stack);
