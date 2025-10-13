@@ -16,6 +16,8 @@ class CouponController extends BaseController {
         this.detail = this.detail.bind(this);
         this.offerFilter = this.offerFilter.bind(this);
         this.offerDetail = this.offerDetail.bind(this);
+        this.advertisementFilter = this.advertisementFilter.bind(this);
+        this.advertisementDetail = this.advertisementDetail.bind(this);
     }
 
     async home(req, res, next) {
