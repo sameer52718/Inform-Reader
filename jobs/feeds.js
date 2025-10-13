@@ -188,15 +188,15 @@ async function startCron() {
       runCouponSync();
     });
 
-    // Coupon sync cron job
+    // Offer sync cron job
     cron.schedule('0 */2 * * *', () => {
-      logger.info(`[Cron] Running Coupon sync job at ${new Date().toISOString()}`);
+      logger.info(`[Cron] Running Offer sync job at ${new Date().toISOString()}`);
       runOfferSync();
     });
 
-    // Coupon sync cron job
+    // Advertisement sync cron job
     cron.schedule('0 */2 * * *', () => {
-      logger.info(`[Cron] Running Coupon sync job at ${new Date().toISOString()}`);
+      logger.info(`[Cron] Running Advertisement sync job at ${new Date().toISOString()}`);
       runAdvertiserSync();
     });
 
