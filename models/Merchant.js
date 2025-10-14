@@ -16,6 +16,7 @@ const merchantSchema = new mongoose.Schema({
     policies: Object,
     features: Object,
     network: Object,
+    refrence: { type: String, enum: ['RU', 'CJ'], default: 'RU', required: false },
 }, { timestamps: true });
 
 export default mongoose.model("Merchant", merchantSchema);

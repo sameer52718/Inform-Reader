@@ -42,6 +42,171 @@ class CommonController extends BaseController {
     this.myAdvertiser = this.myAdvertiser.bind(this);
     this.coupon = this.coupon.bind(this);
     this.getAllOffers = this.getAllOffers.bind(this);
+    this.cjCoupon = this.cjCoupon.bind(this);
+  }
+
+  async cjCoupon(req, res, next) {
+    try {
+      // --- Step 1: Set up headers ---
+      const headers = {
+        Authorization: `Bearer ${process.env.CJ_TOKEN}`,
+        Accept: 'application/xml',
+      };
+
+      // --- Step 2: Fetch Coupons from CJ Link Search API ---
+      const response = await axios.get(
+        'https://link-search.api.cj.com/v2/link-search?website-id=101424322&advertiser-ids=joined&promotion-type=coupon',
+        { headers }
+      );
+
+      // --- Step 3: Parse XML safely ---
+      const parser = new XMLParser({
+        ignoreAttributes: false,
+        parseAttributeValue: true,
+        removeNSPrefix: true,
+      });
+
+      const parsed = parser.parse(response.data);
+      const links = parsed?.['cj-api']?.links?.link;
+      
+      if (!links || (Array.isArray(links) && links.length === 0)) {
+        return res.status(200).json({ success: true, message: 'No coupons found.' });
+      }
+
+      // Normalize to array
+      const couponList = Array.isArray(links) ? links : [links];
+
+      // --- Step 4: Ensure "Coupons" category exists ---
+      let category = await Category.findOne({ name: 'Coupons' });
+      if (!category) {
+        category = await Category.create({ name: 'Coupons', slug: 'coupons' });
+      }
+
+      let inserted = 0;
+      let skipped = 0;
+
+      // --- Step 5: Process Coupons ---
+      for (const link of couponList) {
+        try {
+          const advertiserId = link['advertiser-id'] || null;
+          const offerDescription = link.description || '';
+          const couponCode = link['coupon-code'] || null;
+          const linkId = link['link-id'] || 0;
+          const linkName = link['link-name'] || 'Unknown';
+          const categoryName = link.category || 'Uncategorized';
+          const promotionType = link['promotion-type'] || '';
+          const networkName = 'CJ';
+
+          // Extract image from HTML
+          const impressionPixel =
+            link['link-code-html']?.match(/<img[^>]+src=["'](.*?)["']/)?.[1] || '';
+
+          // Parse date correctly
+          let lastUpdated = null;
+          if (link['last-updated']) {
+            const rawDate = link['last-updated'];
+            const parsedDate = new Date(rawDate);
+            if (!isNaN(parsedDate.getTime())) {
+              lastUpdated = parsedDate;
+            } else {
+              console.warn(`⚠️ Skipped invalid date: ${rawDate}`);
+            }
+          }
+
+          // --- Skip duplicates ---
+          const existing = await Coupon.findOne({
+            advertiserid: advertiserId,
+            offerdescription: offerDescription,
+            couponcode: couponCode,
+            refrence: 'CJ',
+          });
+          if (existing) {
+            skipped++;
+            continue;
+          }
+
+          // --- Ensure SubCategory exists ---
+          let subCategory = await SubCategory.findOne({
+            name: categoryName,
+            categoryId: category._id,
+          });
+          if (!subCategory) {
+            subCategory = await SubCategory.create({
+              name: categoryName,
+              categoryId: category._id,
+            });
+          }
+
+          // --- Create Coupon ---
+          await Coupon.create({
+            adminId: null,
+            categoryId: category._id,
+            subCategoryId: subCategory._id,
+            promotiontypes: { promotiontype: promotionType },
+            offerdescription: offerDescription,
+            offerstartdate: link['promotion-start-date']
+              ? new Date(link['promotion-start-date'])
+              : null,
+            offerenddate: link['promotion-end-date']
+              ? new Date(link['promotion-end-date'])
+              : null,
+            couponcode: couponCode,
+            clickurl: link.clickUrl || '',
+            impressionpixel: impressionPixel,
+            advertiserid: advertiserId,
+            advertisername: link['advertiser-name'] || '',
+            network: networkName,
+            refrence: 'CJ',
+            status: link['relationship-status'] === 'joined',
+            isDeleted: false,
+            clickCommission: link['click-commission'] || 0,
+            creativeHeight: link['creative-height'] || 0,
+            creativeWidth: link['creative-width'] || 0,
+            language: link.language || '',
+            linkCodeHtml: link['link-code-html'] || '',
+            linkCodeJavascript: link['link-code-javascript'] || '',
+            destination: link.destination || '',
+            linkId,
+            linkName,
+            linkType: link['link-type'] || '',
+            allowDeepLinking: Boolean(link['allow-deep-linking']),
+            performanceIncentive: Boolean(link['performance-incentive']),
+            saleCommission: link['sale-commission'] || '',
+            mobileOptimized: Boolean(link['mobile-optimized']),
+            mobileAppDownload: Boolean(link['mobile-app-download']),
+            crossDeviceOnly: Boolean(link['cross-device-only']),
+            targetedCountries: link['targeted-countries'] || '',
+            eventName: link['event-name'] || '',
+            adContent: link['ad-content'] || '',
+            lastUpdated,
+            sevenDayEpc: link['seven-day-epc'] || '',
+            threeMonthEpc: link['three-month-epc'] || '',
+          });
+
+          inserted++;
+        } catch (innerErr) {
+          console.warn(
+            `Skipping coupon (advertiser-id: ${link['advertiser-id'] || 'unknown'}): ${innerErr.message}`
+          );
+        }
+      }
+
+      // --- Step 6: Respond ---
+      return res.status(200).json({
+        success: true,
+        message: 'Coupons fetched and saved successfully.',
+        totalFetched: couponList.length,
+        inserted,
+        skipped,
+      });
+    } catch (error) {
+      console.error('Error in coupon import:', error.response?.data || error.message);
+      return next({
+        status: 500,
+        message: 'Failed to fetch or save coupons.',
+        error: error.message,
+      });
+    }
   }
 
   async advertiser(req, res, next) {

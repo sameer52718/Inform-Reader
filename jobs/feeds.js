@@ -15,7 +15,8 @@ import { generateAllSitemaps } from './sitemap.js';
 import { runSyncJob } from './merchant.js';
 import { runCouponSync } from './coupon.js';
 import { runOfferSync } from './offer.js';
-import { runAdvertiserSync } from './advertiser.js';
+import { runCJMerchantSync } from './cjMerchant.js';
+import { runCJCouponSync } from './cjCoupon.js';
 
 import * as cheerio from 'cheerio';
 
@@ -194,10 +195,16 @@ async function startCron() {
       runOfferSync();
     });
 
-    // Advertisement sync cron job
+    // CJ Merchant sync cron job
     cron.schedule('0 */2 * * *', () => {
-      logger.info(`[Cron] Running Advertisement sync job at ${new Date().toISOString()}`);
-      runAdvertiserSync();
+      logger.info(`[Cron] Running CJ Merchant sync job at ${new Date().toISOString()}`);
+      runCJMerchantSync();
+    });
+
+    // CJ Coupon sync cron job
+    cron.schedule('0 */2 * * *', () => {
+      logger.info(`[Cron] Running CJ Coupon sync job at ${new Date().toISOString()}`);
+      runCJCouponSync();
     });
 
 

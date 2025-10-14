@@ -22,6 +22,7 @@ router.get('/advertiser', commonController.advertiser);
 router.get('/coupon', commonController.coupon);
 router.get('/myAdvertiser', commonController.myAdvertiser);
 router.get('/offer', commonController.getAllOffers);
+router.get('/cj/coupon', commonController.cjCoupon);
 
 
 export default router;

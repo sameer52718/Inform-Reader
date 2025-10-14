@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { parseStringPromise } from 'xml2js';
-import Advertisement from '../models/Advertisement.js';
+import Merchant from '../models/Merchant.js'; // Updated to import Merchant model
 import logger from '../logger.js';
 
-export const runAdvertiserSync = async () => {
+export const runCJMerchantSync = async () => {
   const jobId = Date.now().toString(); // Unique job ID for logging
   logger.info(`[Advertiser][Job:${jobId}] Starting advertiser sync`);
 
@@ -75,41 +75,50 @@ export const runAdvertiserSync = async () => {
     const bulkOps = [];
     for (const adv of advertisers) {
       try {
-        const advertiserId = adv['advertiser-id']?.[0] || 'unknown';
+        const advertiserId = Number(adv['advertiser-id']?.[0]) || 0; // Convert to Number
         const advertiserName = adv['advertiser-name']?.[0] || 'Unknown';
 
         const advertiserData = {
           advertiserId,
-          advertiserName,
-          programName: adv['program-name']?.[0] || '',
-          programUrl: adv['program-url']?.[0] || '',
-          accountStatus: adv['account-status']?.[0] || '',
-          sevenDayEpc: adv['seven-day-epc']?.[0] || '0.00',
-          threeMonthEpc: adv['three-month-epc']?.[0] || '0.00',
-          language: adv.language?.[0] || '',
-          relationshipStatus: adv['relationship-status']?.[0] || '',
-          mobileTrackingCertified: adv['mobile-tracking-certified']?.[0] === 'true',
-          cookielessTrackingEnabled: adv['cookieless-tracking-enabled']?.[0] === 'true',
-          networkRank: adv['network-rank']?.[0] || '0',
-          primaryCategory: {
-            parent: adv['primary-category']?.[0]?.parent?.[0] || 'Unknown',
-            child: adv['primary-category']?.[0]?.child?.[0] || 'Unknown',
+          name: advertiserName,
+          url: adv['program-url']?.[0] || '',
+          description: adv['program-name']?.[0] || '',
+          can_partner: adv['relationship-status']?.[0] === 'joined', // Map to boolean
+          contact: {}, // No contact info in CJ API, leave empty
+          policies: {
+            actions: adv.actions?.[0]?.action?.map((action) => ({
+              name: action.name?.[0] || '',
+              type: action.type?.[0] || '',
+              id: action.id?.[0] || '',
+              commission: {
+                default: action.commission?.[0]?.default?.[0] || '0.00%',
+                itemlist: action.commission?.[0]?.itemlist?.map((item) => ({
+                  value: item._ || '0.00',
+                  name: item.$?.name || '',
+                  id: item.$?.id || '',
+                })) || [],
+              },
+            })) || [],
           },
-          performanceIncentives: adv['performance-incentives']?.[0] === 'true',
-          actions: adv.actions?.[0]?.action?.map((action) => ({
-            name: action.name?.[0] || '',
-            type: action.type?.[0] || '',
-            id: action.id?.[0] || '',
-            commission: {
-              default: action.commission?.[0]?.default?.[0] || '0.00%',
-              itemlist: action.commission?.[0]?.itemlist?.map((item) => ({
-                value: item._ || '0.00',
-                name: item.$?.name || '',
-                id: item.$?.id || '',
-              })) || [],
+          features: {
+            mobileTrackingCertified: adv['mobile-tracking-certified']?.[0] === 'true',
+            cookielessTrackingEnabled: adv['cookieless-tracking-enabled']?.[0] === 'true',
+            performanceIncentives: adv['performance-incentives']?.[0] === 'true',
+            linkTypes: adv['link-types']?.[0]?.['link-type'] || [],
+          },
+          network: {
+            accountStatus: adv['account-status']?.[0] || '',
+            sevenDayEpc: adv['seven-day-epc']?.[0] || '0.00',
+            threeMonthEpc: adv['three-month-epc']?.[0] || '0.00',
+            networkRank: adv['network-rank']?.[0] || '0',
+            primaryCategory: {
+              parent: adv['primary-category']?.[0]?.parent?.[0] || 'Unknown',
+              child: adv['primary-category']?.[0]?.child?.[0] || 'Unknown',
             },
-          })) || [],
-          linkTypes: adv['link-types']?.[0]?.['link-type'] || [],
+            language: adv.language?.[0] || '',
+            relationshipStatus: adv['relationship-status']?.[0] || '',
+            refrence: 'CJ'
+          },
         };
 
         bulkOps.push({
@@ -133,7 +142,7 @@ export const runAdvertiserSync = async () => {
     let storedAdvertisersCount = 0;
     if (bulkOps.length > 0) {
       try {
-        const result = await Advertisement.bulkWrite(bulkOps, { ordered: false });
+        const result = await Merchant.bulkWrite(bulkOps, { ordered: false }); // Updated to Merchant model
         storedAdvertisersCount = result.upsertedCount + result.modifiedCount;
         logger.info(`[Advertiser][Job:${jobId}] Successfully stored/updated ${storedAdvertisersCount} advertisers`);
       } catch (dbError) {
