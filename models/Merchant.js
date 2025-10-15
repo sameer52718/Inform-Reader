@@ -13,9 +13,9 @@ const merchantSchema = new mongoose.Schema({
         phone: String,
         country: String,
     },
-    policies: Object,
-    features: Object,
-    network: Object,
+    policies: mongoose.Schema.Types.Mixed,
+    features: mongoose.Schema.Types.Mixed,
+    network: mongoose.Schema.Types.Mixed,
     refrence: { type: String, enum: ['RU', 'CJ'], default: 'RU', required: false },
 }, { timestamps: true });
 
