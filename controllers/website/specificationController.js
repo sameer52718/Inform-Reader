@@ -218,9 +218,8 @@ class SpecificationController extends BaseController {
 
       // Apply general filters
       if (brand) {
-        const brandNames = brand.split(',').map((b) => b.trim());
-        const brands = await Brand.find({ name: { $in: brandNames } }).select('_id');
-        query.brandId = { $in: brands.map((b) => b._id) };
+        const brandIds = brand.split(',').map((b) => new mongoose.Types.ObjectId(b.trim()));
+        query.brandId = { $in: brandIds };
       }
       if (priceRange) {
         const ranges = priceRange.split(',').map((r) => r.trim());
@@ -341,6 +340,7 @@ class SpecificationController extends BaseController {
         if (capacity) query['data.capacity'] = { $in: capacity.split(',').map((c) => c.trim()) };
         if (applianceFeatures) query['data.applianceFeatures'] = { $in: applianceFeatures.split(',').map((f) => f.trim()) };
       }
+console.log(query);
 
       // Define aggregation pipeline
       const aggregationPipeline = [
