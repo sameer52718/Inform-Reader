@@ -14,12 +14,12 @@ import Nationality from '../../models/Nationality.js';
 import Advertisement from '../../models/Advertisement.js';
 import axios from 'axios';
 import { parseStringPromise } from 'xml2js';
-import qs from "qs";
-import { XMLParser } from "fast-xml-parser";
+import qs from 'qs';
+import { XMLParser } from 'fast-xml-parser';
 import dotenv from 'dotenv';
-import Coupon from "../../models/Coupon.js";
-import Merchant from "../../models/Merchant.js";
-import Offer from "../../models/Offer.js";
+import Coupon from '../../models/Coupon.js';
+import Merchant from '../../models/Merchant.js';
+import Offer from '../../models/Offer.js';
 dotenv.config();
 
 class CommonController extends BaseController {
@@ -54,10 +54,7 @@ class CommonController extends BaseController {
       };
 
       // --- Step 2: Fetch Coupons from CJ Link Search API ---
-      const response = await axios.get(
-        'https://link-search.api.cj.com/v2/link-search?website-id=101424322&advertiser-ids=joined&promotion-type=coupon',
-        { headers }
-      );
+      const response = await axios.get('https://link-search.api.cj.com/v2/link-search?website-id=101424322&advertiser-ids=joined&promotion-type=coupon', { headers });
 
       // --- Step 3: Parse XML safely ---
       const parser = new XMLParser({
@@ -68,7 +65,7 @@ class CommonController extends BaseController {
 
       const parsed = parser.parse(response.data);
       const links = parsed?.['cj-api']?.links?.link;
-      
+
       if (!links || (Array.isArray(links) && links.length === 0)) {
         return res.status(200).json({ success: true, message: 'No coupons found.' });
       }
@@ -98,8 +95,7 @@ class CommonController extends BaseController {
           const networkName = 'CJ';
 
           // Extract image from HTML
-          const impressionPixel =
-            link['link-code-html']?.match(/<img[^>]+src=["'](.*?)["']/)?.[1] || '';
+          const impressionPixel = link['link-code-html']?.match(/<img[^>]+src=["'](.*?)["']/)?.[1] || '';
 
           // Parse date correctly
           let lastUpdated = null;
@@ -144,12 +140,8 @@ class CommonController extends BaseController {
             subCategoryId: subCategory._id,
             promotiontypes: { promotiontype: promotionType },
             offerdescription: offerDescription,
-            offerstartdate: link['promotion-start-date']
-              ? new Date(link['promotion-start-date'])
-              : null,
-            offerenddate: link['promotion-end-date']
-              ? new Date(link['promotion-end-date'])
-              : null,
+            offerstartdate: link['promotion-start-date'] ? new Date(link['promotion-start-date']) : null,
+            offerenddate: link['promotion-end-date'] ? new Date(link['promotion-end-date']) : null,
             couponcode: couponCode,
             clickurl: link.clickUrl || '',
             impressionpixel: impressionPixel,
@@ -185,9 +177,7 @@ class CommonController extends BaseController {
 
           inserted++;
         } catch (innerErr) {
-          console.warn(
-            `Skipping coupon (advertiser-id: ${link['advertiser-id'] || 'unknown'}): ${innerErr.message}`
-          );
+          console.warn(`Skipping coupon (advertiser-id: ${link['advertiser-id'] || 'unknown'}): ${innerErr.message}`);
         }
       }
 
@@ -247,28 +237,30 @@ class CommonController extends BaseController {
             child: adv['primary-category']?.[0]?.child?.[0] || 'Unknown',
           },
           performanceIncentives: adv['performance-incentives']?.[0] === 'true',
-          actions: adv.actions?.[0]?.action?.map((action) => ({
-            name: action.name[0],
-            type: action.type[0],
-            id: action.id[0],
-            commission: {
-              default: action.commission[0].default?.[0] || '0.00%',
-              itemlist: action.commission[0].itemlist?.map((item) => ({
-                value: item._ || '0.00',
-                name: item.$?.name || '',
-                id: item.$?.id || '',
-              })) || [],
-            },
-          })) || [],
+          actions:
+            adv.actions?.[0]?.action?.map((action) => ({
+              name: action.name[0],
+              type: action.type[0],
+              id: action.id[0],
+              commission: {
+                default: action.commission[0].default?.[0] || '0.00%',
+                itemlist:
+                  action.commission[0].itemlist?.map((item) => ({
+                    value: item._ || '0.00',
+                    name: item.$?.name || '',
+                    id: item.$?.id || '',
+                  })) || [],
+              },
+            })) || [],
           linkTypes: adv['link-types']?.[0]?.['link-type'] || [],
         };
 
         // Step 4: Store/Update in MongoDB (no duplicates)
-        const updatedAdvertiser = await Advertisement.findOneAndUpdate(
-          { advertiserId: advertiserData.advertiserId },
-          advertiserData,
-          { upsert: true, new: true, runValidators: true }
-        );
+        const updatedAdvertiser = await Advertisement.findOneAndUpdate({ advertiserId: advertiserData.advertiserId }, advertiserData, {
+          upsert: true,
+          new: true,
+          runValidators: true,
+        });
         storedAdvertisers.push(updatedAdvertiser);
 
         console.log(`Stored/Updated: ${advertiserData.advertiserName}`);
@@ -294,24 +286,22 @@ class CommonController extends BaseController {
 
   async myAdvertiser(req, res, next) {
     try {
-      const bearerToken =
-        "TVhIUmdPenFyUVdJRTREOUttQ3k2ZE1FZ0xhc1VwMTY6QUlUemxGQjk4b0dBY0VneVdWVnpPRWFoR1BCZGNVNGk=";
+      const bearerToken = 'TVhIUmdPenFyUVdJRTREOUttQ3k2ZE1FZ0xhc1VwMTY6QUlUemxGQjk4b0dBY0VneVdWVnpPRWFoR1BCZGNVNGk=';
 
       const data = qs.stringify({
-        grant_type: "password",
-        scope: "4571385",
+        grant_type: 'password',
+        scope: '4571385',
       });
 
       // Step 1: Get token
-      const tokenResponse = await axios.post("https://api.linksynergy.com/token", data, {
+      const tokenResponse = await axios.post('https://api.linksynergy.com/token', data, {
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          'Content-Type': 'application/x-www-form-urlencoded',
           Authorization: `Bearer ${bearerToken}`,
         },
       });
 
       const accessToken = tokenResponse.data.access_token;
-
 
       const keyword = req.query.keyword || ''; // Optional: from query string
       const status = 'approved'; // Fetch only approved advertisers
@@ -320,7 +310,7 @@ class CommonController extends BaseController {
         'Content-Type': 'application/json', // v2 uses JSON
       };
 
-      const response = await axios.get(`https://api.linksynergy.com/advertisersearch/1.0?merchantname=${keyword}`, { headers, });
+      const response = await axios.get(`https://api.linksynergy.com/advertisersearch/1.0?merchantname=${keyword}`, { headers });
       // const response = await axios.get(`https://api.linksynergy.com/v2/advertisers/815`, { headers, });
 
       const parser = new XMLParser();
@@ -329,10 +319,7 @@ class CommonController extends BaseController {
 
       for (const ad of advertisers.result.midlist.merchant) {
         try {
-          const response = await axios.get(
-            `https://api.linksynergy.com/v2/advertisers/${ad.mid}`,
-            { headers }
-          );
+          const response = await axios.get(`https://api.linksynergy.com/v2/advertisers/${ad.mid}`, { headers });
           const advertiserInfo = response.data?.advertiser;
           console.log(advertiserInfo);
           await Merchant.findOneAndUpdate(
@@ -348,7 +335,7 @@ class CommonController extends BaseController {
               features: advertiserInfo.features || {},
               network: advertiserInfo.network || {},
             },
-            { upsert: true, new: true }
+            { upsert: true, new: true },
           );
           console.log(`Stored/Updated: ${advertiserInfo.name}`);
         } catch (innerErr) {
@@ -360,7 +347,6 @@ class CommonController extends BaseController {
         error: false,
         data: advertisers, // JSON data directly
       });
-
     } catch (error) {
       console.error('Error:', error.response?.data || error.message);
       return res.status(error.response?.status || 500).json({
@@ -403,7 +389,6 @@ class CommonController extends BaseController {
   //         },
   //       }
   //     );
-
 
   //     // const advertisers = listResponse.data?.advertisers || [];
   //     const parser = new XMLParser();
@@ -470,25 +455,25 @@ class CommonController extends BaseController {
       // --- Step 1: Get Access Token ---
       const bearerToken = process.env.RAKUTEN_BEARER_TOKEN;
       const tokenData = qs.stringify({
-        grant_type: "password",
-        scope: "4571385",
+        grant_type: 'password',
+        scope: '4571385',
       });
 
-      const tokenResponse = await axios.post("https://api.linksynergy.com/token", tokenData, {
+      const tokenResponse = await axios.post('https://api.linksynergy.com/token', tokenData, {
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          'Content-Type': 'application/x-www-form-urlencoded',
           Authorization: `Bearer ${bearerToken}`,
         },
       });
 
       const accessToken = tokenResponse?.data?.access_token;
-      if (!accessToken) throw new Error("Failed to get access token from Rakuten API");
+      if (!accessToken) throw new Error('Failed to get access token from Rakuten API');
 
       // --- Step 2: Fetch Coupons ---
-      const couponResponse = await axios.get("https://api.linksynergy.com/coupon/1.0", {
+      const couponResponse = await axios.get('https://api.linksynergy.com/coupon/1.0', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          Accept: "application/xml",
+          Accept: 'application/xml',
         },
         params: { sid: process.env.RAKUTEN_PUBLISHER_SID },
       });
@@ -503,13 +488,13 @@ class CommonController extends BaseController {
       const links = couponData?.couponfeed?.link || [];
 
       if (!Array.isArray(links) || links.length === 0) {
-        return res.status(200).json({ success: true, message: "No coupons found." });
+        return res.status(200).json({ success: true, message: 'No coupons found.' });
       }
 
       // --- Step 4: Ensure "Coupons" category exists ---
-      let category = await Category.findOne({ name: "Coupons" });
+      let category = await Category.findOne({ name: 'Coupons' });
       if (!category) {
-        category = await Category.create({ name: "Coupons", slug: "coupons" });
+        category = await Category.create({ name: 'Coupons', slug: 'coupons' });
       }
 
       let inserted = 0;
@@ -523,36 +508,36 @@ class CommonController extends BaseController {
           const couponCode = link?.couponcode || null;
 
           // 🧩 Category Name
-          let categoryName = "Uncategorized";
+          let categoryName = 'Uncategorized';
           const rawCategory = link?.categories?.category;
           if (rawCategory) {
             if (Array.isArray(rawCategory)) {
-              categoryName = rawCategory[0]["#text"]?.trim() || "Uncategorized";
-            } else if (typeof rawCategory === "object" && rawCategory["#text"]) {
-              categoryName = rawCategory["#text"].trim();
-            } else if (typeof rawCategory === "string") {
+              categoryName = rawCategory[0]['#text']?.trim() || 'Uncategorized';
+            } else if (typeof rawCategory === 'object' && rawCategory['#text']) {
+              categoryName = rawCategory['#text'].trim();
+            } else if (typeof rawCategory === 'string') {
               categoryName = rawCategory.trim();
             }
           }
 
           // 🧩 Promotion Type
-          let promotionType = "";
+          let promotionType = '';
           const rawPromo = link?.promotiontypes?.promotiontype;
           if (rawPromo) {
-            if (typeof rawPromo === "object" && rawPromo["#text"]) {
-              promotionType = rawPromo["#text"].trim();
-            } else if (typeof rawPromo === "string") {
+            if (typeof rawPromo === 'object' && rawPromo['#text']) {
+              promotionType = rawPromo['#text'].trim();
+            } else if (typeof rawPromo === 'string') {
               promotionType = rawPromo.trim();
             }
           }
 
           // 🧩 Network Name
-          let networkName = "";
+          let networkName = '';
           const rawNetwork = link?.network;
           if (rawNetwork) {
-            if (typeof rawNetwork === "object" && rawNetwork["#text"]) {
-              networkName = rawNetwork["#text"].trim();
-            } else if (typeof rawNetwork === "string") {
+            if (typeof rawNetwork === 'object' && rawNetwork['#text']) {
+              networkName = rawNetwork['#text'].trim();
+            } else if (typeof rawNetwork === 'string') {
               networkName = rawNetwork.trim();
             }
           }
@@ -599,7 +584,7 @@ class CommonController extends BaseController {
 
           inserted++;
         } catch (err) {
-          console.warn("Skipping invalid coupon:", err.message);
+          console.warn('Skipping invalid coupon:', err.message);
         }
       });
 
@@ -608,36 +593,34 @@ class CommonController extends BaseController {
       // --- Step 6: Respond ---
       return res.status(200).json({
         success: true,
-        message: "Coupons fetched and saved successfully.",
+        message: 'Coupons fetched and saved successfully.',
         totalFetched: links.length,
         inserted,
         skipped,
       });
     } catch (error) {
-      console.error("Error in coupon import:", error.response?.data || error.message);
+      console.error('Error in coupon import:', error.response?.data || error.message);
       return next({
         status: 500,
-        message: "Failed to fetch or save coupons.",
+        message: 'Failed to fetch or save coupons.',
         error: error.message,
       });
     }
-
   }
 
   async getAllOffers(req, res, next) {
     try {
-      const bearerToken =
-        "TVhIUmdPenFyUVdJRTREOUttQ3k2ZE1FZ0xhc1VwMTY6QUlUemxGQjk4b0dBY0VneVdWVnpPRWFoR1BCZGNVNGk=";
+      const bearerToken = 'TVhIUmdPenFyUVdJRTREOUttQ3k2ZE1FZ0xhc1VwMTY6QUlUemxGQjk4b0dBY0VneVdWVnpPRWFoR1BCZGNVNGk=';
 
       const data = qs.stringify({
-        grant_type: "password",
-        scope: "4571385",
+        grant_type: 'password',
+        scope: '4571385',
       });
 
       // Step 1: Get token
-      const tokenResponse = await axios.post("https://api.linksynergy.com/token", data, {
+      const tokenResponse = await axios.post('https://api.linksynergy.com/token', data, {
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          'Content-Type': 'application/x-www-form-urlencoded',
           Authorization: `Bearer ${bearerToken}`,
         },
       });
@@ -645,7 +628,7 @@ class CommonController extends BaseController {
       const accessToken = tokenResponse.data.access_token;
 
       const headers = {
-        accept: "application/json",
+        accept: 'application/json',
         authorization: `Bearer ${accessToken}`,
       };
 
@@ -655,7 +638,7 @@ class CommonController extends BaseController {
       let hasMorePages = true;
       const limit = 100; // Higher limit for efficiency
 
-      console.log("🚀 Starting to fetch all offers from API...");
+      console.log('🚀 Starting to fetch all offers from API...');
 
       // Step 2: Fetch all pages
       while (hasMorePages) {
@@ -681,23 +664,23 @@ class CommonController extends BaseController {
           }
 
           // Transform and prepare offers for storage
-          const processedOffers = currentPageOffers.map(offer => ({
+          const processedOffers = currentPageOffers.map((offer) => ({
             ...offer,
             metadata: {
               ...metadata,
               page: currentPage,
-              total_pages: totalPages
-            }
+              total_pages: totalPages,
+            },
           }));
 
           // Store in database
           await Offer.insertMany(processedOffers, { ordered: false })
-            .then(result => {
+            .then((result) => {
               allOffers = allOffers.concat(result);
               totalOffers += result.length;
               console.log(`💾 Stored ${result.length} offers from page ${currentPage}`);
             })
-            .catch(err => {
+            .catch((err) => {
               console.error(`⚠️ Error storing offers from page ${currentPage}:`, err.message);
               // Continue with next page even if some inserts fail
             });
@@ -706,13 +689,12 @@ class CommonController extends BaseController {
           currentPage++;
 
           // Small delay to avoid rate limiting
-          await new Promise(resolve => setTimeout(resolve, 100));
-
+          await new Promise((resolve) => setTimeout(resolve, 100));
         } catch (pageError) {
           console.error(`❌ Error fetching page ${currentPage}:`, pageError.message);
           if (pageError.response?.status === 429) {
-            console.log("⏳ Rate limited, waiting 1 minute...");
-            await new Promise(resolve => setTimeout(resolve, 60000));
+            console.log('⏳ Rate limited, waiting 1 minute...');
+            await new Promise((resolve) => setTimeout(resolve, 60000));
             // Retry the same page
             currentPage--;
           } else {
@@ -728,25 +710,23 @@ class CommonController extends BaseController {
         error: false,
         offer: {
           metadata: {
-            api_name_version: "offers-v1.4.0",
+            api_name_version: 'offers-v1.4.0',
             total: totalOffers,
             total_pages: currentPage - 1,
-            last_fetched_at: new Date()
+            last_fetched_at: new Date(),
           },
-          offers: allOffers.slice(0, 5) // Return first 5 as sample
+          offers: allOffers.slice(0, 5), // Return first 5 as sample
         },
-        message: `Successfully stored ${totalOffers} offers`
+        message: `Successfully stored ${totalOffers} offers`,
       });
-
     } catch (err) {
-      console.error("❌ Failed to fetch offers:", err.message);
+      console.error('❌ Failed to fetch offers:', err.message);
       return res.status(500).json({
         error: true,
-        message: err.message || "Failed to fetch and store offers"
+        message: err.message || 'Failed to fetch and store offers',
       });
     }
   }
-
 
   // async coupon(req, res, next) {
   //   try {
@@ -995,8 +975,12 @@ class CommonController extends BaseController {
   }
 
   async brand(req, res, next) {
+    const { category } = req.query;
     try {
-      const brands = await Brand.find({ status: true, isDeleted: false }).select('name');
+      const filter = { status: true, isDeleted: false };
+      if (category) filter.category = category;
+
+      const brands = await Brand.find(filter).select('name');
       return res.json({ error: false, brands });
     } catch (error) {
       return this.handleError(next, error.message, 500);
@@ -1113,7 +1097,6 @@ class CommonController extends BaseController {
       return this.handleError(next, error.message, 500);
     }
   }
-
 }
 
 export default new CommonController();

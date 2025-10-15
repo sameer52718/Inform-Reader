@@ -70,6 +70,7 @@ class CouponController extends BaseController {
             offerenddate: 1,
             categoryName: '$category.name',
             clickurl: 1,
+            impressionpixel:1,
           },
         },
       ]);
@@ -348,9 +349,6 @@ class CouponController extends BaseController {
         .populate('categoryId', 'name')
         .populate('subCategoryId', 'name')
         .populate('adminId', 'name email')
-        .select(
-          'adminId categoryId subCategoryId promotiontypes offerdescription offerstartdate offerenddate couponcode clickurl impressionpixel advertiserid advertisername network status createdAt',
-        );
 
       if (!coupon) {
         return this.handleError(next, 'Coupon not found', 404);

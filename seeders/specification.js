@@ -12,7 +12,7 @@ dotenv.config();
 
 const BATCH_SIZE = 500;
 
-// Client-specified categories and subcategories with order
+// Client-specified categories
 const clientCategories = [
   { name: 'Mobiles & Tablets', order: 1 },
   { name: 'Laptops & Computers', order: 2 },
@@ -60,7 +60,6 @@ const clientSubCategories = [
   { name: 'Other Office Equipment', category: 'Printers & Office Equipment', order: 27 },
 ];
 
-// Mapping for JSON categories to clientz categories
 const categoryNameMap = {
   'led tv': 'TVs & Home Entertainment',
   drones: 'Cameras & Drones',
@@ -81,7 +80,7 @@ const categoryNameMap = {
   juicers: 'Home & Kitchen Appliances',
   'water dispenser': 'Home & Kitchen Appliances',
   'external drives': 'Laptops & Computers',
-  headphones: 'Mvobiles & Tablets',
+  headphones: 'Mobiles & Tablets',
   'laptop chargers': 'Laptops & Computers',
   keyboards: 'Laptops & Computers',
   webcams: 'Laptops & Computers',
@@ -91,7 +90,6 @@ const categoryNameMap = {
   laptops: 'Laptops & Computers',
 };
 
-// Mapping for JSON subcategories to client subcategories
 const subCategoryNameMap = {
   'hp gaming laptop': 'Laptops',
   'apple macbook': 'Laptops',
@@ -175,42 +173,16 @@ const transformGeneralData = (generalArray) => {
     availability: 'In Stock',
   };
 
-  if (!generalArray || !Array.isArray(generalArray)) {
-    console.warn('⚠️ General array is missing or invalid, returning default data');
-    return data;
-  }
+  if (!generalArray || !Array.isArray(generalArray)) return data;
 
   for (const section of generalArray) {
-    if (!section || !section.section || !section.data) {
-      console.warn('⚠️ Invalid section in general array:', section);
-      continue;
-    }
+    if (!section || !section.section || !section.data) continue;
     const key = normalizeField(section.section);
     const mappedKey = sectionMap[key] || key;
-
     if (!data[mappedKey]) data[mappedKey] = [];
 
     for (const [name, value] of section.data) {
-      if (name && value) {
-        data[mappedKey].push({ name: name.trim(), value: value.trim() });
-
-        // Map to specific filter fields
-        if (name.toLowerCase().includes('installed ram')) {
-          data.ram = value.trim();
-        } else if (name.toLowerCase().includes('storage capacity')) {
-          data.storageCapacity = value.trim();
-        } else if (name.toLowerCase().includes('screen size')) {
-          data.screenSize = value.trim();
-        } else if (name.toLowerCase().includes('operating system')) {
-          data.operatingSystem = value.trim();
-        } else if (name.toLowerCase().includes('processor')) {
-          data.processorType = value.trim();
-        } else if (name.toLowerCase().includes('display') && value.toLowerCase().includes('amoled')) {
-          data.displayType = 'AMOLED';
-        } else if (name.toLowerCase().includes('display') && value.toLowerCase().includes('ips')) {
-          data.displayType = 'IPS LCD';
-        }
-      }
+      if (name && value) data[mappedKey].push({ name: name.trim(), value: value.trim() });
     }
   }
 
@@ -225,254 +197,119 @@ const seedSpecifications = async () => {
     });
     console.log('🚀 Connected to MongoDB');
 
-    // Step 1: Delete existing data
-    await Promise.all([Specification.deleteMany({})]);
-    console.log('🗑️ Deleted existing Specifications, Categories, SubCategories, Brands, and Types');
+    await Specification.deleteMany({});
+    console.log('🗑️ Deleted old specifications');
 
-    // Step 2: Create Type
-    const type = await Type.create({ name: 'Specification', slug: 'specification', status: true });
-    console.log('✅ Created Type: Specification');
+    const type = await Type.findOne({ name: 'Specification', slug: 'specification', status: true });
+    console.log('✅ Type created');
 
-    // Step 3: Create Categories (client-defined + new from JSON)
     const categoryMap = new Map();
-    let maxCategoryOrder = Math.max(...clientCategories.map((c) => c.order), 0);
-
-    // Create client-defined categories
     for (const cat of clientCategories) {
       const category = await Category.create({
         name: cat.name,
         order: cat.order,
         typeId: type._id,
-        adminId: null,
         status: true,
         isDeleted: false,
       });
       categoryMap.set(cat.name.toLowerCase(), category);
-      console.log(`✅ Created Category: ${cat.name} with order ${cat.order}`);
     }
 
-    // Collect unique categories from JSON
-    const jsonCategories = new Set();
-    for (const item of specifications) {
-      const categoryName = (item.category || '').trim();
-      if (categoryName) jsonCategories.add(categoryName);
-    }
-
-    // Create new categories from JSON if not mapped or not in clientCategories
-    for (const jsonCat of jsonCategories) {
-      const normalizedJsonCat = jsonCat.toLowerCase();
-      const mappedCatName = categoryNameMap[normalizedJsonCat] || jsonCat;
-      if (!categoryMap.has(mappedCatName.toLowerCase())) {
-        maxCategoryOrder += 1;
-        const category = await Category.create({
-          name: mappedCatName,
-          order: maxCategoryOrder,
-          typeId: type._id,
-          adminId: null,
-          status: true,
-          isDeleted: false,
-        });
-        categoryMap.set(mappedCatName.toLowerCase(), category);
-        console.log(`✅ Created New Category: ${mappedCatName} with order ${maxCategoryOrder}`);
-      }
-    }
-
-    // Step 4: Create SubCategories (client-defined + new from JSON)
     const subCategoryMap = new Map();
-    let maxSubCategoryOrder = Math.max(...clientSubCategories.map((sc) => sc.order), 0);
-
-    // Create client-defined subcategories
-    for (const subCat of clientSubCategories) {
-      const category = categoryMap.get(subCat.category.toLowerCase());
-      if (!category) {
-        console.error(`❌ Category not found for SubCategory: ${subCat.name}`);
-        continue;
-      }
-      const subCategory = await SubCategory.create({
-        name: subCat.name,
-        order: subCat.order,
+    for (const sub of clientSubCategories) {
+      const category = categoryMap.get(sub.category.toLowerCase());
+      const subCat = await SubCategory.create({
+        name: sub.name,
         categoryId: category._id,
+        order: sub.order,
         typeId: type._id,
-        adminId: null,
         status: true,
-        isDeleted: false,
       });
-      subCategoryMap.set(`${subCat.category.toLowerCase()}:${subCat.name.toLowerCase()}`, subCategory);
-      console.log(`✅ Created SubCategory: ${subCat.name} under ${subCat.category} with order ${subCat.order}`);
+      subCategoryMap.set(`${sub.category.toLowerCase()}:${sub.name.toLowerCase()}`, subCat);
     }
 
-    // Collect unique subcategories from JSON
-    const jsonSubCategories = new Map();
-    for (const item of specifications) {
-      const categoryName = (item.category || '').trim();
-      const subCatName = (item.subcategory || '').trim();
-      if (categoryName && subCatName) {
-        const key = `${categoryName}:${subCatName}`;
-        jsonSubCategories.set(key, { category: categoryName, subcategory: subCatName });
-      }
-    }
-
-    // Create new subcategories from JSON if not mapped
-    for (const [key, { category, subcategory }] of jsonSubCategories) {
-      const normalizedCat = category.toLowerCase();
-      const normalizedSubCat = subcategory.toLowerCase();
-      const mappedCatName = categoryNameMap[normalizedCat] || category;
-      const mappedSubCatName = subCategoryNameMap[normalizedSubCat] || subcategory;
-      const subCatKey = `${mappedCatName.toLowerCase()}:${mappedSubCatName.toLowerCase()}`;
-      if (!subCategoryMap.has(subCatKey)) {
-        const parentCategory = categoryMap.get(mappedCatName.toLowerCase());
-        if (parentCategory) {
-          maxSubCategoryOrder += 1;
-          const subCategory = await SubCategory.create({
-            name: mappedSubCatName,
-            order: maxSubCategoryOrder,
-            categoryId: parentCategory._id,
-            typeId: type._id,
-            adminId: null,
-            status: true,
-            isDeleted: false,
-          });
-          subCategoryMap.set(subCatKey, subCategory);
-          console.log(`✅ Created New SubCategory: ${mappedSubCatName} under ${mappedCatName} with order ${maxSubCategoryOrder}`);
-        } else {
-          console.warn(`⚠️ Parent category not found for SubCategory: ${mappedSubCatName} (Category: ${mappedCatName})`);
-        }
-      }
-    }
-
-    // Step 5: Process Specifications
     const brandMap = new Map();
     const batch = [];
-    const skippedItems = [];
 
     for (const item of specifications) {
-      // Validate item
-      if (!item.name || !item.category) {
-        skippedItems.push({
-          ...item,
-          reason: 'Missing name or category',
-        });
-        console.warn(`⚠️ Skipped item: ${item.name || 'Unknown'} (Reason: Missing name or category)`);
-        continue;
-      }
+      const mappedCatName = categoryNameMap[item.category?.toLowerCase()] || item.category;
+      const category = categoryMap.get(mappedCatName?.toLowerCase());
+      if (!category) continue;
 
-      // Map JSON category to client category or use JSON category
-      let categoryName = item.category.trim().toLowerCase();
-      const mappedCatName = categoryNameMap[categoryName] || item.category.trim();
-      const category = categoryMap.get(mappedCatName.toLowerCase());
-      if (!category) {
-        skippedItems.push({
-          ...item,
-          reason: `Category not found: ${mappedCatName}`,
-        });
-        console.warn(`⚠️ Skipped item: ${item.name} (Reason: Category not found: ${mappedCatName})`);
-        continue;
-      }
+      let subCatName = item.subcategory || item.brand || 'General';
+      subCatName = subCategoryNameMap[subCatName.toLowerCase()] || subCatName;
+      const subCatKey = `${mappedCatName.toLowerCase()}:${subCatName.toLowerCase()}`;
+      let subCategory = subCategoryMap.get(subCatKey);
 
-      // Handle missing subcategory by using brand
-      let subCatName = (item.subcategory || '').trim();
-      let mappedSubCatName;
-      if (!subCatName) {
-        subCatName = (item.brand || '').trim() || `UnknownSubCategory-${normalizeField(item.category)}`;
-        mappedSubCatName = subCategoryNameMap[subCatName.toLowerCase()] || subCatName;
-      } else {
-        mappedSubCatName = subCategoryNameMap[subCatName.toLowerCase()] || subCatName;
-      }
-
-      const subCategoryKey = `${mappedCatName.toLowerCase()}:${mappedSubCatName.toLowerCase()}`;
-      let subCategory = subCategoryMap.get(subCategoryKey);
-
-      // Create subcategory using brand if it doesn't exist
       if (!subCategory) {
-        const parentCategory = categoryMap.get(mappedCatName.toLowerCase());
-        if (parentCategory) {
-          maxSubCategoryOrder += 1;
-          subCategory = await SubCategory.create({
-            name: mappedSubCatName,
-            order: maxSubCategoryOrder,
-            categoryId: parentCategory._id,
-            typeId: type._id,
+        subCategory = await SubCategory.create({
+          name: subCatName,
+          order: subCategoryMap.size + 1,
+          categoryId: category._id,
+          typeId: type._id,
+          status: true,
+        });
+        subCategoryMap.set(subCatKey, subCategory);
+      }
+
+      // 🔥 BRAND LOGIC UPDATED HERE
+      let brandName = (item.brand || '').trim();
+      if (!brandName) brandName = subCatName || `UnknownBrand-${normalizeField(item.category)}`;
+
+      let brand = brandMap.get(brandName);
+      if (!brand) {
+        brand = await Brand.findOne({ name: brandName });
+        if (!brand) {
+          brand = await Brand.create({
+            name: brandName,
             adminId: null,
             status: true,
             isDeleted: false,
+            category: [category._id], // attach category on creation
           });
-          subCategoryMap.set(subCategoryKey, subCategory);
-          console.log(`✅ Created New SubCategory from Brand: ${mappedSubCatName} under ${mappedCatName} with order ${maxSubCategoryOrder}`);
         } else {
-          skippedItems.push({
-            ...item,
-            reason: `Parent category not found for SubCategory: ${mappedSubCatName} (Category: ${mappedCatName})`,
-          });
-          console.warn(`⚠️ Skipped item: ${item.name} (Reason: Parent category not found for SubCategory: ${mappedSubCatName})`);
-          continue;
-        }
-      }
-
-      // Handle Brand
-      let brandName = (item.brand || '').trim();
-      if (!brandName) {
-        brandName = `UnknownBrand-${normalizeField(item.category || 'general')}`;
-      }
-      let brand = brandMap.get(brandName);
-      if (!brand) {
-        brand = await Brand.findOne({ name: brandName }).select('_id');
-        if (!brand) {
-          brand = await Brand.create({ name: brandName, adminId: null, status: true, isDeleted: false });
+          if (!brand.category.some((catId) => catId.equals(category._id))) {
+            brand.category.push(category._id);
+            await brand.save();
+          }
         }
         brandMap.set(brandName, brand);
+      } else {
+        if (!brand.category.some((catId) => catId.equals(category._id))) {
+          brand.category.push(category._id);
+          await brand.save();
+        }
       }
+      // 🔥 END BRAND LOGIC
 
-      // Prepare Specification Document
-      const specDoc = {
+      batch.push({
         adminId: null,
         brandId: brand._id,
         categoryId: category._id,
         subCategoryId: subCategory._id,
         name: item.name,
         url: item.url || '',
-        price: parseInt(item.price?.replace(/,/g, '') || '0', 10) || 0,
+        price: parseInt(item.price?.replace(/,/g, '') || '0', 10),
         priceSymbol: 'PKR',
         image: item.image || '',
         data: transformGeneralData(item.general),
         status: true,
         isDeleted: false,
-        compare: true,
-        wishlist: [],
-      };
-
-      batch.push(specDoc);
+      });
 
       if (batch.length >= BATCH_SIZE) {
-        await Specification.insertMany(batch, { ordered: false });
-        console.log(`✅ Inserted ${batch.length} specifications`);
+        await Specification.insertMany(batch);
         batch.length = 0;
       }
     }
 
-    // Insert remaining documents
-    if (batch.length > 0) {
-      await Specification.insertMany(batch, { ordered: false });
-      console.log(`✅ Inserted remaining ${batch.length} specifications`);
-    }
+    if (batch.length > 0) await Specification.insertMany(batch);
 
-    // Step 6: Save skipped items to a JSON file
-    if (skippedItems.length > 0) {
-      const outputPath = path.join('seeders', 'skippedItems.json');
-      fs.writeFileSync(outputPath, JSON.stringify(skippedItems, null, 2));
-      console.log(`📝 Saved ${skippedItems.length} skipped items to ${outputPath}`);
-      console.log('⚠️ Skipped items:');
-      skippedItems.forEach((item) => {
-        console.log(`- ${item.name || 'Unknown'} (Reason: ${item.reason}, Category: ${item.category || 'N/A'}, SubCategory: ${item.subcategory || 'N/A'})`);
-      });
-    } else {
-      console.log('✅ No items were skipped');
-    }
-
+    console.log('✅ All specifications seeded successfully!');
     await mongoose.disconnect();
-    console.log('🔌 Disconnected from MongoDB');
     process.exit();
-  } catch (error) {
-    console.error('❌ Error seeding specifications:', error.message);
+  } catch (err) {
+    console.error('❌ Error seeding:', err);
     process.exit(1);
   }
 };
