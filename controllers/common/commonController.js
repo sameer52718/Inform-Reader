@@ -20,6 +20,7 @@ import dotenv from 'dotenv';
 import Coupon from '../../models/Coupon.js';
 import Merchant from '../../models/Merchant.js';
 import Offer from '../../models/Offer.js';
+import ollama from 'ollama';
 dotenv.config();
 
 class CommonController extends BaseController {
@@ -43,6 +44,7 @@ class CommonController extends BaseController {
     this.coupon = this.coupon.bind(this);
     this.getAllOffers = this.getAllOffers.bind(this);
     this.cjCoupon = this.cjCoupon.bind(this);
+    this.chat = this.chat.bind(this);
   }
 
   async cjCoupon(req, res, next) {
@@ -1093,6 +1095,19 @@ class CommonController extends BaseController {
 
       const translated = await this.translateRecursive(json, from, to);
       return res.json(translated);
+    } catch (error) {
+      return this.handleError(next, error.message, 500);
+    }
+  }
+
+  async chat(req, res, next) {
+    try {
+      const { message, model = 'llama3.2' } = req.body;
+      const response = await ollama.chat({
+        model,
+        messages: [{ role: 'user', content: message }],
+      });
+      return res.json({ error: false, response: response.message.content });
     } catch (error) {
       return this.handleError(next, error.message, 500);
     }

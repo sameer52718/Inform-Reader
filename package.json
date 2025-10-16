@@ -51,6 +51,7 @@
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.15",
     "nodemailer-express-handlebars": "^7.0.0",
+    "ollama": "^0.6.0",
     "otp-generator": "^4.0.1",
     "rss-parser": "^3.13.0",
     "sanitize-filename": "^1.6.3",
