@@ -11,6 +11,7 @@ const bankCodeSchema = new mongoose.Schema(
     status: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
     slug: { type: String, trim: true, index: true, unique: true },
+    contentGenerated: { type: Boolean, default: false, index: true },
   },
   { timestamps: true },
 );
@@ -19,7 +20,7 @@ bankCodeSchema.index({ slug: 1 }, { unique: true });
 bankCodeSchema.index({ countryId: 1, status: 1, isDeleted: 1 });
 bankCodeSchema.index({ countryId: 1, bank: 1 });
 bankCodeSchema.index({ swiftCode: 1 });
-bankCodeSchema.index({ bank: "text", city: "text" });
+bankCodeSchema.index({ bank: 'text', city: 'text' });
 
 const BankCode = mongoose.model('BankCode', bankCodeSchema);
 
