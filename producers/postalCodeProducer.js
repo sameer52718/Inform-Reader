@@ -14,7 +14,7 @@ logger.info('✅ Connected to MongoDB (Producer)');
 async function enqueuePostalCodeJobs() {
   try {
     // Fetch postal codes that need content
-    const postalCodes = await PostalCode.find({ isDeleted: false, status: true }).limit(100).lean();
+    const postalCodes = await PostalCode.find({ isDeleted: false, status: true }).lean();
 
     if (!postalCodes.length) {
       logger.warn('⚠️ No postal codes found to process');
