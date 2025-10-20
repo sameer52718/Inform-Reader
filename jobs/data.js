@@ -2436,6 +2436,7 @@ export const staticPages = [
 ];
 
 export const supportedCountries = {
+  pk: 'ur',
   ae: 'ar',
   af: 'ps',
   al: 'sq',
@@ -2542,7 +2543,6 @@ export const supportedCountries = {
   pe: 'es',
   pg: 'en',
   ph: 'tl',
-  pk: 'ur',
   pl: 'pl',
   pt: 'pt',
   qa: 'ar',

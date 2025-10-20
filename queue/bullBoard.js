@@ -4,13 +4,11 @@ import { ExpressAdapter } from '@bull-board/express';
 import { Queue } from 'bullmq';
 import { redisOptions } from './connection.js';
 
-// 🧩 Define your queues here
+// Define your queues here
 export const queues = {
-  contentGeneration: new Queue('contentGeneration', { connection: redisOptions }),
-  feeds: new Queue('feeds', { connection: redisOptions }),
-  seoSync: new Queue('seoSync', { connection: redisOptions }),
+  generatePostalCode: new Queue('generatePostalCode', { connection: redisOptions }),
+  generateBankCode: new Queue('generateBankCode', { connection: redisOptions }),
 };
-
 const serverAdapter = new ExpressAdapter();
 serverAdapter.setBasePath('/admin/queues');
 

@@ -1,12 +1,11 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import PostalCode from './models/PostalCode.js';
-import ContentMeta from './models/ContentMeta.js';
-import { supportedCountries } from './jobs/data.js';
+import { Worker } from 'bullmq';
 import ollama from 'ollama';
-import logger from './logger.js';
+import PostalCode from '../models/PostalCode.js';
+import ContentMeta from '../models/ContentMeta.js';
+import logger from '../logger.js';
 
-dotenv.config();
 
 // 🧠 Master Prompt for the AI
 export const MASTER_PROMPT = `
@@ -144,19 +143,23 @@ Generate **5 short key highlights** relevant to the postal code area (e.g., regi
 }
 `;
 
+
+dotenv.config();
+
+import { redisOptions } from '../queue/connection.js';
+
+
 const MONGODB_URI = process.env.MONGO_DB_URL;
-
-const DELAY_BETWEEN_REQUESTS = 4000; // 4s between API calls
-const LIMIT_PER_BATCH = 10; // how many postal codes per batch
-
 await mongoose.connect(MONGODB_URI);
-logger.info('✅ Connected to MongoDB');
+logger.info('✅ MongoDB connected for PostalCode worker');
 
+// 🧠 Helper: Sleep function
 const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
 
-// 🧠 Helper: Generate prompt text dynamically
+// 🧠 Helper: Build prompt dynamically
 function buildPrompt({ country, city, region, postalCode, language, tone = 'informative' }) {
-  return MASTER_PROMPT.replace('{{Country_Name}}', country)
+  return MASTER_PROMPT
+    .replace('{{Country_Name}}', country)
     .replace('{{City_Name}}', city || '')
     .replace('{{Region_Name}}', region || '')
     .replace('{{Postal_Code}}', postalCode)
@@ -164,104 +167,95 @@ function buildPrompt({ country, city, region, postalCode, language, tone = 'info
     .replace('{{Tone}}', tone);
 }
 
-async function generatePostalContent() {
-  const totalCount = await PostalCode.countDocuments({ isDeleted: false, status: true });
-  logger.info(`📦 Total postal codes: ${totalCount}`);
-  const languages = ['en'];
-  logger.info(`🌐 Languages: ${languages}`);
+// 🧩 Worker — 1 job = 1 postal code
+const worker = new Worker(
+  'generatePostalCode',
+  async (job) => {
+    const { postalId, countryCode, language = 'en' } = job.data;
 
-  // Outer loop: countries
-  for (const countryCode of Object.keys(supportedCountries)) {
-    const countryName = countryCode.toUpperCase();
-
-    logger.info(`\n🌍 COUNTRY START: ${countryName}`);
-
-    // Inner loop: languages
-    for (const language of languages) {
-      logger.info(`🈳 Generating for ${countryName} → Language: ${language}`);
-
-      let skip = 0;
-      while (skip < totalCount) {
-        const postalCodes = await PostalCode.find({ isDeleted: false, status: true }).skip(skip).limit(LIMIT_PER_BATCH).lean();
-
-        if (postalCodes.length === 0) break;
-
-        logger.info(`🚚 Processing batch: skip=${skip}, limit=${LIMIT_PER_BATCH}`);
-
-        for (const postal of postalCodes) {
-          const city = postal.area || '';
-          const region = postal.state || '';
-          const postalCode = postal.code;
-
-          const prompt = buildPrompt({
-            country: countryName,
-            city,
-            region,
-            postalCode,
-            language,
-          });
-
-          try {
-            const response = await ollama.chat({
-              model: 'llama3.2',
-              messages: [{ role: 'user', content: prompt }],
-            });
-
-            const data = response.message.content;
-            const aiMessage = data?.trim();
-            if (!aiMessage) {
-              logger.warn(`❌ No content for ${countryCode}-${postalCode} (${language})`);
-              continue;
-            }
-
-            let parsed;
-            try {
-              const jsonStart = aiMessage.indexOf('{');
-              const jsonEnd = aiMessage.lastIndexOf('}');
-              parsed = JSON.parse(aiMessage.slice(jsonStart, jsonEnd + 1));
-            } catch (err) {
-              logger.error(`⚠️ Invalid JSON for ${countryCode}-${postalCode}:`, err.message);
-              continue;
-            }
-
-            const { description, keyFeatures, faqs } = parsed;
-
-            await ContentMeta.findOneAndUpdate(
-              {
-                refModel: 'PostalCode',
-                refId: postal._id,
-                countryCode,
-                language,
-              },
-              {
-                description,
-                keyFeatures,
-                faqs,
-                countryName,
-                source: 'ai',
-              },
-              { upsert: true, new: true },
-            );
-
-            logger.info(`✅ Saved ${countryCode}-${postalCode} (${language})`);
-            await sleep(DELAY_BETWEEN_REQUESTS);
-          } catch (err) {
-            logger.error(`🚨 Error ${countryCode}-${postalCode} (${language}):`, err.message);
-          }
-        }
-
-        skip += LIMIT_PER_BATCH; // ⏭️ move to next batch
-      }
-
-      logger.info(`✅ LANGUAGE DONE: ${countryName}-${language}`);
+    if (!postalId) {
+      logger.warn('⚠️ Skipped: No postalId provided in job');
+      return;
     }
 
-    logger.info(`🏁 COUNTRY DONE: ${countryName}`);
-  }
+    const postal = await PostalCode.findById(postalId).lean();
+    if (!postal) {
+      logger.warn(`⚠️ Postal code not found for ID: ${postalId}`);
+      return;
+    }
 
-  logger.info('\n🎉 All countries + languages processed successfully!');
-  await mongoose.disconnect();
-  process.exit(0); // clean exit
-}
+    const city = postal.area || '';
+    const region = postal.state || '';
+    const postalCode = postal.code;
+    const countryName = countryCode?.toUpperCase() || 'UNKNOWN';
 
-generatePostalContent();
+    const prompt = buildPrompt({
+      country: countryName,
+      city,
+      region,
+      postalCode,
+      language,
+    });
+
+    try {
+      logger.info(`🚀 Generating content for ${countryName}-${postalCode} (${language})`);
+
+      const response = await ollama.chat({
+        model: 'llama3.2',
+        messages: [{ role: 'user', content: prompt }],
+      });
+
+      const data = response.message.content?.trim();
+      if (!data) {
+        logger.warn(`⚠️ No response for ${countryName}-${postalCode}`);
+        return;
+      }
+
+      let parsed;
+      try {
+        const jsonStart = data.indexOf('{');
+        const jsonEnd = data.lastIndexOf('}');
+        parsed = JSON.parse(data.slice(jsonStart, jsonEnd + 1));
+      } catch (err) {
+        logger.error(`💥 Invalid JSON for ${countryName}-${postalCode}: ${err.message}`);
+        return;
+      }
+
+      const { description, keyFeatures, faqs } = parsed;
+
+      await ContentMeta.findOneAndUpdate(
+        {
+          refModel: 'PostalCode',
+          refId: postal._id,
+          countryCode,
+          language,
+        },
+        {
+          description,
+          keyFeatures,
+          faqs,
+          countryName,
+          source: 'ai',
+        },
+        { upsert: true, new: true },
+      );
+
+      logger.info(`✅ Saved content for ${countryName}-${postalCode} (${language})`);
+
+      await sleep(2000); // delay between jobs
+      return { success: true, postalCode };
+    } catch (err) {
+      logger.error(`🚨 Error on ${countryCode}-${postalCode}: ${err.message}`);
+      throw err;
+    }
+  },
+  { connection: redisOptions },
+);
+
+worker.on('completed', (job) => {
+  logger.info(`🎯 Job completed: ${job.id}`);
+});
+
+worker.on('failed', (job, err) => {
+  logger.error(`❌ Job failed (${job.id}): ${err.message}`);
+});

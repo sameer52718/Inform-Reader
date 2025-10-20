@@ -125,11 +125,6 @@ logger.info('✅ Connected to MongoDB');
 // 💤 Helper sleep
 const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
 
-// 🌐 Get unique language list
-const getUniqueLanguages = () => {
-  return [...new Set(Object.values(supportedCountries))];
-};
-
 // 🧠 Build prompt dynamically
 function buildPrompt({ country, city, bank, branch, swiftCode, language, tone = 'informative' }) {
   return MASTER_PROMPT.replace('{{Country_Name}}', country)
@@ -145,7 +140,7 @@ async function generateBankContent() {
   const totalCount = await BankCode.countDocuments({ isDeleted: false, status: true });
   logger.info(`🏦 Total bank records: ${totalCount}`);
 
-  const languages = getUniqueLanguages();
+  const languages = ["en"];
   logger.info(`🌐 Languages: ${languages}`);
 
   for (const countryCode of Object.keys(supportedCountries)) {
