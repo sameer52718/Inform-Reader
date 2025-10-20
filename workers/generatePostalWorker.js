@@ -220,12 +220,6 @@ const worker = new Worker(
     });
 
     try {
-      if (!(await checkOllamaHealth())) {
-        logger.error('💀 Ollama not responding — restarting...');
-        await restartOllama();
-        await sleep(6000); // wait before retry
-      }
-
       logger.info(`🚀 Generating content for ${countryName}-${postalCode} (${language})`);
 
       const response = await ollama.chat({
