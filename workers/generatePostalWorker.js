@@ -274,6 +274,10 @@ const worker = new Worker(
       return { success: true, postalCode };
     } catch (err) {
       logger.error(`🚨 Error on ${countryCode}-${postalCode}: ${err.message}`);
+      // ⚡ if Ollama crashed, restart and throw to retry job
+      if (err.message.includes('ECONNREFUSED') || err.message.includes('fetch failed') || err.message.includes('socket hang up')) {
+        await restartOllama();
+      }
       throw err;
     }
   },
