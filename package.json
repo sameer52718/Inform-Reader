@@ -31,6 +31,8 @@
   "description": "",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.670.0",
+    "@bull-board/api": "^6.13.1",
+    "@bull-board/express": "^6.13.1",
     "@google-cloud/translate": "^9.1.0",
     "axios": "^1.12.2",
     "bcrypt": "^5.1.1",

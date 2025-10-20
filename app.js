@@ -10,6 +10,7 @@ import connectDB from './db/index.js';
 import { initializeSocket } from './socket.js';
 import startCron from './jobs/feeds.js';
 import { getSitemap } from './controllers/website/SitemapController.js';
+import { bullBoardRouter, queues } from './queue/bullBoard.js';
 
 const app = express();
 
@@ -37,6 +38,7 @@ const corsOptions = {
   credentials: true,
 };
 
+app.use('/admin/queues', bullBoardRouter);
 app.use(cors());
 app.use(morgan('common'));
 app.use(express.json({ limit: '100mb' }));
