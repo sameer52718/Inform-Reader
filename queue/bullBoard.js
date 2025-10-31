@@ -8,6 +8,7 @@ import { redisOptions } from './connection.js';
 export const queues = {
   generatePostalCode: new Queue('generatePostalCode', { connection: redisOptions }),
   generateBankCode: new Queue('generateBankCode', { connection: redisOptions }),
+  generateLuckyName: new Queue('generateLuckyName', { connection: redisOptions }),
 };
 const serverAdapter = new ExpressAdapter();
 serverAdapter.setBasePath('/admin/queues');

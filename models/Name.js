@@ -25,28 +25,14 @@ const nameSchema = new mongoose.Schema(
     status: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
     slug: { type: String, trim: true, index: true, unique: true },
+    luckyNumber: { type: Number, default: null, index: true },
+    luckyColor: { type: String, default: null },
+    luckyStone: { type: String, default: null },
   },
   { timestamps: true },
 );
 
-nameSchema.index({
-  categoryId: 1,
-  gender: 1,
-  initialLetter: 1,
-  status: 1,
-  isDeleted: 1,
-  name: 1,
-});
-
 nameSchema.index({ slug: 1 }, { unique: true });
-nameSchema.index({
-  categoryId: 1,
-  gender: 1,
-  initialLetter: 1,
-  status: 1,
-  isDeleted: 1,
-});
-nameSchema.index({ name: 1 });
 
 const Name = mongoose.model('Name', nameSchema);
 export default Name;
