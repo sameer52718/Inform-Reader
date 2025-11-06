@@ -26,7 +26,6 @@ const blogSchema = new mongoose.Schema(
 blogSchema.index({ isDeleted: 1, categoryId: 1, status: 1 });
 blogSchema.index({ isDeleted: 1, subCategoryId: 1 });
 blogSchema.index({ isDeleted: 1, adminId: 1 });
-blogSchema.index({ slug: 1 }, { unique: true });
 blogSchema.index({ createdAt: -1 });
 blogSchema.index({ tag: 1 });
 blogSchema.index({ name: 'text' });

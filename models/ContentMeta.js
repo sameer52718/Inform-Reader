@@ -56,6 +56,4 @@ const contentMetaSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-contentMetaSchema.index({ refModel: 1, refId: 1, countryCode: 1, language: 1 }, { unique: true });
-
 export default mongoose.model('ContentMeta', contentMetaSchema);

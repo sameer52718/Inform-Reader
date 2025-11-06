@@ -24,15 +24,13 @@ const nameSchema = new mongoose.Schema(
     nameLength: { type: Number, required: true },
     status: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
-    slug: { type: String, trim: true, index: true, unique: true },
+    slug: { type: String, trim: true, unique: true },
     luckyNumber: { type: Number, default: null, index: true },
     luckyColor: { type: String, default: null },
     luckyStone: { type: String, default: null },
   },
   { timestamps: true },
 );
-
-nameSchema.index({ slug: 1 }, { unique: true });
 
 const Name = mongoose.model('Name', nameSchema);
 export default Name;

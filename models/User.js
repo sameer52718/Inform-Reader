@@ -18,11 +18,11 @@ const userSchema = new mongoose.Schema(
     },
     status: {
       type: Boolean,
-      default: true // Ensures new drivers are active by default
+      default: true, // Ensures new drivers are active by default
     },
     verified: {
       type: Boolean,
-      default: false
+      default: false,
     },
     password: {
       type: String,
@@ -31,11 +31,11 @@ const userSchema = new mongoose.Schema(
     },
     profile: {
       type: String,
-      default: ''
+      default: '',
     },
     otp: {
       type: Number,
-      default: 0
+      default: 0,
     },
     role: {
       type: String,
@@ -43,11 +43,8 @@ const userSchema = new mongoose.Schema(
       default: 'USER',
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
-
-// Add unique index for email and joinBy combination for verification process
-userSchema.index({ email: 1 }, { unique: true });
 
 // Adding a pre-save hook to hash passwords before storing
 userSchema.pre('save', async function (next) {
