@@ -4,9 +4,17 @@ const postalCodeSchema = new mongoose.Schema(
   {
     adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
     countryId: { type: mongoose.Schema.Types.ObjectId, ref: 'Country', required: true },
-    state: { type: String, trim: true }, // Optional - e.g., district, town
-    area: { type: String, trim: true }, // e.g., locality or neighborhood
+    state: { type: String, trim: true },
+    area: { type: String, trim: true },
     code: { type: String, required: true, uppercase: true, trim: true },
+    adminName2: { type: String, trim: true },
+    adminCode1: { type: String, trim: true },
+    adminCode2: { type: String, trim: true },
+    adminName3: { type: String, trim: true },
+    adminCode3: { type: String, trim: true },
+    latitude: { type: Number },
+    longitude: { type: Number },
+    accuracy: { type: Number, enum: [1, 2, 3, 4, 5, 6], default: 6 },
     status: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
     slug: { type: String, trim: true },
