@@ -1,0 +1,847 @@
+{
+  "AF": [
+    "{postal_authority} oversees postal operations in {country} ({country_code}) across all {admin_type}.",
+    "{country}'s {code_format} system ensures consistent delivery nationwide under {postal_authority}.",
+    "Each {admin_name1} region in {country} uses verified {postal_code} ranges assigned by {postal_authority}."
+  ],
+  "AL": [
+    "{postal_authority} manages {country}'s modern {code_format} postal infrastructure with regional precision.",
+    "Every {admin_type} in {country} operates under standardized {code_format} guidelines.",
+    "Mail routing for {place_name} ({postal_code}) is verified and maintained by {postal_authority}."
+  ],
+  "DZ": [
+    "{country}'s {postal_authority} regulates {code_format} postal codes to ensure accurate mail distribution.",
+    "Each {admin_name1} in {country} follows structured delivery under {postal_authority} supervision.",
+    "The {postal_authority} of {country} maintains up-to-date postal data for all {admin_type}."
+  ],
+  "AD": [
+    "In {country}, {postal_authority} coordinates a {code_format} system designed for mountainous regions.",
+    "Each {admin_type} has its unique {postal_code} verified by {postal_authority}.",
+    "Mail routing in {country} is precise and governed by {postal_authority}'s standards."
+  ],
+  "AO": [
+    "{postal_authority} manages mail and logistics across {country} ({country_code}) using {code_format}.",
+    "Each {admin_name1} region’s {postal_code} is regulated for reliability under {postal_authority}.",
+    "Official postal operations in {country} are standardized to ensure consistent delivery."
+  ],
+  "AG": [
+    "Postal codes in {country} follow a friendly {code_format} system managed by {postal_authority}.",
+    "{place_name} ({postal_code}) within {admin_name1} enjoys reliable service from {postal_authority}.",
+    "{postal_authority} ensures every {admin_type} in {country} receives accurate postal coverage."
+  ],
+  "AR": [
+    "Mail delivery in {country} operates under {postal_authority}'s {code_format} postal framework.",
+    "Each {admin_name1} region uses defined {postal_code} ranges assigned by {postal_authority}.",
+    "{country}'s postal logistics are centrally maintained by {postal_authority} for reliability."
+  ],
+  "AM": [
+    "{postal_authority} of {country} ({country_code}) administers {code_format} postal zones nationwide.",
+    "{place_name} ({postal_code}) in {admin_name1} follows standard mail routing under {postal_authority}.",
+    "Postal management across {admin_type} remains consistent under {postal_authority}'s oversight."
+  ],
+  "AU": [
+    "In {country}, {postal_authority} manages {code_format} codes for smooth mail distribution.",
+    "{place_name} ({postal_code}) within {admin_name1} is part of a highly organized postal system.",
+    "{country}'s postal network covers all {admin_type} with efficiency and accuracy."
+  ],
+  "AT": [
+    "{postal_authority} oversees Austria’s formal {code_format} postal standard across all {admin_type}.",
+    "Each {admin_name1} region in {country} maintains structured routing for mail efficiency.",
+    "{country}'s delivery network follows precision mapping verified by {postal_authority}."
+  ],
+  "AZ": [
+    "Postal services in {country} ({country_code}) are managed by {postal_authority} using {code_format}.",
+    "{postal_authority} ensures accurate coverage of all {admin_type} regions.",
+    "{place_name} ({postal_code}) in {admin_name1} adheres to standardized distribution routes."
+  ],
+  "BH": [
+    "{country}'s {postal_authority} oversees {code_format} postal codes across all {admin_type}.",
+    "Mail routing and distribution follow official procedures under {postal_authority}.",
+    "{place_name} ({postal_code}) in {admin_name1} is verified for postal accuracy."
+  ],
+  "BD": [
+    "Each {admin_name1} in {country} uses verified {postal_code} ranges managed by {postal_authority}.",
+    "{postal_authority} organizes mail across all {admin_type} using {code_format}.",
+    "For {place_name}, routing accuracy is ensured by {postal_authority}'s official standards."
+  ],
+  "BB": [
+    "In {country}, {postal_authority} manages {code_format} zones for consistent island-wide service.",
+    "Each {admin_type} is mapped and verified for accuracy under {postal_authority}.",
+    "Postal operations ensure fast routing within {country}’s compact geography."
+  ],
+  "BY": [
+    "{postal_authority} administers a structured {code_format} postal framework across {country}.",
+    "{place_name} ({postal_code}) is listed officially under {postal_authority}'s database.",
+    "Delivery logistics in {country} rely on standardized {admin_type} classification."
+  ],
+  "BE": [
+    "{postal_authority} manages {country}'s {code_format} postal system with precision and formality.",
+    "Each {admin_name1} region operates under uniform postal routing verified by {postal_authority}.",
+    "Mail and courier services in {country} follow data-driven standards for accuracy."
+  ],
+  "BZ": [
+    "{postal_authority} manages postal operations throughout {country} ({country_code}).",
+    "{place_name} ({postal_code}) in {admin_name1} is served efficiently under {postal_authority}.",
+    "Mail delivery across {admin_type} remains standardized and reliable."
+  ],
+  "BJ": [
+    "Postal codes in {country} are governed by {postal_authority} using {code_format} formats.",
+    "{place_name} ({postal_code}) under {admin_name1} follows official routing procedures.",
+    "All {admin_type} zones are covered consistently by {postal_authority}."
+  ],
+  "BT": [
+    "{country}'s {postal_authority} manages mail across mountainous {admin_type} areas using {code_format}.",
+    "{place_name} ({postal_code}) is assigned officially by {postal_authority}.",
+    "Reliable postal routing is ensured under national oversight."
+  ],
+  "BO": [
+    "In {country}, {postal_authority} operates the {code_format} postal system across {admin_type}.",
+    "{postal_authority} provides verified {postal_code} ranges for every {admin_name1}.",
+    "{place_name} follows formal routing standards under {postal_authority}."
+  ],
+  "BA": [
+    "{postal_authority} maintains {country}'s structured {code_format} postal network.",
+    "Each {admin_type} has assigned {postal_code} blocks governed by {postal_authority}.",
+    "Mail routing in {country} is formally verified by {postal_authority} databases."
+  ],
+  "BW": [
+    "{postal_authority} oversees {country}'s postal network ({country_code}) for all {admin_type}.",
+    "{place_name} ({postal_code}) follows official routing maps approved by {postal_authority}.",
+    "Standardized {code_format} ensures reliable delivery nationwide."
+  ],
+  "BR": [
+    "{postal_authority} manages {country}'s extensive {code_format} system across states.",
+    "{admin_name1} and {place_name} ({postal_code}) follow national postal protocols.",
+    "Mail accuracy across {country} is guaranteed by {postal_authority} oversight."
+  ],
+  "BN": [
+    "Mail delivery in {country} ({country_code}) is organized under {postal_authority} using {code_format}.",
+    "Each {admin_type} maintains consistent {postal_code} patterns.",
+    "{place_name} ({postal_code}) is validated through official postal records."
+  ],
+  "BG": [
+    "{country}'s {postal_authority} operates a formal {code_format} system across all {admin_type}.",
+    "Mail routing is standardized and verified by {postal_authority}.",
+    "{place_name} ({postal_code}) aligns with official distribution protocols."
+  ],
+  "BF": [
+    "Postal management in {country} is overseen by {postal_authority}.",
+    "All {admin_type} follow official {code_format} standards for delivery accuracy.",
+    "{postal_authority} ensures reliable service to {place_name} ({postal_code})."
+  ],
+  "BI": [
+    "{country}'s {postal_authority} regulates postal coverage across {admin_type}.",
+    "Each {admin_name1} region is mapped using {code_format} codes.",
+    "Mail routing to {place_name} ({postal_code}) is ensured through verified systems."
+  ],
+  "KH": [
+    "{postal_authority} manages {country}'s {code_format} postal framework across provinces.",
+    "{place_name} ({postal_code}) lies within organized delivery routes.",
+    "All {admin_type} are covered under {postal_authority}'s network."
+  ],
+  "CM": [
+    "{postal_authority} oversees postal coordination in {country} ({country_code}).",
+    "Each {admin_name1} operates with standardized {code_format} mail routing.",
+    "{postal_authority} ensures efficient coverage across {admin_type}."
+  ],
+  "CA": [
+    "{country}'s {postal_authority} maintains a formal {code_format} postal system with structured zoning.",
+    "Mail delivery in {country} is divided by {admin_type}, verified under {postal_authority}.",
+    "{place_name} ({postal_code}) operates under precise routing protocols."
+  ],
+  "CV": [
+    "In {country}, {postal_authority} manages {code_format} codes across islands and municipalities.",
+    "Each {admin_type} has regulated postal coverage verified by {postal_authority}.",
+    "Mail routing for {place_name} ({postal_code}) ensures timely delivery."
+  ],
+  "CF": [
+    "{postal_authority} supervises postal distribution across all {admin_type} in {country}.",
+    "{country}'s {code_format} standard allows efficient mail routing.",
+    "{postal_authority} guarantees reliable coverage for {place_name} ({postal_code})."
+  ],
+  "TD": [
+    "{postal_authority} manages {country}'s postal infrastructure ({country_code}) using {code_format}.",
+    "{place_name} ({postal_code}) in {admin_name1} is registered officially.",
+    "All {admin_type} follow structured delivery patterns set by {postal_authority}."
+  ],
+  "CL": [
+    "{country}'s {postal_authority} operates a nationwide {code_format} system for all {admin_type}.",
+    "Mail to {place_name} ({postal_code}) follows verified routing.",
+    "Each {admin_name1} adheres to standardized postal regulations."
+  ],
+  "CN": [
+    "{postal_authority} manages {country}'s {code_format} postal structure across {admin_type}.",
+    "Each {admin_name1} is organized under official mail routing laws.",
+    "{place_name} ({postal_code}) is verified and registered with {postal_authority}."
+  ],
+  "CO": [
+    "{country}'s {postal_authority} regulates {code_format} codes for national logistics.",
+    "{place_name} ({postal_code}) is officially mapped under {admin_name1}.",
+    "Mail routing follows government-verified data under {postal_authority}."
+  ],
+  "CG": [
+    "{postal_authority} oversees {country}'s postal services with {code_format} accuracy.",
+    "Each {admin_type} region is covered by standardized codes.",
+    "{place_name} ({postal_code}) data is verified through official records."
+  ],
+  "CR": [
+    "{postal_authority} manages {country}'s postal grid under {code_format} system.",
+    "{place_name} ({postal_code}) follows structured delivery plans.",
+    "All {admin_type} maintain updated coverage verified by {postal_authority}."
+  ],
+  "HR": [
+    "{country}'s {postal_authority} enforces a formal {code_format} structure across {admin_type}.",
+    "Each {admin_name1} region in {country} has distinct {postal_code} mapping.",
+    "Mail accuracy is certified by {postal_authority} supervision."
+  ],
+  "CU": [
+    "In {country}, {postal_authority} organizes postal routing across all {admin_type}.",
+    "Each {postal_code} is regulated for clarity and consistency.",
+    "Postal records in {country} are verified by {postal_authority} databases."
+  ],
+  "CY": [
+    "{postal_authority} manages {country}'s {code_format} system across municipalities.",
+    "Mail routing for {place_name} ({postal_code}) ensures structured accuracy.",
+    "Each {admin_type} in {country} operates under {postal_authority}'s guidance."
+  ],
+  "CZ": [
+    "{country}'s {postal_authority} manages a precise {code_format} network for all {admin_type}.",
+    "Postal data for {place_name} ({postal_code}) is verified officially.",
+    "Each {admin_name1} adheres to uniform mail routing protocols."
+  ],
+  "DK": [
+    "Postal operations in {country} are managed by {postal_authority} using {code_format} coding.",
+    "{place_name} ({postal_code}) in {admin_name1} is officially listed for delivery routing.",
+    "Mail distribution across {country} follows accurate digital mapping verified by {postal_authority}."
+  ],
+  "DO": [
+    "{postal_authority} oversees postal coverage in {country} ({country_code}) using {code_format}.",
+    "{place_name} ({postal_code}) is assigned within {admin_name1}.",
+    "Each {admin_type} region is structured under official postal regulation."
+  ],
+  "EC": [
+    "Mail delivery in {country} is handled under {postal_authority}'s {code_format} postal standard.",
+    "Each {admin_name1} follows officially approved routing for {postal_code} assignments.",
+    "{place_name} operates under regulated logistics managed by {postal_authority}."
+  ],
+  "EG": [
+    "{country}'s {postal_authority} operates {code_format} postal codes nationwide.",
+    "Mail routing for {place_name} ({postal_code}) follows official standards.",
+    "Each {admin_type} in {country} is covered efficiently under {postal_authority}."
+  ],
+  "FI": [
+    "{postal_authority} manages {country}'s structured {code_format} postal zones across all {admin_type}.",
+    "Mail accuracy in {country} ({country_code}) is ensured through digital routing under {postal_authority}.",
+    "{place_name} ({postal_code}) in {admin_name1} follows precise postal data verified officially."
+  ],
+  "FR": [
+    "In {country}, {postal_authority} operates a formal {code_format} system ensuring uniform delivery nationwide.",
+    "Each {admin_type} region maintains {postal_code} blocks defined by {postal_authority}.",
+    "Mail routing and logistics in {country} are verified by state postal authorities."
+  ],
+  "GA": [
+    "{country}'s {postal_authority} regulates all {admin_type} postal zones with {code_format} precision.",
+    "{place_name} ({postal_code}) is registered officially for mail and logistics purposes.",
+    "Delivery systems are coordinated under {postal_authority}'s supervision."
+  ],
+  "GM": [
+    "{postal_authority} manages {country}'s postal distribution network ({country_code}).",
+    "Each {admin_name1} is mapped under official {code_format} routing schemes.",
+    "Mail accuracy for {place_name} ({postal_code}) is ensured by {postal_authority}."
+  ],
+  "GE": [
+    "{postal_authority} oversees {country}'s {code_format} system for all {admin_type}.",
+    "{place_name} ({postal_code}) is officially recognized under {postal_authority}.",
+    "National routing and delivery remain consistent and verified."
+  ],
+  "DE": [
+    "Postal operations in {country} are run by {postal_authority} using standardized {code_format} formats.",
+    "{country}'s federal {admin_type} regions maintain accurate routing data under {postal_authority}.",
+    "{place_name} ({postal_code}) adheres to uniform delivery protocols verified nationally."
+  ],
+  "GH": [
+    "{postal_authority} manages the {code_format} postal system for all {admin_type} in {country}.",
+    "Each {admin_name1} is organized with verified {postal_code} ranges.",
+    "Mail distribution follows national routing schemes regulated by {postal_authority}."
+  ],
+  "GR": [
+    "{country}'s {postal_authority} maintains a formal {code_format} system ensuring reliable coverage.",
+    "{place_name} ({postal_code}) is mapped precisely within {admin_name1}.",
+    "Each {admin_type} in {country} complies with official postal routing standards."
+  ],
+  "GD": [
+    "Mail across {country} is organized by {postal_authority} with {code_format} simplicity.",
+    "{place_name} ({postal_code}) in {admin_name1} receives verified coverage.",
+    "All {admin_type} benefit from the island’s structured postal network."
+  ],
+  "GT": [
+    "{postal_authority} oversees {country}'s mail network ({country_code}) under {code_format}.",
+    "Each {admin_type} maintains standardized {postal_code} blocks.",
+    "Routing accuracy for {place_name} ({postal_code}) is verified by {postal_authority}."
+  ],
+  "GN": [
+    "{country}'s {postal_authority} organizes national delivery with {code_format} structure.",
+    "Mail routing for {place_name} ({postal_code}) in {admin_name1} follows official guidelines.",
+    "Each {admin_type} region is included in {postal_authority}'s national map."
+  ],
+  "GW": [
+    "{postal_authority} manages {country}'s {code_format} postal framework.",
+    "{place_name} ({postal_code}) is included in official {admin_name1} routing lists.",
+    "All {admin_type} are mapped for efficient service under {postal_authority}."
+  ],
+  "GY": [
+    "Postal services in {country} ({country_code}) are managed by {postal_authority}.",
+    "Each {admin_type} uses structured {code_format} routing patterns.",
+    "Deliveries for {place_name} ({postal_code}) are verified and organized efficiently."
+  ],
+  "HT": [
+    "{postal_authority} oversees mail distribution throughout {country} using {code_format}.",
+    "{place_name} ({postal_code}) is mapped precisely within {admin_name1}.",
+    "All {admin_type} maintain standardized routing verified by {postal_authority}."
+  ],
+  "HN": [
+    "{country}'s {postal_authority} operates {code_format} postal codes across {admin_type}.",
+    "{place_name} ({postal_code}) follows official delivery routes.",
+    "Mail accuracy across {admin_name1} is verified by {postal_authority}."
+  ],
+  "HU": [
+    "In {country}, {postal_authority} manages a formal {code_format} system for precise routing.",
+    "Each {admin_name1} region adheres to regulated {postal_code} patterns.",
+    "Postal data for {place_name} ({postal_code}) is validated officially."
+  ],
+  "IS": [
+    "{country}'s {postal_authority} maintains accurate {code_format} postal data across {admin_type}.",
+    "Mail routing to {place_name} ({postal_code}) follows verified standards.",
+    "All postal zones operate under unified control of {postal_authority}."
+  ],
+  "IN": [
+    "{postal_authority} manages the {code_format} postal system for all {admin_type} in {country}.",
+    "Mail delivery in {country} ({country_code}) is regulated by {postal_authority} with structured {code_format} codes.",
+    "{place_name} ({postal_code}) lies within {admin_name1}, ensuring organized distribution under {postal_authority}."
+  ],
+  "ID": [
+    "{country}'s {postal_authority} oversees {code_format} codes covering {admin_type} regions.",
+    "{place_name} ({postal_code}) is part of a regulated delivery network.",
+    "{postal_authority} ensures accurate distribution throughout {country} ({country_code})."
+  ],
+  "IR": [
+    "{postal_authority} manages {country}'s official {code_format} postal network for all {admin_type}.",
+    "{place_name} ({postal_code}) under {admin_name1} follows regulated routing.",
+    "Mail coverage and accuracy are guaranteed by {postal_authority} supervision."
+  ],
+  "IQ": [
+    "{postal_authority} regulates {country}'s national {code_format} postal mapping system.",
+    "Each {admin_type} follows centralized delivery coordination.",
+    "{place_name} ({postal_code}) is officially listed under {admin_name1} routing."
+  ],
+  "IE": [
+    "{country}'s {postal_authority} maintains a modern {code_format} postal addressing framework.",
+    "Each {admin_name1} region uses unique {postal_code} sequences verified centrally.",
+    "Postal coverage for {place_name} ({postal_code}) is formally certified."
+  ],
+  "IL": [
+    "{postal_authority} manages all {code_format} postal sectors within {country} ({country_code}).",
+    "Mail delivery in {admin_name1} follows official routing charts verified by {postal_authority}.",
+    "{place_name} ({postal_code}) is registered in {country}'s postal directory."
+  ],
+  "IT": [
+    "Postal zones in {country} are organized by {postal_authority} using {code_format} schemes.",
+    "{admin_name1} regions maintain structured distribution verified by {postal_authority}.",
+    "{place_name} ({postal_code}) operates under nationally standardized routing."
+  ],
+  "JM": [
+    "{postal_authority} coordinates {country}'s {code_format} system for all {admin_type}.",
+    "{place_name} ({postal_code}) is part of organized delivery under {postal_authority}.",
+    "National coverage ensures accuracy across {admin_name1}."
+  ],
+  "JP": [
+    "{country}'s {postal_authority} operates a {code_format} system covering all {admin_type}.",
+    "{place_name} ({postal_code}) is part of an organized delivery network maintained by {postal_authority}.",
+    "Mail routing in {country} follows strict {code_format} regulations for {admin_type} regions."
+  ],
+  "JO": [
+    "{postal_authority} oversees postal services across {country} ({country_code}).",
+    "{place_name} ({postal_code}) in {admin_name1} adheres to official delivery standards.",
+    "Mail routing and verification remain under {postal_authority} control."
+  ],
+  "KZ": [
+    "{country}'s {postal_authority} operates {code_format} postal structures across all {admin_type}.",
+    "{place_name} ({postal_code}) follows mapped logistics verified by {postal_authority}.",
+    "Each {admin_name1} maintains consistent postal service coverage."
+  ],
+  "KE": [
+    "{postal_authority} manages {country}'s national {code_format} system for all {admin_type}.",
+    "{place_name} ({postal_code}) under {admin_name1} is officially mapped for routing.",
+    "Mail accuracy and regional coordination are supervised by {postal_authority}."
+  ],
+  "KI": [
+    "{postal_authority} manages island-wide {code_format} postal operations in {country}.",
+    "{place_name} ({postal_code}) is officially listed within {admin_name1}.",
+    "All {admin_type} follow verified delivery paths under {postal_authority}."
+  ],
+  "KW": [
+    "{postal_authority} regulates {country}'s {code_format} postal sectors across all {admin_type}.",
+    "Mail routing for {place_name} ({postal_code}) follows national standards.",
+    "Each {admin_name1} maintains coverage verified by {postal_authority}."
+  ],
+  "KG": [
+    "{postal_authority} organizes {country}'s {code_format} postal network.",
+    "{place_name} ({postal_code}) under {admin_name1} adheres to structured delivery routes.",
+    "All {admin_type} are included in {postal_authority}'s national mapping."
+  ],
+  "LA": [
+    "Postal operations in {country} ({country_code}) are supervised by {postal_authority}.",
+    "Each {admin_type} maintains routing integrity using {code_format}.",
+    "Mail delivery for {place_name} ({postal_code}) follows national standards."
+  ],
+  "LV": [
+    "{country}'s {postal_authority} maintains formal {code_format} routing structures across {admin_type}.",
+    "Each {admin_name1} region is verified for postal accuracy.",
+    "Deliveries in {country} are handled precisely under {postal_authority}."
+  ],
+  "LB": [
+    "{postal_authority} oversees all {code_format} postal zones across {country}.",
+    "Each {admin_type} adheres to official routing systems.",
+    "Mail for {place_name} ({postal_code}) follows regulated delivery patterns."
+  ],
+  "LS": [
+    "{country}'s {postal_authority} operates {code_format} codes for all {admin_type}.",
+    "{admin_name1} regions are mapped officially for mail accuracy.",
+    "Postal records remain verified under {postal_authority}."
+  ],
+  "LR": [
+    "{postal_authority} manages {country}'s official {code_format} postal routes.",
+    "{place_name} ({postal_code}) follows regulated delivery across {admin_name1}.",
+    "All {admin_type} are included in verified routing frameworks."
+  ],
+  "LY": [
+    "{country}'s {postal_authority} oversees nationwide {code_format} operations.",
+    "Mail accuracy is maintained for all {admin_name1} through {postal_authority}.",
+    "{place_name} ({postal_code}) is listed in official databases."
+  ],
+  "LI": [
+    "{postal_authority} maintains {country}'s formal {code_format} postal precision.",
+    "{admin_type} divisions are registered for uniform delivery.",
+    "Each {postal_code} corresponds to accurate routing verified by {postal_authority}."
+  ],
+  "LT": [
+    "Postal coordination in {country} is managed by {postal_authority} using {code_format}.",
+    "{place_name} ({postal_code}) is verified under {admin_name1} mapping.",
+    "Each {admin_type} in {country} follows official routing guidelines."
+  ],
+  "LU": [
+    "{postal_authority} administers {country}'s structured {code_format} system with formal precision.",
+    "Each {admin_type} region in {country} operates under standardized {postal_code} mapping.",
+    "Mail routing for {place_name} ({postal_code}) is verified by {postal_authority}."
+  ],
+  "MG": [
+    "{country}'s {postal_authority} manages national {code_format} routing across all {admin_type}.",
+    "{place_name} ({postal_code}) in {admin_name1} follows official postal standards.",
+    "Every {admin_type} region is supervised for accuracy under {postal_authority}."
+  ],
+  "MW": [
+    "{postal_authority} regulates {country}'s {code_format} mail network across provinces.",
+    "{place_name} ({postal_code}) is mapped precisely within {admin_name1}.",
+    "All {admin_type} adhere to routing verified by {postal_authority}."
+  ],
+  "MY": [
+    "In {country}, {postal_authority} oversees {code_format} postal codes across {admin_type}.",
+    "{place_name} ({postal_code}) follows regulated mail routing protocols.",
+    "{admin_name1} regions are structured for efficient delivery under {postal_authority} supervision."
+  ],
+  "MV": [
+    "{country}'s {postal_authority} manages island-wide {code_format} postal coordination.",
+    "{place_name} ({postal_code}) is registered under {admin_name1} for timely service.",
+    "All {admin_type} are covered by verified delivery frameworks."
+  ],
+  "ML": [
+    "{postal_authority} directs {country}'s {code_format} system ensuring national consistency.",
+    "{place_name} ({postal_code}) follows official delivery paths within {admin_name1}.",
+    "Each {admin_type} region maintains records verified by {postal_authority}."
+  ],
+  "MT": [
+    "{country}'s {postal_authority} maintains a formal {code_format} addressing network across {admin_type}.",
+    "Each {admin_name1} zone follows standardized delivery routing.",
+    "Mail data for {place_name} ({postal_code}) is verified officially."
+  ],
+  "MR": [
+    "{postal_authority} manages {country}'s {code_format} postal infrastructure ({country_code}).",
+    "{place_name} ({postal_code}) lies within {admin_name1} under regulated service.",
+    "All {admin_type} observe routing verified by {postal_authority}."
+  ],
+  "MU": [
+    "{country}'s {postal_authority} operates {code_format} mail zones covering all {admin_type}.",
+    "Each {admin_name1} area is mapped for efficient delivery.",
+    "{place_name} ({postal_code}) is listed officially for routing accuracy."
+  ],
+  "MX": [
+    "{postal_authority} oversees {country}'s extensive {code_format} network across {admin_type}.",
+    "{place_name} ({postal_code}) under {admin_name1} follows national routing standards.",
+    "Mail coverage is verified by {postal_authority} for every postal region."
+  ],
+  "MD": [
+    "{country}'s {postal_authority} enforces formal {code_format} schemes across {admin_type}.",
+    "Each {admin_name1} region operates under unified postal mapping.",
+    "Delivery accuracy for {place_name} ({postal_code}) is validated by {postal_authority}."
+  ],
+  "MC": [
+    "{postal_authority} manages Monaco's {code_format} postal system ensuring precision across all {admin_type}.",
+    "Mail routing for {place_name} ({postal_code}) follows verified national standards.",
+    "Each {admin_name1} area is registered under {postal_authority} supervision."
+  ],
+  "MN": [
+    "{postal_authority} manages {country}'s {code_format} mail network ({country_code}).",
+    "{place_name} ({postal_code}) within {admin_name1} is listed in national databases.",
+    "All {admin_type} are mapped for efficient routing."
+  ],
+  "ME": [
+    "{country}'s {postal_authority} maintains formal {code_format} routing across municipalities.",
+    "{place_name} ({postal_code}) in {admin_name1} follows verified distribution.",
+    "Postal accuracy is certified by {postal_authority}."
+  ],
+  "MA": [
+    "{postal_authority} oversees {country}'s {code_format} system with official precision.",
+    "Each {admin_type} maintains updated {postal_code} listings.",
+    "{place_name} ({postal_code}) routing data is confirmed by {postal_authority}."
+  ],
+  "MZ": [
+    "{country}'s {postal_authority} directs {code_format} postal logistics nationwide.",
+    "Mail to {place_name} ({postal_code}) follows standardized paths.",
+    "All {admin_type} are managed through centralized control by {postal_authority}."
+  ],
+  "NA": [
+    "{postal_authority} manages {country}'s {code_format} mail network ensuring reliable coverage.",
+    "Each {admin_name1} is mapped accurately for delivery verification.",
+    "{place_name} ({postal_code}) lies within registered postal boundaries."
+  ],
+  "NP": [
+    "Mail in {country} is managed by {postal_authority} using standardized {code_format} codes for all {admin_type}.",
+    "{place_name} ({postal_code}) within {admin_name1} follows official routing protocols.",
+    "{postal_authority} ensures timely and accurate delivery across {country} ({country_code})."
+  ],
+  "NL": [
+    "{country}'s {postal_authority} manages a formal {code_format} addressing structure for all {admin_type}.",
+    "Each {admin_name1} adheres to strict postal standards verified by {postal_authority}.",
+    "Mail delivery for {place_name} ({postal_code}) is certified for accuracy."
+  ],
+  "NZ": [
+    "{postal_authority} oversees {code_format} postal zones in {country} ({country_code}).",
+    "{place_name} ({postal_code}) within {admin_name1} is registered in official records.",
+    "Mail routing and delivery across {admin_type} is structured under {postal_authority}."
+  ],
+  "NE": [
+    "{postal_authority} operates {country}'s national {code_format} framework for all {admin_type}.",
+    "{place_name} ({postal_code}) in {admin_name1} follows official routing charts.",
+    "Every region’s data is verified under {postal_authority} supervision."
+  ],
+  "NG": [
+    "{country}'s {postal_authority} organizes {code_format} postal mapping across all {admin_type}.",
+    "{admin_name1} regions follow standardized delivery verified by {postal_authority}.",
+    "{place_name} ({postal_code}) is officially registered for logistics routing."
+  ],
+  "NI": [
+    "{postal_authority} oversees {country}'s {code_format} mail routing system ({country_code}).",
+    "Each {admin_type} maintains consistent {postal_code} coverage.",
+    "Deliveries to {place_name} ({postal_code}) follow national postal guidelines."
+  ],
+  "NO": [
+    "In {country}, {postal_authority} manages a precise {code_format} system across all {admin_type}.",
+    "Mail routing for {place_name} ({postal_code}) is verified by {postal_authority}.",
+    "Each {admin_name1} adheres to digital routing accuracy standards."
+  ],
+  "PA": [
+    "{country}'s {postal_authority} maintains {code_format} postal mapping across all {admin_type}.",
+    "{place_name} ({postal_code}) in {admin_name1} is listed for accurate routing.",
+    "Mail coordination across {country} is certified under {postal_authority}."
+  ],
+  "PG": [
+    "{postal_authority} manages {country}'s island-wide {code_format} postal structure.",
+    "{place_name} ({postal_code}) is mapped officially within {admin_name1}.",
+    "Delivery routes for all {admin_type} are verified under {postal_authority}."
+  ],
+  "PY": [
+    "{country}'s {postal_authority} oversees {code_format} addressing for national delivery networks.",
+    "{place_name} ({postal_code}) in {admin_name1} is verified by {postal_authority}.",
+    "Each {admin_type} maintains structured logistics and routing accuracy."
+  ],
+  "PE": [
+    "{postal_authority} manages {country}'s {code_format} postal zones across {admin_type}.",
+    "{place_name} ({postal_code}) follows official delivery routes within {admin_name1}.",
+    "Mail distribution accuracy is guaranteed by {postal_authority}."
+  ],
+  "PH": [
+    "{postal_authority} manages postal services in {country} ({country_code}) via {code_format} codes.",
+    "{place_name} ({postal_code}) in {admin_name1} is fully registered.",
+    "Delivery networks across {admin_type} are monitored by {postal_authority}."
+  ],
+  "PL": [
+    "{country}'s {postal_authority} enforces a formal {code_format} postal framework across {admin_type}.",
+    "Mail routing to {place_name} ({postal_code}) is verified for precision.",
+    "Each {admin_name1} adheres to national delivery regulations."
+  ],
+  "RO": [
+    "{country}'s {postal_authority} manages {code_format} postal zones across {admin_type}.",
+    "Mail routing for {place_name} ({postal_code}) follows certified accuracy standards.",
+    "Each {admin_name1} maintains official postal listings verified by {postal_authority}."
+  ],
+  "RU": [
+    "{postal_authority} oversees {country}'s vast {code_format} postal network across multiple {admin_type}.",
+    "{place_name} ({postal_code}) is officially recorded under {admin_name1}.",
+    "Mail accuracy and logistics are verified through state postal mapping."
+  ],
+  "RW": [
+    "{country}'s {postal_authority} regulates all {code_format} postal sectors.",
+    "{place_name} ({postal_code}) in {admin_name1} is registered for national delivery.",
+    "Every {admin_type} is included in verified routing under {postal_authority}."
+  ],
+  "OM": [
+    "{postal_authority} governs {country}'s national {code_format} routing framework.",
+    "Each {admin_name1} operates under certified distribution standards.",
+    "{place_name} ({postal_code}) data is verified by {postal_authority}."
+  ],
+  "PK": [
+    "{country}'s {postal_authority} operates a {code_format} postal system that covers all {admin_type} regions.",
+    "{postal_authority} ensures precise delivery across {country} ({country_code}) through standardized {code_format} codes.",
+    "Each {admin_type} in {country} uses {postal_code} ranges assigned by {postal_authority}."
+  ],
+  "PS": [
+    "{postal_authority} manages {country}'s official {code_format} addressing framework.",
+    "Each {admin_name1} is registered for verified mail delivery.",
+    "{place_name} ({postal_code}) is listed in {postal_authority}'s national registry."
+  ],
+  "PT": [
+    "{country}'s {postal_authority} administers national {code_format} postal logistics.",
+    "{place_name} ({postal_code}) follows official mail routing under {admin_name1}.",
+    "All {admin_type} are covered under verified postal mapping."
+  ],
+  "QA": [
+    "{postal_authority} oversees the {code_format} postal network of {country} ({country_code}).",
+    "{place_name} ({postal_code}) adheres to routing rules under {admin_name1}.",
+    "All {admin_type} are serviced through verified systems of {postal_authority}."
+  ],
+  "RE": [
+    "{country}'s {postal_authority} manages {code_format} distribution across all {admin_type}.",
+    "Each {admin_name1} is mapped precisely for delivery routing.",
+    "Mail to {place_name} ({postal_code}) is verified through official databases."
+  ],
+  "RS": [
+    "{postal_authority} regulates postal distribution throughout {country} using {code_format}.",
+    "Each {admin_name1} operates under centralized routing.",
+    "{place_name} ({postal_code}) is verified in the national postal database."
+  ],
+  "SC": [
+    "{country}'s {postal_authority} oversees island-wide {code_format} postal operations.",
+    "Each {admin_type} maintains verified routing coverage.",
+    "{place_name} ({postal_code}) is registered officially for accurate mail flow."
+  ],
+  "SD": [
+    "{postal_authority} governs {country}'s {code_format} system across all {admin_type}.",
+    "Mail routing to {place_name} ({postal_code}) follows verified national guidelines.",
+    "{admin_name1} areas maintain regulated postal delivery standards."
+  ],
+  "SG": [
+    "{postal_authority} manages the {code_format} system for all regions of {country}.",
+    "Each {place_name} ({postal_code}) in {admin_name1} is registered with precise coordinates.",
+    "Mail routing and distribution in {country} are standardized by {postal_authority}."
+  ],
+  "SI": [
+    "{country}'s {postal_authority} maintains {code_format} routing with formal precision.",
+    "Each {admin_type} adheres to national addressing rules.",
+    "{place_name} ({postal_code}) is certified for accurate delivery."
+  ],
+  "SK": [
+    "In {country}, {postal_authority} manages a unified {code_format} postal network.",
+    "{admin_name1} regions operate under regulated routing verified by {postal_authority}.",
+    "{place_name} ({postal_code}) is listed in national directories."
+  ],
+  "SL": [
+    "{postal_authority} regulates {country}'s {code_format} mail system ({country_code}).",
+    "Each {admin_type} is covered under verified routing schemes.",
+    "{place_name} ({postal_code}) adheres to official mapping protocols."
+  ],
+  "SO": [
+    "{postal_authority} manages {country}'s postal distribution network across {admin_type}.",
+    "{place_name} ({postal_code}) under {admin_name1} follows verified delivery patterns.",
+    "Mail routing across {country} is standardized for reliability."
+  ],
+  "TJ": [
+    "{postal_authority} manages {country}'s {code_format} postal framework across all {admin_type}.",
+    "{place_name} ({postal_code}) is mapped officially within {admin_name1}.",
+    "Each {admin_type} follows routing verified by {postal_authority}."
+  ],
+  "TZ": [
+    "{postal_authority} regulates {country}'s {code_format} system for all {admin_type}.",
+    "{place_name} ({postal_code}) under {admin_name1} adheres to national delivery standards.",
+    "Postal coverage is certified through {postal_authority}'s verified maps."
+  ],
+  "TH": [
+    "{country}'s {postal_authority} operates {code_format} postal zones for all {admin_type}.",
+    "{place_name} ({postal_code}) is assigned with official postal standards.",
+    "Delivery across {admin_name1} and {country} is regulated under {postal_authority}."
+  ],
+  "TG": [
+    "{postal_authority} oversees {country}'s national {code_format} postal distribution.",
+    "Each {admin_name1} maintains verified delivery data.",
+    "{place_name} ({postal_code}) is registered for accuracy under {postal_authority}."
+  ],
+  "TO": [
+    "{postal_authority} manages island mail delivery throughout {country} ({country_code}).",
+    "{place_name} ({postal_code}) within {admin_name1} is verified for routing accuracy.",
+    "All {admin_type} adhere to {postal_authority}'s national standards."
+  ],
+  "TT": [
+    "{postal_authority} operates {country}'s {code_format} postal grid across all {admin_type}.",
+    "Each {admin_name1} has confirmed {postal_code} zones for distribution.",
+    "Mail routing for {place_name} ({postal_code}) is validated officially."
+  ],
+  "TN": [
+    "{country}'s {postal_authority} enforces {code_format} postal systems across {admin_type}.",
+    "{place_name} ({postal_code}) follows regulated national routing.",
+    "Each {admin_name1} is included in verified distribution data."
+  ],
+  "TR": [
+    "{postal_authority} manages {country}'s {code_format} postal structure for all {admin_type}.",
+    "Mail delivery to {place_name} ({postal_code}) follows official mapping.",
+    "Each {admin_name1} operates under standards set by {postal_authority}."
+  ],
+  "TM": [
+    "{country}'s {postal_authority} regulates {code_format} routing networks.",
+    "{place_name} ({postal_code}) is verified within {admin_name1}.",
+    "All {admin_type} adhere to delivery systems managed by {postal_authority}."
+  ],
+  "TV": [
+    "{postal_authority} supervises island-wide mail operations in {country} ({country_code}).",
+    "{place_name} ({postal_code}) under {admin_name1} is mapped for precise routing.",
+    "Postal data remain verified by {postal_authority}."
+  ],
+  "UG": [
+    "{country}'s {postal_authority} coordinates {code_format} delivery across {admin_type}.",
+    "{place_name} ({postal_code}) follows structured postal coverage.",
+    "Mail distribution across {admin_name1} remains verified by {postal_authority}."
+  ],
+  "UA": [
+    "{postal_authority} maintains {country}'s {code_format} postal accuracy across all {admin_type}.",
+    "Each {admin_name1} operates under state postal regulations.",
+    "{place_name} ({postal_code}) is listed officially for delivery verification."
+  ],
+  "AE": [
+    "{postal_authority} operates {code_format} postal codes covering {admin_type} in {country}.",
+    "{place_name} ({postal_code}) is officially recognized for delivery purposes.",
+    "Mail management across {admin_name1} is supervised by {postal_authority}."
+  ],
+  "GB": [
+    "{postal_authority} manages {country}'s formal {code_format} postal addressing system.",
+    "Each {admin_name1} region adheres to precise routing guidelines.",
+    "Mail to {place_name} ({postal_code}) follows certified mapping verified by {postal_authority}."
+  ],
+  "US": [
+    "{postal_authority} oversees {country}'s nationwide {code_format} network covering all {admin_type}.",
+    "{place_name} ({postal_code}) within {admin_name1} follows official delivery standards.",
+    "Mail routing and verification across {country} ({country_code}) are maintained by {postal_authority}."
+  ],
+  "UY": [
+    "{country}'s {postal_authority} operates {code_format} systems across all {admin_type}.",
+    "{place_name} ({postal_code}) adheres to standardized routing.",
+    "Mail distribution is certified through {postal_authority} databases."
+  ],
+  "UZ": [
+    "{postal_authority} manages {country}'s {code_format} framework for regional delivery.",
+    "{place_name} ({postal_code}) in {admin_name1} is officially mapped.",
+    "Each {admin_type} maintains routing verified by {postal_authority}."
+  ],
+  "VU": [
+    "{country}'s {postal_authority} coordinates {code_format} routing across all {admin_type}.",
+    "{place_name} ({postal_code}) under {admin_name1} follows regulated paths.",
+    "Mail accuracy is validated through official mapping systems."
+  ],
+  "VE": [
+    "{postal_authority} oversees {country}'s {code_format} delivery networks.",
+    "{place_name} ({postal_code}) is officially registered for routing accuracy.",
+    "Each {admin_type} operates under postal frameworks managed by {postal_authority}."
+  ],
+  "VN": [
+    "{postal_authority} manages {code_format} postal codes in {country} ({country_code}) for each {admin_type}.",
+    "{place_name} ({postal_code}) follows regional mail routing regulations.",
+    "All {admin_name1} areas are covered under {postal_authority} postal network."
+  ],
+  "WF": [
+    "{postal_authority} manages {country}'s {code_format} mail routing across island territories.",
+    "Each {admin_type} under {country_code} follows verified delivery by {postal_authority}.",
+    "{place_name} ({postal_code}) is registered within {admin_name1} for accurate correspondence."
+  ],
+  "YE": [
+    "{country}'s {postal_authority} regulates national {code_format} postal routes.",
+    "{place_name} ({postal_code}) within {admin_name1} is mapped officially.",
+    "Mail coverage across all {admin_type} remains under {postal_authority}'s supervision."
+  ],
+  "ZM": [
+    "{postal_authority} operates {country}'s {code_format} postal system across provinces.",
+    "{place_name} ({postal_code}) follows verified routing under {admin_name1}.",
+    "Each {admin_type} is covered consistently by {postal_authority}."
+  ],
+  "ZW": [
+    "{country}'s {postal_authority} manages national {code_format} networks for all {admin_type}.",
+    "{place_name} ({postal_code}) is certified in official databases.",
+    "Mail routing across {admin_name1} maintains {postal_authority}-verified accuracy."
+  ],
+  "VA": [
+    "{postal_authority} oversees {country}'s unique {code_format} system within city boundaries.",
+    "Each {admin_type} zone follows strictly verified delivery guidelines.",
+    "{place_name} ({postal_code}) is recorded under official Vatican listings."
+  ],
+  "EH": [
+    "{postal_authority} manages {country}'s {code_format} postal regions ({country_code}).",
+    "Mail for {place_name} ({postal_code}) follows official coordination.",
+    "All {admin_type} areas operate under verified national routing."
+  ],
+  "WS": [
+    "{country}'s {postal_authority} operates {code_format} routes across island districts.",
+    "Each {admin_name1} adheres to postal mapping verified by {postal_authority}.",
+    "{place_name} ({postal_code}) is listed for accurate routing."
+  ],
+  "SM": [
+    "{postal_authority} manages {country}'s formal {code_format} addressing system.",
+    "{place_name} ({postal_code}) under {admin_name1} follows national delivery standards.",
+    "Mail routing remains certified under {postal_authority}."
+  ],
+  "ST": [
+    "{country}'s {postal_authority} directs {code_format} postal logistics across {admin_type}.",
+    "{place_name} ({postal_code}) follows official routing charts.",
+    "All mail paths are validated by {postal_authority}."
+  ],
+  "SN": [
+    "{postal_authority} operates {country}'s {code_format} framework ensuring reliable delivery.",
+    "{place_name} ({postal_code}) is officially registered for routing accuracy.",
+    "Every {admin_type} region adheres to {postal_authority}'s distribution model."
+  ],
+  "SR": [
+    "{postal_authority} manages {country}'s {code_format} addressing for all {admin_type}.",
+    "{place_name} ({postal_code}) within {admin_name1} follows verified delivery lines.",
+    "National mail accuracy is confirmed under {postal_authority} control."
+  ],
+  "SZ": [
+    "{country}'s {postal_authority} maintains {code_format} postal data across all {admin_type}.",
+    "Mail routing to {place_name} ({postal_code}) follows certified mapping.",
+    "Each {admin_name1} operates under national postal verification."
+  ],
+  "SE": [
+    "{country}'s {postal_authority} manages a formal {code_format} delivery structure.",
+    "Each {admin_name1} region follows regulated postal boundaries.",
+    "{place_name} ({postal_code}) is validated through national postal data."
+  ],
+  "CH": [
+    "{postal_authority} operates {country}'s precise {code_format} addressing across {admin_type}.",
+    "{place_name} ({postal_code}) under {admin_name1} adheres to accurate delivery mapping.",
+    "Mail routing in {country} ({country_code}) is certified under {postal_authority}."
+  ],
+  "SY": [
+    "{postal_authority} manages {country}'s {code_format} postal system with official oversight.",
+    "{place_name} ({postal_code}) follows structured routing paths.",
+    "All {admin_type} regions comply with {postal_authority}’s postal regulations."
+  ],
+  "ZA": [
+    "{postal_authority} operates {country}'s {code_format} framework across provinces.",
+    "{place_name} ({postal_code}) within {admin_name1} is mapped officially.",
+    "Mail accuracy across all {admin_type} is maintained by {postal_authority}."
+  ]
+}

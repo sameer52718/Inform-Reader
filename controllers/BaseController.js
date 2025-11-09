@@ -331,15 +331,23 @@ class BaseController {
     }
   }
 
-  // async prepareResponse(response){
-  //   try {
+  extractSubdomainCountryCode(req) {
+    const origin = req.headers.origin || req.get('origin') || '';
+    let subdomainCountryCode = 'pk';
 
-  //     return response.errorMessage
-
-  //   } catch (error) {
-  //     console.error('Error sending OTP email:', error);
-  //   }
-  // }
+    if (origin) {
+      try {
+        const hostname = new URL(origin).hostname; // e.g., pk.informreaders.com
+        const parts = hostname.split('.');
+        if (parts.length > 2) {
+          subdomainCountryCode = parts[0].toUpperCase(); // "pk", "in", "us"
+        }
+      } catch (parseErr) {
+        // If origin is not a valid URL, ignore
+      }
+    }
+    return subdomainCountryCode;
+  }
 }
 
 export default BaseController;

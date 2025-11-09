@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 import Country from '../../models/Country.js';
 import PostalCode from '../../models/PostalCode.js';
 import BaseController from '../BaseController.js';
+import path from 'path';
+import fs from 'fs/promises';
 
 class PostalCodeController extends BaseController {
   constructor() {
@@ -138,38 +140,107 @@ class PostalCodeController extends BaseController {
   // Get single software detail by ID
   async detail(req, res) {
     try {
-      const { id:slug } = req.params;
+      const { id: slug } = req.params;
 
       const postalCode = await PostalCode.findOne({
         slug,
         status: true,
         isDeleted: false,
       })
-        .populate('countryId') // populate category name
-        .select('-__v -isDeleted'); // exclude version and internal fields if desired
+        .populate('countryId')
+        .select('-__v -isDeleted');
 
       if (!postalCode) {
         return res.status(404).json({ message: 'Postal Code not found' });
       }
 
+      const countryCode = this.extractSubdomainCountryCode(req).toUpperCase();
+      console.log(countryCode);
+
+      // 🔹 Paths for templates
+      const countryTemplatesFile = path.join(process.cwd(), 'templates', 'postalcodes', 'country.json');
+      const universalTemplatesFile = path.join(process.cwd(), 'templates', 'postalcodes', 'template.json');
+      console.log(countryTemplatesFile, universalTemplatesFile);
+
+      // 🔹 Load and parse both template files (once per request)
+      const [countryDataRaw, universalDataRaw] = await Promise.all([
+        fs.readFile(countryTemplatesFile, { encoding: 'utf-8' }),
+        fs.readFile(universalTemplatesFile, { encoding: 'utf-8' }),
+      ]);
+
+      const countryTemplates = JSON.parse(countryDataRaw);
+      const universalTemplates = JSON.parse(universalDataRaw);
+
+      // 🔹 Pick country-specific templates
+      const countrySet = countryTemplates[countryCode] || [];
+      const randomCountryTemplate = countrySet.length > 0 ? countrySet[Math.floor(Math.random() * countrySet.length)] : null;
+      console.log(countrySet);
+
+      // 🔹 Pick universal template
+      const randomUniversal = universalTemplates[Math.floor(Math.random() * universalTemplates.length)];
+
+      // 🔹 Replacement helper
+      const replaceVars = (text, map) => text?.replace(/{(.*?)}/g, (_, key) => (map[key] !== undefined ? map[key] : `{${key}}`)) || '';
+
+      // 🔹 Prepare variable map for replacements
+      const map = {
+        postal_code: postalCode.code,
+        place_name: postalCode.area || postalCode.adminName2 || '',
+        admin_name1: postalCode.state || '',
+        admin_name2: postalCode.adminName2 || '',
+        admin_name3: postalCode.adminName3 || '',
+        country: postalCode.countryId.name,
+        country_code: countryCode,
+        latitude: postalCode.latitude ?? '',
+        longitude: postalCode.longitude ?? '',
+        accuracy: postalCode.accuracy ?? '',
+        postal_authority: 'Universal Postal Union',
+        code_format: 'Standard GeoNames Postal Format',
+        related_Postal_Code_link: `/postalcode/${countryCode}/${postalCode.state}`,
+        top_5_Postal_Code_link: `/postalcode/${countryCode}/${postalCode.state}`,
+        admin_type: 'regions',
+      };
+
+      // 🔹 Fill template content
+      const filledCountrySummary = randomCountryTemplate ? replaceVars(randomCountryTemplate, map) : '';
+
+      const filledTitle = replaceVars(randomUniversal.content.title, map);
+      const filledParagraph = replaceVars(randomUniversal.content.paragraph, map);
+      const filledFaqs = randomUniversal.content.faqs.map((f) => ({
+        question: replaceVars(f.question, map),
+        answer: replaceVars(f.answer, map),
+      }));
+
+      // 🔹 Fetch related info
       const otherCountries = await Country.find({
         region: postalCode.countryId.region,
       }).select('name countryCode flag');
 
       const groupedPostalCodes = await PostalCode.aggregate([
         { $match: { countryId: new mongoose.Types.ObjectId(postalCode.countryId._id) } },
-        {
-          $group: {
-            _id: '$state',
-          },
-        },
+        { $group: { _id: '$state' } },
         { $sort: { _id: 1 } },
       ]);
 
-      return res.status(200).json({ data: { postalCode, otherCountries, regions: groupedPostalCodes.map((region) => region._id) }, error: false });
+      // 🔹 Build response
+      const response = {
+        postalCode,
+        content: {
+          title: filledTitle,
+          paragraph: filledParagraph,
+          faqs: filledFaqs,
+          summary: filledCountrySummary,
+          tone: randomUniversal.tone,
+          eeat_notes: randomUniversal.eeat_notes,
+        },
+        otherCountries,
+        regions: groupedPostalCodes.map((r) => r._id),
+      };
+
+      return res.status(200).json({ data: response, error: false });
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Error retrieving software details' });
+      console.error('❌ detail error:', error);
+      return res.status(500).json({ message: 'Error retrieving postal code details' });
     }
   }
 }
