@@ -37,17 +37,8 @@ const seedPostalCodes = async () => {
       if (!country) {
         country = await Country.findOne({ countryCode });
         if (!country) {
-          country = await Country.create({
-            name: countryCode,
-            slug: countryCode.toLowerCase(),
-            flag: '',
-            region: '',
-            countryCode,
-            status: false,
-          });
-          console.log(`🌍 Created new country: ${countryCode}`);
+          continue;
         }
-        countryCache.set(countryCode, country);
       }
 
       // ✅ Avoid duplicates (in batch and DB)
