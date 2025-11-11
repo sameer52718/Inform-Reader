@@ -12,6 +12,8 @@ const bankCodeSchema = new mongoose.Schema(
     isDeleted: { type: Boolean, default: false },
     slug: { type: String, trim: true, unique: true },
     contentGenerated: { type: Boolean, default: false, index: true },
+    branchSlug: { type: String, trim: true },
+    bankSlug: { type: String, trim: true },
   },
   { timestamps: true },
 );
