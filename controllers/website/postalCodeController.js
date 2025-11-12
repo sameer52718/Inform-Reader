@@ -11,6 +11,9 @@ class PostalCodeController extends BaseController {
     this.get = this.get.bind(this);
     this.detail = this.detail.bind(this);
     this.getPostalCodesGroupedByRegion = this.getPostalCodesGroupedByRegion.bind(this);
+    this.groupByState = this.groupByState.bind(this);
+    this.groupByArea = this.groupByArea.bind(this);
+    this.getAreaDetail = this.getAreaDetail.bind(this);
   }
 
   // Method for software listing with filters and pagination
@@ -38,7 +41,6 @@ class PostalCodeController extends BaseController {
 
       filter.countryId = country._id;
       filter.state = region.replaceAll('%20', ' ');
-      console.log(filter);
 
       if (search) {
         filter.$or = [{ code: { $regex: search, $options: 'i' } }, { area: { $regex: search, $options: 'i' } }];
@@ -140,12 +142,34 @@ class PostalCodeController extends BaseController {
   // Get single software detail by ID
   async detail(req, res) {
     try {
-      const { id: slug } = req.params;
+      const { id: code } = req.params;
+
+      const origin = req.headers.origin || req.get('origin') || '';
+      let subdomainCountryCode = 'pk';
+
+      if (origin) {
+        try {
+          const hostname = new URL(origin).hostname; // e.g., pk.informreaders.com
+          const parts = hostname.split('.');
+          if (parts.length > 2) {
+            subdomainCountryCode = parts[0].toUpperCase(); // "pk", "in", "us"
+          }
+        } catch (parseErr) {
+          // If origin is not a valid URL, ignore
+        }
+      }
+
+      // Find country
+      const country = await Country.findOne({ countryCode: subdomainCountryCode.toLowerCase() });
+      if (!country) {
+        return this.handleError(next, 'Country not found', 404);
+      }
 
       const postalCode = await PostalCode.findOne({
-        slug,
+        code,
         status: true,
         isDeleted: false,
+        countryId: country._id,
       })
         .populate('countryId')
         .select('-__v -isDeleted');
@@ -155,12 +179,10 @@ class PostalCodeController extends BaseController {
       }
 
       const countryCode = this.extractSubdomainCountryCode(req).toUpperCase();
-      console.log(countryCode);
 
       // 🔹 Paths for templates
       const countryTemplatesFile = path.join(process.cwd(), 'templates', 'postalcodes', 'country.json');
       const universalTemplatesFile = path.join(process.cwd(), 'templates', 'postalcodes', 'template.json');
-      console.log(countryTemplatesFile, universalTemplatesFile);
 
       // 🔹 Load and parse both template files (once per request)
       const [countryDataRaw, universalDataRaw] = await Promise.all([
@@ -174,7 +196,6 @@ class PostalCodeController extends BaseController {
       // 🔹 Pick country-specific templates
       const countrySet = countryTemplates[countryCode] || [];
       const randomCountryTemplate = countrySet.length > 0 ? countrySet[Math.floor(Math.random() * countrySet.length)] : null;
-      console.log(countrySet);
 
       // 🔹 Pick universal template
       const randomUniversal = universalTemplates[Math.floor(Math.random() * universalTemplates.length)];
@@ -241,6 +262,259 @@ class PostalCodeController extends BaseController {
     } catch (error) {
       console.error('❌ detail error:', error);
       return res.status(500).json({ message: 'Error retrieving postal code details' });
+    }
+  }
+
+  // ✅ Group by State (like groupByBank)
+  async groupByState(req, res, next) {
+    try {
+      const { search, status = true } = req.query;
+
+      const origin = req.headers.origin || req.get('origin') || '';
+      let subdomainCountryCode = 'pk';
+
+      if (origin) {
+        try {
+          const hostname = new URL(origin).hostname; // e.g., pk.informreaders.com
+          const parts = hostname.split('.');
+          if (parts.length > 2) {
+            subdomainCountryCode = parts[0].toUpperCase(); // "pk", "in", "us"
+          }
+        } catch (parseErr) {
+          // If origin is not a valid URL, ignore
+        }
+      }
+
+      // Find country
+      const country = await Country.findOne({ countryCode: subdomainCountryCode.toLowerCase() });
+      if (!country) {
+        return this.handleError(next, 'Country not found', 404);
+      }
+
+      // Base match
+      const match = {
+        countryId: country._id,
+        isDeleted: false,
+      };
+
+      if (status !== undefined) {
+        match.status = status === 'true' || status === true;
+      }
+
+      if (search) {
+        match.$or = [{ state: { $regex: search, $options: 'i' } }, { area: { $regex: search, $options: 'i' } }, { code: { $regex: search, $options: 'i' } }];
+      }
+
+      // Group by state
+      const groupedStates = await PostalCode.aggregate([
+        { $match: match },
+        {
+          $group: {
+            _id: '$state',
+            totalAreas: { $sum: 1 },
+            stateSlug: { $first: '$stateSlug' },
+            areas: { $addToSet: '$area' },
+          },
+        },
+        { $sort: { _id: 1 } },
+        {
+          $project: {
+            _id: 1,
+            totalAreas: 1,
+            stateSlug: 1,
+            areas: { $slice: ['$areas', 5] },
+          },
+        },
+      ]);
+
+      return res.status(200).json({
+        success: true,
+        country: {
+          name: country.name,
+          code: country.countryCode,
+          flag: country.flag,
+        },
+        totalStates: groupedStates.length,
+        states: groupedStates.map((item) => ({
+          state: item._id,
+          stateSlug: item.stateSlug,
+          totalAreas: item.totalAreas,
+          areas: item.areas,
+        })),
+      });
+    } catch (error) {
+      return this.handleError(next, error.message, 500);
+    }
+  }
+
+  // ✅ Group by Area (like groupByBranch)
+  async groupByArea(req, res, next) {
+    try {
+      const { stateSlug, search, status = true } = req.query;
+
+      if (!stateSlug) {
+        return this.handleError(next, 'stateSlug is required', 400);
+      }
+
+      const origin = req.headers.origin || req.get('origin') || '';
+      let subdomainCountryCode = 'pk';
+
+      if (origin) {
+        try {
+          const hostname = new URL(origin).hostname; // e.g., pk.informreaders.com
+          const parts = hostname.split('.');
+          if (parts.length > 2) {
+            subdomainCountryCode = parts[0].toUpperCase(); // "pk", "in", "us"
+          }
+        } catch (parseErr) {
+          // If origin is not a valid URL, ignore
+        }
+      }
+
+      // Find country
+      const country = await Country.findOne({ countryCode: subdomainCountryCode.toLowerCase() });
+      if (!country) {
+        return this.handleError(next, 'Country not found', 404);
+      }
+
+      // Base match
+      const match = {
+        countryId: country._id,
+        stateSlug: stateSlug.toLowerCase(),
+        isDeleted: false,
+        area: { $ne: '' },
+      };
+
+      if (status !== undefined) {
+        match.status = status === 'true' || status === true;
+      }
+
+      if (search) {
+        match.$or = [{ area: { $regex: search, $options: 'i' } }, { code: { $regex: search, $options: 'i' } }];
+      }
+
+      // Group by area
+      const groupedAreas = await PostalCode.aggregate([
+        { $match: match },
+        {
+          $group: {
+            _id: '$area',
+            areaSlug: { $first: '$areaSlug' },
+          },
+        },
+        { $sort: { _id: 1 } },
+      ]);
+
+      // Get state info (for name)
+      const stateInfo = await PostalCode.findOne({
+        countryId: country._id,
+        stateSlug: stateSlug.toLowerCase(),
+      }).select('state stateSlug countryId');
+
+      if (!stateInfo) {
+        return this.handleError(next, 'State not found', 404);
+      }
+
+      return res.status(200).json({
+        success: true,
+        country: {
+          name: country.name,
+          code: country.countryCode,
+          flag: country.flag,
+        },
+        state: {
+          name: stateInfo.state,
+          slug: stateInfo.stateSlug,
+        },
+        totalAreas: groupedAreas.length,
+        areas: groupedAreas.map((item) => ({
+          area: item._id,
+          areaSlug: item.areaSlug,
+        })),
+      });
+    } catch (error) {
+      return this.handleError(next, error.message, 500);
+    }
+  }
+
+  // 🔹 Get postal code (area) detail by slug
+  async getAreaDetail(req, res, next) {
+    try {
+      const { areaSlug } = req.query;
+
+      if (!areaSlug) {
+        return this.handleError(next, 'areaSlug are required', 400);
+      }
+
+      const origin = req.headers.origin || req.get('origin') || '';
+      let subdomainCountryCode = 'pk';
+
+      if (origin) {
+        try {
+          const hostname = new URL(origin).hostname; // e.g., pk.informreaders.com
+          const parts = hostname.split('.');
+          if (parts.length > 2) {
+            subdomainCountryCode = parts[0].toUpperCase(); // "pk", "in", "us"
+          }
+        } catch (parseErr) {
+          // If origin is not a valid URL, ignore
+        }
+      }
+
+      // Find country
+      const country = await Country.findOne({ countryCode: subdomainCountryCode.toLowerCase() });
+      if (!country) {
+        return this.handleError(next, 'Country not found', 404);
+      }
+
+      // Find postal code (area) by slug
+      const postalCode = await PostalCode.findOne({
+        countryId: country._id,
+        areaSlug: areaSlug,
+        isDeleted: false,
+        status: true,
+      }).populate('countryId', 'name countryCode region flag');
+
+      if (!postalCode) {
+        return this.handleError(next, 'Postal Code not found', 404);
+      }
+
+      // Group other areas from same state (for sidebar suggestions)
+      const relatedAreas = await PostalCode.find({
+        countryId: country._id,
+        state: postalCode.state,
+        slug: { $ne: postalCode.slug },
+        isDeleted: false,
+        status: true,
+      })
+        .select('area areaSlug')
+        .limit(5);
+
+      // Build response
+      const data = {
+        country: {
+          name: country.name,
+          code: country.countryCode,
+          flag: country.flag,
+          continent: country.region,
+        },
+        postalCode: {
+          code: postalCode.code,
+          area: postalCode.area,
+          state: postalCode.state,
+          latitude: postalCode.latitude,
+          longitude: postalCode.longitude,
+          adminName2: postalCode.adminName2,
+          adminName3: postalCode.adminName3,
+          accuracy: postalCode.accuracy,
+        },
+        relatedAreas,
+      };
+
+      return res.status(200).json({ success: true, data });
+    } catch (error) {
+      console.error('❌ Error fetching area detail:', error);
+      return this.handleError(next, error.message);
     }
   }
 }
