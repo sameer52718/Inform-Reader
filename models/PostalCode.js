@@ -18,6 +18,8 @@ const postalCodeSchema = new mongoose.Schema(
     status: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
     slug: { type: String, trim: true },
+    stateSlug: { type: String, trim: true },
+    areaSlug: { type: String, trim: true },
   },
   { timestamps: true },
 );
