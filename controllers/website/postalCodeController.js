@@ -288,6 +288,7 @@ class PostalCodeController extends BaseController {
       const match = {
         countryId: country._id,
         isDeleted: false,
+        state: { $ne: '' },
       };
 
       if (status !== undefined) {
