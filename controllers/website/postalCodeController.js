@@ -143,20 +143,17 @@ class PostalCodeController extends BaseController {
   async detail(req, res) {
     try {
       const { id: code } = req.params;
+      const { host } = req.query;
 
-      const origin = req.headers.origin || req.get('origin') || '';
       let subdomainCountryCode = 'pk';
-
-      if (origin) {
-        try {
-          const hostname = new URL(origin).hostname; // e.g., pk.informreaders.com
-          const parts = hostname.split('.');
-          if (parts.length > 2) {
-            subdomainCountryCode = parts[0].toUpperCase(); // "pk", "in", "us"
-          }
-        } catch (parseErr) {
-          // If origin is not a valid URL, ignore
+      try {
+        const hostname = new URL(`https://${host}`).hostname;
+        const parts = hostname.split('.');
+        if (parts.length > 2) {
+          subdomainCountryCode = parts[0].toUpperCase(); // e.g. "PK"
         }
+      } catch {
+        // fallback
       }
 
       // Find country
@@ -346,25 +343,21 @@ class PostalCodeController extends BaseController {
   // ✅ Group by Area (like groupByBranch)
   async groupByArea(req, res, next) {
     try {
-      const { stateSlug, search, status = true } = req.query;
+      const { stateSlug, search, status = true, host } = req.query;
 
       if (!stateSlug) {
         return this.handleError(next, 'stateSlug is required', 400);
       }
 
-      const origin = req.headers.origin || req.get('origin') || '';
       let subdomainCountryCode = 'pk';
-
-      if (origin) {
-        try {
-          const hostname = new URL(origin).hostname; // e.g., pk.informreaders.com
-          const parts = hostname.split('.');
-          if (parts.length > 2) {
-            subdomainCountryCode = parts[0].toUpperCase(); // "pk", "in", "us"
-          }
-        } catch (parseErr) {
-          // If origin is not a valid URL, ignore
+      try {
+        const hostname = new URL(`https://${host}`).hostname;
+        const parts = hostname.split('.');
+        if (parts.length > 2) {
+          subdomainCountryCode = parts[0].toUpperCase(); // e.g. "PK"
         }
+      } catch {
+        // fallback
       }
 
       // Find country
@@ -436,25 +429,21 @@ class PostalCodeController extends BaseController {
   // 🔹 Get postal code (area) detail by slug
   async getAreaDetail(req, res, next) {
     try {
-      const { areaSlug } = req.query;
+      const { areaSlug, host } = req.query;
 
       if (!areaSlug) {
         return this.handleError(next, 'areaSlug are required', 400);
       }
 
-      const origin = req.headers.origin || req.get('origin') || '';
       let subdomainCountryCode = 'pk';
-
-      if (origin) {
-        try {
-          const hostname = new URL(origin).hostname; // e.g., pk.informreaders.com
-          const parts = hostname.split('.');
-          if (parts.length > 2) {
-            subdomainCountryCode = parts[0].toUpperCase(); // "pk", "in", "us"
-          }
-        } catch (parseErr) {
-          // If origin is not a valid URL, ignore
+      try {
+        const hostname = new URL(`https://${host}`).hostname;
+        const parts = hostname.split('.');
+        if (parts.length > 2) {
+          subdomainCountryCode = parts[0].toUpperCase(); // e.g. "PK"
         }
+      } catch {
+        // fallback
       }
 
       // Find country
