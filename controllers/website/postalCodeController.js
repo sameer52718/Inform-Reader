@@ -268,21 +268,17 @@ class PostalCodeController extends BaseController {
   // ✅ Group by State (like groupByBank)
   async groupByState(req, res, next) {
     try {
-      const { search, status = true } = req.query;
-
-      const origin = req.headers.origin || req.get('origin') || '';
+      const { search, status = true, host } = req.query;
+      // 🔹 Extract subdomain
       let subdomainCountryCode = 'pk';
-
-      if (origin) {
-        try {
-          const hostname = new URL(origin).hostname; // e.g., pk.informreaders.com
-          const parts = hostname.split('.');
-          if (parts.length > 2) {
-            subdomainCountryCode = parts[0].toUpperCase(); // "pk", "in", "us"
-          }
-        } catch (parseErr) {
-          // If origin is not a valid URL, ignore
+      try {
+        const hostname = new URL(`https://${host}`).hostname;
+        const parts = hostname.split('.');
+        if (parts.length > 2) {
+          subdomainCountryCode = parts[0].toUpperCase(); // e.g. "PK"
         }
+      } catch {
+        // fallback
       }
 
       // Find country
