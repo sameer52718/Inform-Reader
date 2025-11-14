@@ -937,7 +937,7 @@ class CommonController extends BaseController {
       }
       console.log(filter);
 
-      const categories = await Category.find(filter).select('name');
+      const categories = await Category.find(filter).select('name slug');
       return res.json({ error: false, categories });
     } catch (error) {
       return this.handleError(next, error.message, 500);

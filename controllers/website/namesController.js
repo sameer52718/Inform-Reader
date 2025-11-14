@@ -1,6 +1,6 @@
 import Name from '../../models/Name.js';
 import BaseController from '../BaseController.js';
-
+import Category from '../../models/Category.js';
 class NamesController extends BaseController {
   constructor() {
     super();
@@ -17,7 +17,13 @@ class NamesController extends BaseController {
       // Build filter object
       let filter = {};
       if (initialLetter) filter.initialLetter = initialLetter;
-      if (categoryId) filter.categoryId = categoryId;
+
+      if (categoryId) {
+        const category = await Category.findOne({ slug: categoryId, isDeleted: false, status: true });
+        if (category) {
+          filter.categoryId = category._id;
+        }
+      }
       if (gender) filter.gender = gender;
       if (search) filter.name = { $regex: search, $options: 'i' };
 

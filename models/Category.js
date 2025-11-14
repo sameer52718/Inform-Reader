@@ -7,6 +7,7 @@ const categorySchema = new mongoose.Schema(
     name: { type: String, required: true },
     status: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
+    slug: { type: String },
     order: {
       type: Number,
       required: true,
@@ -15,6 +16,8 @@ const categorySchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+
+categorySchema.index({ slug: 1 });
 
 const Category = mongoose.model('Category', categorySchema);
 
