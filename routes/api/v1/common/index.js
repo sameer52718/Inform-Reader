@@ -17,11 +17,6 @@ router.get('/city', commonController.cities);
 router.get('/nationality', commonController.nationality);
 router.post('/translate', commonController.translateContent);
 
-router.get('/advertiser', commonController.advertiser);
-router.get('/coupon', commonController.coupon);
-router.get('/myAdvertiser', commonController.myAdvertiser);
-router.get('/offer', commonController.getAllOffers);
-router.get('/cj/coupon', commonController.cjCoupon);
 router.post('/chat', commonController.chat);
 
 export default router;

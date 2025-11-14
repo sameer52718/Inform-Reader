@@ -8,6 +8,7 @@ const subCategorySchema = new mongoose.Schema(
     name: { type: String, required: true },
     status: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
+    slug: { type: String },
     order: {
       type: Number,
       required: true,
