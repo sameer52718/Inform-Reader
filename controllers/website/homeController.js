@@ -4,7 +4,6 @@ import Software from '../../models/Software.js';
 import Name from '../../models/Name.js';
 import Specification from '../../models/Specification.js';
 import Biography from '../../models/Biography.js';
-import Article from '../../models/Article.js';
 import Vehicle from '../../models/Vehicle.js';
 import Bike from '../../models/Bike.js';
 
@@ -68,7 +67,7 @@ class HomeController extends BaseController {
               gender: 1,
               shortMeaning: 1,
               origion: 1,
-              slug: 1
+              slug: 1,
             },
           },
         ]);
@@ -186,40 +185,6 @@ class HomeController extends BaseController {
               slug: 1,
               categoryId: 1,
               categoryName: '$categoryInfo.name',
-            },
-          },
-        ]);
-
-      const getRandomArticles = () =>
-        Article.aggregate([
-          // Randomly select 12 articles
-          { $sample: { size: 12 } },
-          // Lookup category information
-          {
-            $lookup: {
-              from: 'categories',
-              localField: 'category',
-              foreignField: '_id',
-              as: 'categoryInfo',
-            },
-          },
-          // Unwind categoryInfo
-          {
-            $unwind: {
-              path: '$categoryInfo',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-          // Project relevant fields
-          {
-            $project: {
-              _id: 1,
-              title: 1,
-              pubDate: 1,
-              categoryId: '$category',
-              categoryName: '$categoryInfo.name',
-              source: 1,
-              link: 1,
             },
           },
         ]);
@@ -374,18 +339,16 @@ class HomeController extends BaseController {
         ]);
 
       // Run all async tasks in parallel
-      const [postalCodeCountry, bankCodeCountry, randomSoftware, randomNames, randomSpecifications, randomBiographies, randomArticles, randomVehicles, randomBikes] =
-        await Promise.all([
-          getRandomCountries(),
-          getRandomCountries(),
-          getRandomSoftware(),
-          getRandomNames(),
-          getRandomSpecifications(),
-          getRandomBiographies(),
-          getRandomArticles(),
-          getRandomVehicles(),
-          getRandomBikes(),
-        ]);
+      const [postalCodeCountry, bankCodeCountry, randomSoftware, randomNames, randomSpecifications, randomBiographies, randomVehicles, randomBikes] = await Promise.all([
+        getRandomCountries(),
+        getRandomCountries(),
+        getRandomSoftware(),
+        getRandomNames(),
+        getRandomSpecifications(),
+        getRandomBiographies(),
+        getRandomVehicles(),
+        getRandomBikes(),
+      ]);
 
       return res.status(200).json({
         error: false,
@@ -396,7 +359,6 @@ class HomeController extends BaseController {
           randomNames,
           randomSpecifications,
           randomBiographies,
-          randomArticles,
           randomVehicles,
           randomBikes,
         },
