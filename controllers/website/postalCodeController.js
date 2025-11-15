@@ -150,18 +150,20 @@ class PostalCodeController extends BaseController {
         const hostname = new URL(`https://${host}`).hostname;
         const parts = hostname.split('.');
         if (parts.length > 2) {
-          subdomainCountryCode = parts[0].toUpperCase(); // e.g. "PK"
+          subdomainCountryCode = parts[0].toUpperCase(); // e.g., "PK"
         }
-      } catch {
-        // fallback
-      }
+      } catch {}
 
-      // Find country
-      const country = await Country.findOne({ countryCode: subdomainCountryCode.toLowerCase() });
+      // Find country in DB
+      const country = await Country.findOne({
+        countryCode: subdomainCountryCode.toLowerCase(),
+      });
+
       if (!country) {
-        return this.handleError(next, 'Country not found', 404);
+        return res.status(404).json({ message: 'Country not found' });
       }
 
+      // Find postal code
       const postalCode = await PostalCode.findOne({
         code,
         status: true,
@@ -175,83 +177,63 @@ class PostalCodeController extends BaseController {
         return res.status(404).json({ message: 'Postal Code not found' });
       }
 
-      const countryCode = this.extractSubdomainCountryCode(req).toUpperCase();
-
-      // 🔹 Paths for templates
+      // Load NEW country.json
       const countryTemplatesFile = path.join(process.cwd(), 'templates', 'postalcodes', 'country.json');
-      const universalTemplatesFile = path.join(process.cwd(), 'templates', 'postalcodes', 'template.json');
-
-      // 🔹 Load and parse both template files (once per request)
-      const [countryDataRaw, universalDataRaw] = await Promise.all([
-        fs.readFile(countryTemplatesFile, { encoding: 'utf-8' }),
-        fs.readFile(universalTemplatesFile, { encoding: 'utf-8' }),
-      ]);
+      const countryDataRaw = await fs.readFile(countryTemplatesFile, {
+        encoding: 'utf-8',
+      });
 
       const countryTemplates = JSON.parse(countryDataRaw);
-      const universalTemplates = JSON.parse(universalDataRaw);
 
-      // 🔹 Pick country-specific templates
-      const countrySet = countryTemplates[countryCode] || [];
-      const randomCountryTemplate = countrySet.length > 0 ? countrySet[Math.floor(Math.random() * countrySet.length)] : null;
+      // Find template block for this country
+      const countryTemplate = countryTemplates.find((item) => item.country_code.toLowerCase() === postalCode.countryId.countryCode.toLowerCase());
 
-      // 🔹 Pick universal template
-      const randomUniversal = universalTemplates[Math.floor(Math.random() * universalTemplates.length)];
+      if (!countryTemplate) {
+        return res.status(404).json({
+          message: 'No template found for this country in country.json',
+        });
+      }
 
-      // 🔹 Replacement helper
-      const replaceVars = (text, map) => text?.replace(/{(.*?)}/g, (_, key) => (map[key] !== undefined ? map[key] : `{${key}}`)) || '';
-
-      // 🔹 Prepare variable map for replacements
+      // Replacement variable map
       const map = {
-        postal_code: postalCode.code,
-        place_name: postalCode.area || postalCode.adminName2 || '',
-        admin_name1: postalCode.state || '',
-        admin_name2: postalCode.adminName2 || '',
-        admin_name3: postalCode.adminName3 || '',
-        country: postalCode.countryId.name,
-        country_code: countryCode,
-        latitude: postalCode.latitude ?? '',
-        longitude: postalCode.longitude ?? '',
-        accuracy: postalCode.accuracy ?? '',
-        postal_authority: 'Universal Postal Union',
-        code_format: 'Standard GeoNames Postal Format',
-        related_Postal_Code_link: `/postalcode/${countryCode}/${postalCode.state}`,
-        top_5_Postal_Code_link: `/postalcode/${countryCode}/${postalCode.state}`,
-        admin_type: 'regions',
+        'Postal Code': postalCode.code,
+        Area: postalCode.area || postalCode.adminName2 || '',
+        State: postalCode.state || '',
+        Country: postalCode.countryId.name,
+        Latitude: postalCode.latitude ?? '',
+        Longitude: postalCode.longitude ?? '',
       };
 
-      // 🔹 Fill template content
-      const filledCountrySummary = randomCountryTemplate ? replaceVars(randomCountryTemplate, map) : '';
+      // Replace helper
+      const replaceVars = (text) => text?.replace(/{(.*?)}/g, (_, key) => (map[key] !== undefined ? map[key] : `{${key}}`)) || '';
 
-      const filledTitle = replaceVars(randomUniversal.content.title, map);
-      const filledParagraph = replaceVars(randomUniversal.content.paragraph, map);
-      const filledFaqs = randomUniversal.content.faqs.map((f) => ({
-        question: replaceVars(f.question, map),
-        answer: replaceVars(f.answer, map),
+      // Generate paragraph
+      const filledParagraph = replaceVars(countryTemplate.paragraph_template);
+
+      // Generate FAQs
+      const filledFaqs = countryTemplate.faqs.map((faq) => ({
+        question: replaceVars(faq.question),
+        answer: replaceVars(faq.answer),
       }));
 
-      // 🔹 Fetch related info
-      const otherCountries = await Country.find({
-        region: postalCode.countryId.region,
-      }).select('name countryCode flag');
+      const constants = countryTemplate.constants || {};
 
+      // Fetch states list for sidebar
       const groupedPostalCodes = await PostalCode.aggregate([
         { $match: { countryId: new mongoose.Types.ObjectId(postalCode.countryId._id) } },
         { $group: { _id: '$state' } },
         { $sort: { _id: 1 } },
       ]);
 
-      // 🔹 Build response
+      // Final Response
       const response = {
         postalCode,
         content: {
-          title: filledTitle,
+          title: `Postal Code ${postalCode.code} - ${postalCode.area}, ${postalCode.state}, ${postalCode.countryId.name}`,
           paragraph: filledParagraph,
           faqs: filledFaqs,
-          summary: filledCountrySummary,
-          tone: randomUniversal.tone,
-          eeat_notes: randomUniversal.eeat_notes,
+          constants,
         },
-        otherCountries,
         regions: groupedPostalCodes.map((r) => r._id),
       };
 
