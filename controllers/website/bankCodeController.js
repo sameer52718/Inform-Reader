@@ -93,14 +93,21 @@ class BankCodeController extends BaseController {
 
   async groupByBank(req, res, next) {
     try {
-      const { countryCode, search, status = true } = req.query;
+      const { host, search, status = true } = req.query;
 
-      if (!countryCode) {
-        return this.handleError(next, 'countryCode is required', 400);
+      let subdomainCountryCode = 'pk';
+      try {
+        const hostname = new URL(`https://${host}`).hostname;
+        const parts = hostname.split('.');
+        if (parts.length > 2) {
+          subdomainCountryCode = parts[0].toUpperCase(); // e.g. "PK"
+        }
+      } catch {
+        // fallback
       }
 
       // Find the country by countryCode
-      const country = await Country.findOne({ countryCode: countryCode.toLowerCase() });
+      const country = await Country.findOne({ countryCode: subdomainCountryCode.toLowerCase() });
       if (!country) {
         return this.handleError(next, 'Country not found', 404);
       }
@@ -159,18 +166,26 @@ class BankCodeController extends BaseController {
 
   async groupByBranch(req, res, next) {
     try {
-      const { countryCode, bankSlug, search, status = true } = req.query;
+      const { host, bankSlug, search, status = true } = req.query;
 
       // Validate input
-      if (!countryCode) {
-        return this.handleError(next, 'countryCode is required', 400);
-      }
       if (!bankSlug) {
         return this.handleError(next, 'bankSlug is required', 400);
       }
 
+      let subdomainCountryCode = 'pk';
+      try {
+        const hostname = new URL(`https://${host}`).hostname;
+        const parts = hostname.split('.');
+        if (parts.length > 2) {
+          subdomainCountryCode = parts[0].toUpperCase(); // e.g. "PK"
+        }
+      } catch {
+        // fallback
+      }
+
       //  Fetch the country by code
-      const country = await Country.findOne({ countryCode: countryCode.toLowerCase() });
+      const country = await Country.findOne({ countryCode: subdomainCountryCode.toLowerCase() });
       if (!country) {
         return this.handleError(next, 'Country not found', 404);
       }
@@ -242,16 +257,29 @@ class BankCodeController extends BaseController {
 
   async branchDetail(req, res, next) {
     try {
-      const { countryCode, bankSlug, branchSlug } = req.params;
+      const { host } = req.query;
+      const { bankSlug, branchSlug } = req.params;
 
       // Validate input
-      if (!countryCode) return this.handleError(next, 'countryCode is required', 400);
       if (!bankSlug) return this.handleError(next, 'bankSlug is required', 400);
       if (!branchSlug) return this.handleError(next, 'branchSlug is required', 400);
 
-      // Find the country
-      const country = await Country.findOne({ countryCode: countryCode.toLowerCase() });
-      if (!country) return this.handleError(next, 'Country not found', 404);
+      let subdomainCountryCode = 'pk';
+      try {
+        const hostname = new URL(`https://${host}`).hostname;
+        const parts = hostname.split('.');
+        if (parts.length > 2) {
+          subdomainCountryCode = parts[0].toUpperCase(); // e.g. "PK"
+        }
+      } catch {
+        // fallback
+      }
+
+      //  Fetch the country by code
+      const country = await Country.findOne({ countryCode: subdomainCountryCode.toLowerCase() });
+      if (!country) {
+        return this.handleError(next, 'Country not found', 404);
+      }
 
       // Find the branch
       const branch = await BankCode.findOne({
