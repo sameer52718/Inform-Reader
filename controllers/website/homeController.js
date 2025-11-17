@@ -6,6 +6,8 @@ import Specification from '../../models/Specification.js';
 import Biography from '../../models/Biography.js';
 import Vehicle from '../../models/Vehicle.js';
 import Bike from '../../models/Bike.js';
+import PostalCode from '../../models/PostalCode.js';
+import BankCode from '../../models/BankCode.js';
 
 class HomeController extends BaseController {
   constructor() {
@@ -15,28 +17,91 @@ class HomeController extends BaseController {
 
   async get(req, res, next) {
     try {
-      const getRandomCountries = () =>
-        Country.aggregate([
-          { $match: { status: true } },
+      const { host } = req.query;
+
+      let subdomainCountryCode = 'pk';
+      try {
+        const hostname = new URL(`https://${host}`).hostname;
+        const parts = hostname.split('.');
+        if (parts.length > 2) {
+          subdomainCountryCode = parts[0].toUpperCase();
+        }
+      } catch {}
+
+      const country = await Country.findOne({
+        countryCode: subdomainCountryCode.toLowerCase(),
+      });
+
+      if (!country) {
+        return res.status(404).json({ message: 'Country not found' });
+      }
+
+      /* --------------------------------------------------------------------
+         RANDOM STATES (POSTAL CODES)
+      -------------------------------------------------------------------- */
+      const getRandomStates = () => {
+        const match = {
+          countryId: country._id,
+          isDeleted: false,
+          state: { $ne: '' },
+          status: true,
+        };
+
+        return PostalCode.aggregate([
+          { $match: match },
+          {
+            $group: {
+              _id: '$state',
+              totalAreas: { $sum: 1 },
+              stateSlug: { $first: '$stateSlug' },
+              areas: { $addToSet: '$area' },
+            },
+          },
           { $sample: { size: 12 } },
           {
             $project: {
               _id: 1,
-              name: 1,
-              flag: 1,
-              countryCode: 1,
+              totalAreas: 1,
+              stateSlug: 1,
+              areas: { $slice: ['$areas', 5] },
             },
           },
         ]);
+      };
+
+      /* --------------------------------------------------------------------
+         RANDOM BANKS (BANK CODES)
+      -------------------------------------------------------------------- */
+      const getRandomBanks = () => {
+        const match = {
+          countryId: country._id,
+          isDeleted: false,
+          status: true,
+        };
+
+        return BankCode.aggregate([
+          { $match: match },
+          {
+            $group: {
+              _id: '$bank',
+              totalBranches: { $sum: 1 },
+              bankSlug: { $first: '$bankSlug' },
+              cities: { $addToSet: '$city' },
+              swiftCodes: { $addToSet: '$swiftCode' },
+              branches: { $addToSet: '$branch' },
+            },
+          },
+          { $sample: { size: 12 } },
+        ]);
+      };
+
+      /* --------------------------------------------------------------------
+         OTHER RANDOM DATA (unchanged)
+      -------------------------------------------------------------------- */
 
       const getRandomSoftware = () =>
         Software.aggregate([
-          {
-            $match: {
-              status: true,
-              isDeleted: false,
-            },
-          },
+          { $match: { status: true, isDeleted: false } },
           { $sample: { size: 12 } },
           {
             $project: {
@@ -53,12 +118,7 @@ class HomeController extends BaseController {
 
       const getRandomNames = () =>
         Name.aggregate([
-          {
-            $match: {
-              status: true,
-              isDeleted: false,
-            },
-          },
+          { $match: { status: true, isDeleted: false } },
           { $sample: { size: 10 } },
           {
             $project: {
@@ -74,16 +134,8 @@ class HomeController extends BaseController {
 
       const getRandomSpecifications = () =>
         Specification.aggregate([
-          // Match active and non-deleted specifications
-          {
-            $match: {
-              status: true,
-              isDeleted: false,
-            },
-          },
-          // Randomly select 12 specifications
+          { $match: { status: true, isDeleted: false } },
           { $sample: { size: 12 } },
-          // Lookup category information
           {
             $lookup: {
               from: 'categories',
@@ -92,14 +144,7 @@ class HomeController extends BaseController {
               as: 'categoryInfo',
             },
           },
-          // Unwind categoryInfo to simplify structure
-          {
-            $unwind: {
-              path: '$categoryInfo',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-          // Lookup brand information
+          { $unwind: { path: '$categoryInfo', preserveNullAndEmptyArrays: true } },
           {
             $lookup: {
               from: 'brands',
@@ -108,14 +153,7 @@ class HomeController extends BaseController {
               as: 'brandInfo',
             },
           },
-          // Unwind brandInfo
-          {
-            $unwind: {
-              path: '$brandInfo',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-          // Lookup subcategory information
+          { $unwind: { path: '$brandInfo', preserveNullAndEmptyArrays: true } },
           {
             $lookup: {
               from: 'subcategories',
@@ -124,14 +162,7 @@ class HomeController extends BaseController {
               as: 'subCategoryInfo',
             },
           },
-          // Unwind subCategoryInfo
-          {
-            $unwind: {
-              path: '$subCategoryInfo',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-          // Project relevant fields
+          { $unwind: { path: '$subCategoryInfo', preserveNullAndEmptyArrays: true } },
           {
             $project: {
               _id: 1,
@@ -151,16 +182,8 @@ class HomeController extends BaseController {
 
       const getRandomBiographies = () =>
         Biography.aggregate([
-          // Match active and non-deleted biographies
-          {
-            $match: {
-              status: true,
-              isDeleted: false,
-            },
-          },
-          // Randomly select 12 biographies
+          { $match: { status: true, isDeleted: false } },
           { $sample: { size: 12 } },
-          // Lookup category information
           {
             $lookup: {
               from: 'categories',
@@ -169,14 +192,7 @@ class HomeController extends BaseController {
               as: 'categoryInfo',
             },
           },
-          // Unwind categoryInfo
-          {
-            $unwind: {
-              path: '$categoryInfo',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-          // Project relevant fields
+          { $unwind: { path: '$categoryInfo', preserveNullAndEmptyArrays: true } },
           {
             $project: {
               _id: 1,
@@ -191,16 +207,8 @@ class HomeController extends BaseController {
 
       const getRandomVehicles = () =>
         Vehicle.aggregate([
-          // Match active and non-deleted vehicles
-          {
-            $match: {
-              status: true,
-              isDeleted: false,
-            },
-          },
-          // Randomly select 12 vehicles
+          { $match: { status: true, isDeleted: false } },
           { $sample: { size: 12 } },
-          // Lookup category information
           {
             $lookup: {
               from: 'categories',
@@ -209,14 +217,7 @@ class HomeController extends BaseController {
               as: 'categoryInfo',
             },
           },
-          // Unwind categoryInfo
-          {
-            $unwind: {
-              path: '$categoryInfo',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-          // Lookup make information
+          { $unwind: { path: '$categoryInfo', preserveNullAndEmptyArrays: true } },
           {
             $lookup: {
               from: 'makes',
@@ -225,14 +226,7 @@ class HomeController extends BaseController {
               as: 'makeInfo',
             },
           },
-          // Unwind makeInfo
-          {
-            $unwind: {
-              path: '$makeInfo',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-          // Lookup model information
+          { $unwind: { path: '$makeInfo', preserveNullAndEmptyArrays: true } },
           {
             $lookup: {
               from: 'models',
@@ -241,14 +235,7 @@ class HomeController extends BaseController {
               as: 'modelInfo',
             },
           },
-          // Unwind modelInfo
-          {
-            $unwind: {
-              path: '$modelInfo',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-          // Project relevant fields with populated values in a nested object
+          { $unwind: { path: '$modelInfo', preserveNullAndEmptyArrays: true } },
           {
             $project: {
               _id: 1,
@@ -257,34 +244,17 @@ class HomeController extends BaseController {
               vehicleType: 1,
               image: 1,
               slug: 1,
-              category: {
-                _id: '$categoryId',
-                name: '$categoryInfo.name',
-              },
-              make: {
-                _id: '$makeId',
-                name: '$makeInfo.name',
-              },
-              model: {
-                _id: '$modelId',
-                name: '$modelInfo.name',
-              },
+              category: { _id: '$categoryId', name: '$categoryInfo.name' },
+              make: { _id: '$makeId', name: '$makeInfo.name' },
+              model: { _id: '$modelId', name: '$modelInfo.name' },
             },
           },
         ]);
 
       const getRandomBikes = () =>
         Bike.aggregate([
-          // Match active and non-deleted vehicles
-          {
-            $match: {
-              status: true,
-              isDeleted: false,
-            },
-          },
-          // Randomly select 12 vehicles
+          { $match: { status: true, isDeleted: false } },
           { $sample: { size: 12 } },
-          // Lookup category information
           {
             $lookup: {
               from: 'categories',
@@ -293,14 +263,7 @@ class HomeController extends BaseController {
               as: 'categoryInfo',
             },
           },
-          // Unwind categoryInfo
-          {
-            $unwind: {
-              path: '$categoryInfo',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-          // Lookup make information
+          { $unwind: { path: '$categoryInfo', preserveNullAndEmptyArrays: true } },
           {
             $lookup: {
               from: 'makes',
@@ -309,15 +272,7 @@ class HomeController extends BaseController {
               as: 'makeInfo',
             },
           },
-          // Unwind makeInfo
-          {
-            $unwind: {
-              path: '$makeInfo',
-              preserveNullAndEmptyArrays: true,
-            },
-          },
-
-          // Project relevant fields with populated values in a nested object
+          { $unwind: { path: '$makeInfo', preserveNullAndEmptyArrays: true } },
           {
             $project: {
               _id: 1,
@@ -326,22 +281,19 @@ class HomeController extends BaseController {
               vehicleType: 1,
               image: 1,
               slug: 1,
-              category: {
-                _id: '$categoryId',
-                name: '$categoryInfo.name',
-              },
-              make: {
-                _id: '$makeId',
-                name: '$makeInfo.name',
-              },
+              category: { _id: '$categoryId', name: '$categoryInfo.name' },
+              make: { _id: '$makeId', name: '$makeInfo.name' },
             },
           },
         ]);
 
-      // Run all async tasks in parallel
-      const [postalCodeCountry, bankCodeCountry, randomSoftware, randomNames, randomSpecifications, randomBiographies, randomVehicles, randomBikes] = await Promise.all([
-        getRandomCountries(),
-        getRandomCountries(),
+      /* --------------------------------------------------------------------
+         RUN PARALLEL REQUESTS
+      -------------------------------------------------------------------- */
+
+      const [postalCodeState, randomBanks, randomSoftware, randomNames, randomSpecifications, randomBiographies, randomVehicles, randomBikes] = await Promise.all([
+        getRandomStates(),
+        getRandomBanks(),
         getRandomSoftware(),
         getRandomNames(),
         getRandomSpecifications(),
@@ -353,8 +305,8 @@ class HomeController extends BaseController {
       return res.status(200).json({
         error: false,
         data: {
-          postalCodeCountry,
-          bankCodeCountry,
+          postalCodeState,
+          randomBanks,
           randomSoftware,
           randomNames,
           randomSpecifications,
