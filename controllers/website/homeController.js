@@ -104,6 +104,15 @@ class HomeController extends BaseController {
           { $match: { status: true, isDeleted: false } },
           { $sample: { size: 12 } },
           {
+            $lookup: {
+              from: 'subcategories',
+              localField: 'subCategoryId',
+              foreignField: '_id',
+              as: 'subCategory',
+            },
+          },
+          { $unwind: { path: '$subCategory', preserveNullAndEmptyArrays: true } },
+          {
             $project: {
               _id: 1,
               name: 1,
@@ -112,6 +121,7 @@ class HomeController extends BaseController {
               version: 1,
               tag: 1,
               slug: 1,
+              subCategory: { _id: 1, name: 1, slug: 1 },
             },
           },
         ]);

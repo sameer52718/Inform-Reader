@@ -1,17 +1,10 @@
-import mongoose from 'mongoose';
 import axios from 'axios';
 import dotenv from 'dotenv';
 import Name from '../models/Name.js';
 import Software from '../models/Software.js';
 import PostalCode from '../models/PostalCode.js';
 import BankCode from '../models/BankCode.js';
-import League from '../models/League.js';
-import Team from '../models/Team.js';
-import Player from '../models/Player.js';
-import Bike from '../models/Bike.js';
-import Car from '../models/Vehicle.js';
 import Sitemap from '../models/Sitemap.js';
-import Biography from '../models/Biography.js';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import logger from '../logger.js';
@@ -29,36 +22,24 @@ dotenv.config({
   path: path.resolve(__dirname, '../.env'),
 });
 
-// ================== HELPERS ==================
-function buildXml(type, country, items) {
+// ==================================================================
+// 🔵 UNIVERSAL XML BUILDER (updated to use correct subdomains)
+// ==================================================================
+function buildXml(type, subdomain, items) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${items
   .map((item) => {
     let loc = '';
+
     if (type === 'names') {
-      loc = `https://${country}.informreaders.com/names/${item.slug}`;
+      loc = `https://${subdomain}.informreaders.com/baby-names/${item.slug}`;
     } else if (type === 'software') {
-      loc = `https://${country}.informreaders.com/software/${item.slug}`;
+      loc = `https://${subdomain}.informreaders.com/software/${item.subCategoryId.slug}/${item.slug}`;
     } else if (type === 'postalcodes') {
-      const countrySlug = item.countryId?.slug || country;
-      const statePart = item.state ? encodeURIComponent(item.state) : '';
-      loc = `https://${countrySlug}.informreaders.com/postalcode/${countrySlug}/${statePart}/${item.slug}`;
-    } else if (type === 'bank-codes') {
-      const countrySlug = item.countryId?.slug || country;
-      loc = `https://${countrySlug}.informreaders.com/bank-codes/${item?.countryId?.countryCode}/${item.bankSlug}/${item.branchSlug}/${item.swiftCode}`;
-    } else if (type === 'biographies') {
-      loc = `https://${country}.informreaders.com/biography/${item.slug}`;
-    } else if (type === 'bikes') {
-      loc = `https://${country}.informreaders.com/bikes/${item.slug}`;
-    } else if (type === 'cars') {
-      loc = `https://${country}.informreaders.com/cars/${item.slug}`;
-    } else if (type === 'leagues') {
-      loc = `https://${country}.informreaders.com/sports/leagues/${item.idLeague}`;
-    } else if (type === 'teams') {
-      loc = `https://${country}.informreaders.com/sports/teams/${item.idTeam}`;
-    } else if (type === 'players') {
-      loc = `https://${country}.informreaders.com/sports/players/${item.idPlayer}`;
+      loc = `https://${subdomain}.informreaders.com/postalcode/${item.stateSlug}/${item.areaSlug}/${item.code}`;
+    } else if (type === 'bankcodes') {
+      loc = `https://${subdomain}.informreaders.com/bank-codes/${item.bankSlug}/${item.branchSlug}/${item.swiftCode}`;
     }
 
     return `
@@ -73,14 +54,17 @@ ${items
 </urlset>`;
 }
 
-function buildStaticPagesXml(country) {
+// ==================================================================
+// STATIC PAGES
+// ==================================================================
+function buildStaticPagesXml(subdomain) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${staticPages
   .map(
     (page) => `
   <url>
-    <loc>https://${country}.informreaders.com${page.path}</loc>
+    <loc>https://${subdomain}.informreaders.com${page.path}</loc>
     <lastmod>${new Date().toISOString()}</lastmod>
     <changefreq>${page.changefreq}</changefreq>
     <priority>${page.priority}</priority>
@@ -90,7 +74,10 @@ ${staticPages
 </urlset>`;
 }
 
-const processInBatches = async (docs, type, country, allFiles) => {
+// ==================================================================
+// PROCESS BATCHES
+// ==================================================================
+const processInBatches = async (docs, type, subdomain, allFiles) => {
   let batch = 1;
   let i = 0;
 
@@ -98,19 +85,19 @@ const processInBatches = async (docs, type, country, allFiles) => {
     let currentBatchSize = BATCH_SIZE;
     let chunk = docs.slice(i, i + currentBatchSize);
 
-    let xml = buildXml(type, country, chunk);
+    let xml = buildXml(type, subdomain, chunk);
 
     while (Buffer.byteLength(xml, 'utf-8') > MAX_DOC_SIZE && currentBatchSize > 1000) {
       currentBatchSize = Math.floor(currentBatchSize / 2);
       chunk = docs.slice(i, i + currentBatchSize);
-      xml = buildXml(type, country, chunk);
+      xml = buildXml(type, subdomain, chunk);
     }
 
-    const fileName = `sitemap-${type}-${country}-batch-${batch}.xml`;
+    const fileName = `sitemap-${type}-${subdomain}-batch-${batch}.xml`;
 
-    await Sitemap.findOneAndUpdate({ fileName }, { fileName, type, country, batch, xmlContent: xml }, { upsert: true, new: true });
+    await Sitemap.findOneAndUpdate({ fileName }, { fileName, type, country: subdomain, batch, xmlContent: xml }, { upsert: true, new: true });
 
-    logger.info(`✅ Saved ${fileName} (${chunk.length} records, size ${(Buffer.byteLength(xml, 'utf-8') / 1024 / 1024).toFixed(2)} MB)`);
+    logger.info(`✅ Saved ${fileName} (${chunk.length} records)`);
 
     allFiles.push(fileName);
     i += currentBatchSize;
@@ -118,32 +105,80 @@ const processInBatches = async (docs, type, country, allFiles) => {
   }
 };
 
+// ==================================================================
+// BABY NAMES & SOFTWARE → ALL COUNTRIES
+// ==================================================================
 const generateForAllCountries = async (docs, type, allFiles) => {
-  const tasks = Object.keys(supportedCountries).map(async (country) => {
-    if (docs.length === 0) {
-      logger.warn(`⚠️ No ${type} records for ${country}, skipping...`);
-      return;
-    }
-    logger.info(`📝 Generating ${type} sitemaps for ${country} (${docs.length} records)`);
-    await processInBatches(docs, type, country, allFiles);
+  const tasks = Object.keys(supportedCountries).map(async (subdomain) => {
+    if (!docs.length) return;
+    await processInBatches(docs, type, subdomain, allFiles);
   });
   await Promise.all(tasks);
 };
 
+// ==================================================================
+// POSTAL CODES → ONLY ITS OWN COUNTRY SUBDOMAIN
+// ==================================================================
+const generatePostalCodeSitemaps = async (allFiles) => {
+  logger.info('🔄 Fetching postal codes...');
+
+  const postals = await PostalCode.find({ isDeleted: false, status: true }).populate('countryId', 'countryCode').lean();
+
+  logger.info(`📦 Total postal codes fetched: ${postals.length}`);
+
+  const grouped = {};
+  postals.forEach((pc) => {
+    const subdomain = pc.countryId.countryCode.toLowerCase();
+    if (!grouped[subdomain]) grouped[subdomain] = [];
+    grouped[subdomain].push(pc);
+  });
+
+  for (const subdomain of Object.keys(grouped)) {
+    await processInBatches(grouped[subdomain], 'postalcodes', subdomain, allFiles);
+  }
+};
+
+// ==================================================================
+// BANK CODES → ONLY ITS OWN COUNTRY SUBDOMAIN
+// ==================================================================
+const generateBankCodeSitemaps = async (allFiles) => {
+  logger.info('🔄 Fetching bank codes...');
+
+  const banks = await BankCode.find({ isDeleted: false, status: true }).populate('countryId', 'countryCode').lean();
+
+  logger.info(`📦 Total bank codes fetched: ${banks.length}`);
+
+  const grouped = {};
+  banks.forEach((bc) => {
+    const subdomain = bc.countryId.countryCode.toLowerCase();
+    if (!grouped[subdomain]) grouped[subdomain] = [];
+    grouped[subdomain].push(bc);
+  });
+
+  for (const subdomain of Object.keys(grouped)) {
+    await processInBatches(grouped[subdomain], 'bankcodes', subdomain, allFiles);
+  }
+};
+
+// ==================================================================
+// STATIC PAGES
+// ==================================================================
 const generateStaticPagesSitemap = async (allFiles) => {
-  const tasks = Object.keys(supportedCountries).map(async (country) => {
-    const xml = buildStaticPagesXml(country);
-    const fileName = `sitemap-static-${country}.xml`;
+  const tasks = Object.keys(supportedCountries).map(async (subdomain) => {
+    const xml = buildStaticPagesXml(subdomain);
+    const fileName = `sitemap-static-${subdomain}.xml`;
 
-    await Sitemap.findOneAndUpdate({ fileName }, { fileName, type: 'static', country, batch: 0, xmlContent: xml }, { upsert: true, new: true });
+    await Sitemap.findOneAndUpdate({ fileName }, { fileName, type: 'static', country: subdomain, batch: 0, xmlContent: xml }, { upsert: true, new: true });
 
-    logger.info(`✅ Saved ${fileName} (static pages for ${country})`);
     allFiles.push(fileName);
   });
 
   await Promise.all(tasks);
 };
 
+// ==================================================================
+// GLOBAL INDEX
+// ==================================================================
 const generateGlobalSitemapIndex = async () => {
   const sitemaps = await Sitemap.find({ fileName: { $ne: 'sitemap-index.xml' } }, 'fileName updatedAt').sort({ updatedAt: -1 });
 
@@ -166,97 +201,37 @@ ${sitemaps
     { upsert: true, new: true },
   );
 
-  logger.info('📑 Generated global sitemap index in DB');
+  logger.info('📑 Global sitemap index generated');
 };
 
-const pingGoogle = async (sitemapUrl) => {
-  try {
-    const encodedUrl = encodeURIComponent(sitemapUrl);
-    await axios.get(`http://www.google.com/ping?sitemap=${encodedUrl}`);
-    logger.info(`🚀 Pinged Google for ${sitemapUrl}`);
-  } catch (err) {
-    logger.error(`❌ Error pinging Google for ${sitemapUrl}: ${err.message}`);
-  }
-};
-
-// ================== MAIN ==================
+// ==================================================================
+// MAIN FUNCTION
+// ==================================================================
 export const generateAllSitemaps = async () => {
   try {
     const allFiles = [];
 
-    // ===== Static Pages =====
-    logger.info('🔄 Generating static pages sitemaps...');
+    // Static pages for all countries
     await generateStaticPagesSitemap(allFiles);
 
-    // ===== Leagues =====
-    logger.info('🔄 Fetching leagues...');
-    const leagues = await League.find({ status: true }).select('idLeague updatedAt').lean();
-    logger.info(`📦 Total leagues fetched: ${leagues.length}`);
-    await generateForAllCountries(leagues, 'leagues', allFiles);
+    // Postal Codes → Only own country
+    await generatePostalCodeSitemaps(allFiles);
 
-    // ===== Teams =====
-    logger.info('🔄 Fetching teams...');
-    const teams = await Team.find({ status: true }).select('idTeam updatedAt').lean();
-    logger.info(`📦 Total teams fetched: ${teams.length}`);
-    await generateForAllCountries(teams, 'teams', allFiles);
+    // Bank Codes → Only own country
+    await generateBankCodeSitemaps(allFiles);
 
-    // ===== Players =====
-    logger.info('🔄 Fetching players...');
-    const players = await Player.find({ status: 'Active' }).select('idPlayer updatedAt').lean();
-    logger.info(`📦 Total players fetched: ${players.length}`);
-    await generateForAllCountries(players, 'players', allFiles);
-
-    // ===== Biographies =====
-    logger.info('🔄 Fetching biographies...');
-    const biographies = await Biography.find({ isDeleted: false, status: true }).select('slug updatedAt').lean();
-    logger.info(`📦 Total biographies fetched: ${biographies.length}`);
-    await generateForAllCountries(biographies, 'biographies', allFiles);
-
-    // ===== Bikes =====
-    logger.info('🔄 Fetching bikes...');
-    const bikes = await Bike.find({ isDeleted: false, status: true }).select('slug updatedAt').lean();
-    logger.info(`📦 Total bikes fetched: ${bikes.length}`);
-    await generateForAllCountries(bikes, 'bikes', allFiles);
-
-    // ===== Cars =====
-    logger.info('🔄 Fetching cars...');
-    const cars = await Car.find({ isDeleted: false, status: true }).select('slug updatedAt').lean();
-    logger.info(`📦 Total cars fetched: ${cars.length}`);
-    await generateForAllCountries(cars, 'cars', allFiles);
-
-    // ===== Postal Codes =====
-    logger.info('🔄 Fetching postal codes...');
-    const postals = await PostalCode.find({ isDeleted: false, status: true }).populate('countryId', 'slug').lean();
-    logger.info(`📦 Total postal codes fetched: ${postals.length}`);
-    await generateForAllCountries(postals, 'postalcodes', allFiles);
-
-    // ===== Swift Codes =====
-    logger.info('🔄 Fetching bank codes...');
-    const banks = await BankCode.find({ isDeleted: false, status: true }).populate('countryId', 'slug countryCode').lean();
-    logger.info(`📦 Total bank codes fetched: ${banks.length}`);
-    await generateForAllCountries(banks, 'bank-codes', allFiles);
-
-    // ===== Names =====
-    logger.info('🔄 Fetching names...');
+    // Names → All countries
     const names = await Name.find({ isDeleted: false, status: true }).lean();
-    logger.info(`📦 Total names fetched: ${names.length}`);
     await generateForAllCountries(names, 'names', allFiles);
 
-    // ===== Software =====
-    logger.info('🔄 Fetching software...');
-    const softwares = await Software.find({ isDeleted: false, status: true }).lean();
-    logger.info(`📦 Total software fetched: ${softwares.length}`);
+    // Software → All countries
+    const softwares = await Software.find({ isDeleted: false, status: true }).populate('subCategoryId', 'slug').lean();
     await generateForAllCountries(softwares, 'software', allFiles);
 
-    // ===== Global Index =====
-    logger.info('🗂 Generating global sitemap index...');
+    // Global index
     await generateGlobalSitemapIndex();
 
-    // ===== Ping Google =====
-    logger.info('📡 Pinging Google with sitemap index...');
-    await pingGoogle('https://api.informreaders.com/sitemaps/sitemap-index.xml');
-
-    logger.info('🎉 All sitemaps and global index generated successfully!');
+    logger.info('🎉 All sitemaps generated successfully!');
   } catch (err) {
     logger.error(`❌ Error generating sitemaps: ${err.message}`);
   }
