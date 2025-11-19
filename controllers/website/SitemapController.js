@@ -30,9 +30,9 @@ export const getSitemapByCountry = async (req, res) => {
       }
     } catch {}
 
-    const sitemaps = await Sitemap.find({ country: subdomainCountryCode }).limit(1);
-    return { error: false, data: sitemaps };
+    const sitemaps = await Sitemap.find({ country: subdomainCountryCode });
+    return res.json({ error: false, data: sitemaps });
   } catch (error) {
-    res.status(500).json({ error: true, message: error.message });
+    return res.status(500).json({ error: true, message: error.message });
   }
 };

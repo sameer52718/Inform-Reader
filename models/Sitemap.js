@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const sitemapSchema = new mongoose.Schema(
   {
@@ -8,7 +8,8 @@ const sitemapSchema = new mongoose.Schema(
     batch: { type: Number, required: true },
     xmlContent: { type: String, required: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export default mongoose.model("Sitemap", sitemapSchema);
+sitemapSchema.index({ country: 1 });
+export default mongoose.model('Sitemap', sitemapSchema);
