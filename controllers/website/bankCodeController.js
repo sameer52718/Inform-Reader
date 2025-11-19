@@ -1,6 +1,8 @@
 import BaseController from '../BaseController.js';
 import BankCode from '../../models/BankCode.js';
 import Country from '../../models/Country.js';
+import path from 'path';
+import fs from 'fs/promises';
 
 class BankCodeController extends BaseController {
   constructor() {
@@ -71,21 +73,72 @@ class BankCodeController extends BaseController {
       }
 
       // Fetch the bank details
-      const bankCodes = await BankCode.findOne({ swiftCode }).populate('countryId', 'name');
+      const bankCodes = await BankCode.findOne({ swiftCode }).populate('countryId', 'name countryCode');
 
       if (!bankCodes) {
         return res.status(404).json({ success: false, message: 'Bank not found' });
       }
 
-      // Fetch related banks in parallel
-      const relatedPromise = BankCode.find({ bank: bankCodes.bank, _id: { $ne: bankCodes._id } }).limit(25);
-      const related = await relatedPromise;
+      // Load country templates (templates/bankcodes/country.json)
+      const countryTemplatesFile = path.join(process.cwd(), 'templates', 'bankcodes', 'country.json');
 
-      return res.status(200).json({
-        error: false,
-        bankCodes,
-        related, // Include related results
+      const countryDataRaw = await fs.readFile(countryTemplatesFile, {
+        encoding: 'utf-8',
       });
+
+      const countryTemplates = JSON.parse(countryDataRaw);
+
+      // Find template matching country
+      const countryTemplate = countryTemplates.find((item) => item.country_code.toLowerCase() === bankCodes.countryId.countryCode.toLowerCase());
+
+      if (!countryTemplate) {
+        return res.status(404).json({
+          message: 'No template found for this country in bankcodes/country.json',
+        });
+      }
+
+      // Replacement map
+      const map = {
+        'Swift Code': bankCodes.swiftCode,
+        Bank: bankCodes.bank,
+        City: bankCodes.city,
+        Branch: bankCodes.branch || '',
+        Country: bankCodes.countryId.name,
+      };
+
+      // Replace helper
+      const replaceVars = (text) => text?.replace(/{(.*?)}/g, (_, key) => (map[key] !== undefined ? map[key] : `{${key}}`)) || '';
+
+      // Generate dynamic paragraph
+      const filledParagraph = replaceVars(countryTemplate.paragraph_template);
+
+      // Generate FAQs
+      const filledFaqs = countryTemplate.faqs.map((faq) => ({
+        question: replaceVars(faq.question),
+        answer: replaceVars(faq.answer),
+      }));
+
+      const constants = countryTemplate.constants || {};
+
+      // Fetch related banks
+      const related = await BankCode.find({
+        bank: bankCodes.bank,
+        _id: { $ne: bankCodes._id },
+      }).limit(25);
+
+      // Final Response
+      const response = {
+        bankCodes,
+        content: {
+          title: `SWIFT Code ${bankCodes.swiftCode} - ${bankCodes.bank}, ${bankCodes.city}, ${bankCodes.countryId.name}`,
+          paragraph: filledParagraph,
+          faqs: filledFaqs,
+          constants,
+        },
+        related,
+      };
+
+      return res.status(200).json({ ...response, error: false });
     } catch (error) {
       return this.handleError(next, error.message, 500);
     }

@@ -1,0 +1,3362 @@
+[
+  {
+    "country": "China",
+    "country_code": "CN",
+    "constants": {
+      "banking_authority": "People's Bank of China",
+      "systems_used": ["SWIFT", "CNAPS"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "The banking identifier {Swift Code} belongs to {Bank} operating in {City}, China. China uses SWIFT for international transfers and CNAPS (China National Advanced Payment System) for domestic routing. SWIFT codes follow the global structure: Bank (4 letters) → Country (CN) → Location (2 characters) → Branch (3 optional characters). CNAPS numbers are 12 digits and identify the bank and branch for domestic RMB clearing. This listing reflects guidance from the People's Bank of China.",
+    "faqs": [
+      {
+        "question": "Does China use both SWIFT and CNAPS?",
+        "answer": "Yes, SWIFT is used for international transfers and CNAPS for domestic RMB routing."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It is the SWIFT/BIC code for {Bank} in {City}, used for cross-border payments."
+      },
+      {
+        "question": "Who regulates banks in China?",
+        "answer": "The People's Bank of China oversees national financial institutions."
+      }
+    ]
+  },
+  {
+    "country": "India",
+    "country_code": "IN",
+    "constants": {
+      "banking_authority": "Reserve Bank of India",
+      "systems_used": ["SWIFT", "IFSC"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "The identifier {Swift Code} belongs to {Bank} in {City}, India. India uses SWIFT for international transfers and IFSC for domestic payments. IFSC codes are 11 characters: Bank (4 letters) → 0 → Branch (6 alphanumeric). Example: HDFC0001234 identifies HDFC Bank and a specific branch. SWIFT codes follow the international format. This page is aligned with Reserve Bank of India regulations.",
+    "faqs": [
+      {
+        "question": "What system does India use for domestic routing?",
+        "answer": "India uses IFSC for NEFT, RTGS, and IMPS domestic transfers."
+      },
+      {
+        "question": "Do Indian banks need both IFSC and SWIFT?",
+        "answer": "Yes—IFSC for domestic transfers and SWIFT for international transfers."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It is the SWIFT/BIC code for {Bank} in {City} for cross-border transactions."
+      }
+    ]
+  },
+  {
+    "country": "United States",
+    "country_code": "US",
+    "constants": {
+      "banking_authority": "Federal Reserve System",
+      "systems_used": ["SWIFT", "ABA Routing Number"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "The identifier {Swift Code} belongs to {Bank} in {City}, USA. The United States uses SWIFT for international transfers and ABA routing numbers for domestic ACH and wire transactions. ABA numbers contain 9 digits: Federal Reserve routing (4 digits) → ABA institution identifier (4 digits) → Check digit (1 digit). SWIFT codes follow the international structure. This information aligns with Federal Reserve guidelines.",
+    "faqs": [
+      {
+        "question": "What system is used for domestic US transfers?",
+        "answer": "ABA routing numbers are used for ACH and wire transfers within the United States."
+      },
+      {
+        "question": "Is a SWIFT code required for international transfers?",
+        "answer": "Yes, SWIFT is required for transfers to and from US banks."
+      },
+      {
+        "question": "What does {Swift Code} identify?",
+        "answer": "It identifies {Bank} in {City} for international financial communication."
+      }
+    ]
+  },
+  {
+    "country": "Indonesia",
+    "country_code": "ID",
+    "constants": {
+      "banking_authority": "Bank Indonesia",
+      "systems_used": ["SWIFT"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "The SWIFT code {Swift Code} identifies {Bank} in {City}, Indonesia. Indonesia relies on the SWIFT network for international transfers while domestic payments use bank-specific codes handled by Bank Indonesia. The SWIFT format follows Bank (4 letters) → Country (ID) → Location (2 characters) → Branch (3 optional characters).",
+    "faqs": [
+      {
+        "question": "Does Indonesia use SWIFT codes?",
+        "answer": "Yes, SWIFT is used for all international transfers."
+      },
+      {
+        "question": "Who regulates the banking system?",
+        "answer": "Bank Indonesia supervises and regulates banks."
+      },
+      {
+        "question": "What does {Swift Code} mean?",
+        "answer": "It is the SWIFT identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Brazil",
+    "country_code": "BR",
+    "constants": {
+      "banking_authority": "Central Bank of Brazil",
+      "systems_used": ["SWIFT"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "The SWIFT code {Swift Code} identifies {Bank} located in {City}, Brazil. Brazil uses SWIFT for international transfers and local COMPE numbers for domestic clearing, though SWIFT remains the primary system for cross-border communication. SWIFT codes follow the global BIC structure: Bank (4 letters) → Country (BR) → Location (2 characters) → Branch (3 optional characters).",
+    "faqs": [
+      {
+        "question": "What system does Brazil use for international transfers?",
+        "answer": "Brazilian banks use SWIFT for cross-border payments."
+      },
+      {
+        "question": "What does COMPE refer to?",
+        "answer": "COMPE is Brazil’s domestic clearing code system."
+      },
+      {
+        "question": "What does {Swift Code} identify?",
+        "answer": "It identifies {Bank} in {City} for international routing."
+      }
+    ]
+  },
+  {
+    "country": "Nigeria",
+    "country_code": "NG",
+    "constants": {
+      "banking_authority": "Central Bank of Nigeria",
+      "systems_used": ["SWIFT", "NUBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "The SWIFT code {Swift Code} refers to {Bank} operating in {City}, Nigeria. Nigeria uses SWIFT for international transfers and NUBAN (10-digit account numbering system) for domestic transactions. SWIFT codes identify banks globally, while NUBAN ensures standardized account formats within the country.",
+    "faqs": [
+      {
+        "question": "What is NUBAN?",
+        "answer": "NUBAN is Nigeria’s 10-digit standardized domestic account numbering system."
+      },
+      {
+        "question": "Do Nigerian banks use SWIFT?",
+        "answer": "Yes, SWIFT is used for all international transactions."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} for international transfers."
+      }
+    ]
+  },
+  {
+    "country": "Russia",
+    "country_code": "RU",
+    "constants": {
+      "banking_authority": "Bank of Russia",
+      "systems_used": ["SWIFT", "BIK"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "The identifier {Swift Code} belongs to {Bank} in {City}, Russia. Russia uses SWIFT codes for international messaging and BIK (Bank Identifier Code) for domestic transfers. BIK codes contain nine digits: Bank (3 digits) → Region (2 digits) → Branch (4 digits). SWIFT codes follow the international structure. This listing matches Bank of Russia regulatory standards.",
+    "faqs": [
+      {
+        "question": "What is a BIK code?",
+        "answer": "BIK is Russia’s domestic bank identifier used for internal transfers."
+      },
+      {
+        "question": "Do Russian banks still use SWIFT?",
+        "answer": "Yes, many banks continue using SWIFT for cross-border transactions."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It identifies {Bank} in {City} for international transfers."
+      }
+    ]
+  },
+  {
+    "country": "Japan",
+    "country_code": "JP",
+    "constants": {
+      "banking_authority": "Bank of Japan",
+      "systems_used": ["SWIFT"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "The SWIFT identifier {Swift Code} refers to {Bank} in {City}, Japan. Japan uses SWIFT for international transfers and local Zengin codes for domestic transfers. SWIFT codes follow the global BIC format and identify financial institutions during cross-border communication.",
+    "faqs": [
+      {
+        "question": "Does Japan use SWIFT?",
+        "answer": "Yes, Japanese banks use SWIFT for global transactions."
+      },
+      {
+        "question": "What are Zengin codes?",
+        "answer": "They are Japan’s domestic bank and branch identifiers."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It is the SWIFT identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Mexico",
+    "country_code": "MX",
+    "constants": {
+      "banking_authority": "Bank of Mexico",
+      "systems_used": ["SWIFT"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "The banking identifier {Swift Code} belongs to {Bank} located in {City}, Mexico. Mexico uses SWIFT codes for all international transfers, while CLABE numbers (18 digits) are used for domestic transactions. SWIFT codes follow the international structure of Bank → Country → Location → Branch.",
+    "faqs": [
+      {
+        "question": "What is a CLABE number?",
+        "answer": "CLABE is Mexico’s 18-digit domestic account format."
+      },
+      {
+        "question": "Do Mexican banks use SWIFT?",
+        "answer": "Yes, SWIFT codes are required for all international payments."
+      },
+      {
+        "question": "What does {Swift Code} identify?",
+        "answer": "It identifies {Bank} in {City} for international routing."
+      }
+    ]
+  },
+  {
+    "country": "Philippines",
+    "country_code": "PH",
+    "constants": {
+      "banking_authority": "Bangko Sentral ng Pilipinas",
+      "systems_used": ["SWIFT"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "The SWIFT code {Swift Code} belongs to {Bank} operating in {City}, Philippines. The Philippines uses SWIFT for international money transfers, while domestic routing uses bank-specific branch codes. SWIFT follows the international format: Bank (4 letters) → Country (PH) → Location (2 characters) → Branch (3 optional characters).",
+    "faqs": [
+      {
+        "question": "Does the Philippines use SWIFT?",
+        "answer": "Yes, SWIFT is required for international transactions."
+      },
+      {
+        "question": "Who regulates banks in the Philippines?",
+        "answer": "Bangko Sentral ng Pilipinas oversees the banking system."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} for cross-border transfers."
+      }
+    ]
+  },
+  {
+    "country": "Pakistan",
+    "country_code": "PK",
+    "constants": {
+      "banking_authority": "State Bank of Pakistan",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "In Pakistan, the SWIFT identifier {Swift Code} corresponds to {Bank} in {City}. Pakistan uses SWIFT for international remittances and IBAN for domestic and cross-border account identification. IBAN in Pakistan contains 24 characters: Country (PK) → Check digits (2) → Bank code (4) → Account number (16). SWIFT follows the global structure: Bank (4 letters) → Country (PK) → Location (2 characters) → Branch (3 optional). All financial messaging standards are regulated by the State Bank of Pakistan.",
+    "faqs": [
+      {
+        "question": "Does Pakistan use IBAN?",
+        "answer": "Yes, Pakistani banks use a 24-character IBAN format for account identification."
+      },
+      {
+        "question": "Do I need SWIFT for international transfers?",
+        "answer": "Yes, SWIFT codes are required for sending money to or from Pakistan."
+      },
+      {
+        "question": "What does {Swift Code} identify?",
+        "answer": "It belongs to {Bank} in {City} for secure cross-border transfers."
+      }
+    ]
+  },
+  {
+    "country": "Bangladesh",
+    "country_code": "BD",
+    "constants": {
+      "banking_authority": "Bangladesh Bank",
+      "systems_used": ["SWIFT", "Routing Number"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "The SWIFT code {Swift Code} identifies {Bank} in {City}, Bangladesh. Bangladesh uses SWIFT for international transactions and a 9-digit routing number for domestic transfers. The routing number structure is: Bank (3 digits) → Branch (3 digits) → District (2 digits) → Check digit (1 digit). This page aligns with Bangladesh Bank guidelines for secure fund routing.",
+    "faqs": [
+      {
+        "question": "What routing system does Bangladesh use?",
+        "answer": "Bangladesh uses a 9-digit routing number for domestic transfers."
+      },
+      {
+        "question": "Is SWIFT required for international transfers?",
+        "answer": "Yes, SWIFT is mandatory for cross-border payments."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} for international communication."
+      }
+    ]
+  },
+  {
+    "country": "Vietnam",
+    "country_code": "VN",
+    "constants": {
+      "banking_authority": "State Bank of Vietnam",
+      "systems_used": ["SWIFT"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "The banking identifier {Swift Code} corresponds to {Bank} in {City}, Vietnam. Vietnam uses SWIFT codes for international transfers and internal bank codes for domestic routing. SWIFT codes follow the standard format: Bank (4 letters) → Country (VN) → Location (2 characters) → Branch (3 optional). Vietnam's financial systems operate under the regulations of the State Bank of Vietnam.",
+    "faqs": [
+      {
+        "question": "Does Vietnam have a domestic routing system?",
+        "answer": "Domestic transfers use bank-specific internal routing codes."
+      },
+      {
+        "question": "Is SWIFT used in Vietnam?",
+        "answer": "Yes, SWIFT is required for all international transfers."
+      },
+      {
+        "question": "What does {Swift Code} identify?",
+        "answer": "It identifies {Bank} in {City} internationally."
+      }
+    ]
+  },
+  {
+    "country": "Turkey",
+    "country_code": "TR",
+    "constants": {
+      "banking_authority": "Banking Regulation and Supervision Agency of Turkey",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "In Turkey, the SWIFT identifier {Swift Code} belongs to {Bank} in {City}. Turkey uses a 26-character IBAN format: Country (TR) → Check digits (2) → Bank code (5 digits) → Account number (17 digits). SWIFT codes follow the global standard for cross-border financial messaging. All operations fall under the supervision of Turkey’s Banking Regulation and Supervision Agency.",
+    "faqs": [
+      {
+        "question": "Does Turkey use IBAN?",
+        "answer": "Yes, Turkey uses a 26-character IBAN for local and international transfers."
+      },
+      {
+        "question": "Do Turkish banks use SWIFT?",
+        "answer": "Yes, SWIFT is required for foreign transactions."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} for cross-border routing."
+      }
+    ]
+  },
+  {
+    "country": "United Kingdom",
+    "country_code": "GB",
+    "constants": {
+      "banking_authority": "Bank of England",
+      "systems_used": ["SWIFT", "Sort Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "The SWIFT code {Swift Code} identifies {Bank} in {City}, United Kingdom. The UK uses SWIFT for international transfers and Sort Codes for domestic routing. Sort Codes are 6 digits in the format: XX-XX-XX, representing Bank → Branch → Location. SWIFT codes follow the international format: Bank (4 letters) → Country (GB) → Location (2 characters) → Branch (3 optional).",
+    "faqs": [
+      {
+        "question": "What is a Sort Code?",
+        "answer": "A 6-digit code used in the UK to route domestic payments."
+      },
+      {
+        "question": "Do UK banks use IBAN?",
+        "answer": "Yes, UK accounts also have IBANs for international transfers."
+      },
+      {
+        "question": "What does {Swift Code} identify?",
+        "answer": "It identifies {Bank} in {City} for international transactions."
+      }
+    ]
+  },
+  {
+    "country": "Germany",
+    "country_code": "DE",
+    "constants": {
+      "banking_authority": "Deutsche Bundesbank",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "The identifier {Swift Code} belongs to {Bank} located in {City}, Germany. Germany uses SWIFT for cross-border transfers and IBAN for domestic and SEPA transactions. German IBANs contain 22 characters: Country (DE) → Check digits (2) → Bankleitzahl (8 digits) → Account number (10 digits). This template follows Bundesbank regulations.",
+    "faqs": [
+      {
+        "question": "Does Germany use IBAN?",
+        "answer": "Yes, Germany uses IBAN for both domestic and SEPA transfers."
+      },
+      {
+        "question": "Is SWIFT still required?",
+        "answer": "Yes, SWIFT is required for non-SEPA international transactions."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It identifies {Bank} in {City} internationally."
+      }
+    ]
+  },
+  {
+    "country": "France",
+    "country_code": "FR",
+    "constants": {
+      "banking_authority": "Banque de France",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "The SWIFT code {Swift Code} corresponds to {Bank} in {City}, France. France uses SWIFT for international transfers and a 27-character IBAN for domestic and SEPA payments. The structure is: Country (FR) → Check digits (2) → Bank code (5) → Branch code (5) → Account number (11) → Check digits (2).",
+    "faqs": [
+      {
+        "question": "Does France use IBAN?",
+        "answer": "Yes, France uses IBAN for all domestic and SEPA payments."
+      },
+      {
+        "question": "Do French banks use SWIFT?",
+        "answer": "Yes, SWIFT is required for international transfers outside SEPA."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} internationally."
+      }
+    ]
+  },
+  {
+    "country": "South Korea",
+    "country_code": "KR",
+    "constants": {
+      "banking_authority": "Bank of Korea",
+      "systems_used": ["SWIFT", "Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} is the SWIFT identifier for {Bank} in {City}, South Korea. Korea uses SWIFT for international transfers and 3-digit bank codes for domestic transactions. SWIFT codes follow the global BIC structure, while bank codes are used internally for Korean won clearing.",
+    "faqs": [
+      {
+        "question": "What system is used for domestic transfers?",
+        "answer": "South Korea uses 3-digit bank codes for internal routing."
+      },
+      {
+        "question": "Does South Korea use SWIFT?",
+        "answer": "Yes, SWIFT is used for all international transfers."
+      },
+      {
+        "question": "What does {Swift Code} identify?",
+        "answer": "It identifies {Bank} in {City} for international communication."
+      }
+    ]
+  },
+  {
+    "country": "Italy",
+    "country_code": "IT",
+    "constants": {
+      "banking_authority": "Bank of Italy",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} is the SWIFT identifier for {Bank} in {City}, Italy. Italy uses SWIFT for international transfers and IBAN (27 characters) for domestic/SEPA transactions. The IBAN structure is: Country (IT) → Check digits (2) → CIN (1) → ABI bank code (5) → CAB branch code (5) → Account number (12).",
+    "faqs": [
+      {
+        "question": "Does Italy use IBAN?",
+        "answer": "Yes, Italy uses a 27-character IBAN format."
+      },
+      {
+        "question": "Is SWIFT used in Italy?",
+        "answer": "Yes, SWIFT codes are required for non-SEPA transactions."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It identifies {Bank} in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "Thailand",
+    "country_code": "TH",
+    "constants": {
+      "banking_authority": "Bank of Thailand",
+      "systems_used": ["SWIFT"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Thailand. Thailand uses SWIFT codes for international transfers, while domestic routing uses bank-specific branch codes. SWIFT codes follow the standard structure: Bank (4 letters) → Country (TH) → Location (2 characters) → Branch (3 optional).",
+    "faqs": [
+      {
+        "question": "Does Thailand have a domestic routing system?",
+        "answer": "Yes, domestic transfers use bank and branch codes."
+      },
+      {
+        "question": "Is SWIFT used for international transfers?",
+        "answer": "Yes, SWIFT is required for cross-border payments."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It belongs to {Bank} in {City} for international routing."
+      }
+    ]
+  },
+  {
+    "country": "Spain",
+    "country_code": "ES",
+    "constants": {
+      "banking_authority": "Banco de España",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} operating in {City}, Spain. Spain uses a 24-character IBAN structure for domestic and SEPA payments: Country (ES) → Check digits (2) → Bank code (4) → Branch code (4) → Check digits (2) → Account number (10). SWIFT codes handle all international transfers and follow the global Bank → Country → Location → Branch format.",
+    "faqs": [
+      {
+        "question": "Does Spain use IBAN?",
+        "answer": "Yes, Spain uses a 24-character IBAN for all domestic and SEPA transactions."
+      },
+      {
+        "question": "Do Spanish banks use SWIFT?",
+        "answer": "Yes, SWIFT is required for transfers outside SEPA."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It indicates {Bank} in {City} for international routing."
+      }
+    ]
+  },
+  {
+    "country": "Argentina",
+    "country_code": "AR",
+    "constants": {
+      "banking_authority": "Central Bank of Argentina (BCRA)",
+      "systems_used": ["SWIFT"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "The identifier {Swift Code} belongs to {Bank} located in {City}, Argentina. Argentina uses SWIFT for all international transfers and CBU (Clave Bancaria Uniforme) for domestic transaction routing. CBU numbers contain 22 digits that uniquely identify bank and account details. SWIFT codes follow the international format for cross-border communication.",
+    "faqs": [
+      {
+        "question": "What is a CBU in Argentina?",
+        "answer": "CBU is Argentina’s 22-digit domestic banking identification number."
+      },
+      {
+        "question": "Do Argentine banks use SWIFT?",
+        "answer": "Yes, SWIFT is mandatory for international transfers."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It identifies {Bank} in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "South Africa",
+    "country_code": "ZA",
+    "constants": {
+      "banking_authority": "South African Reserve Bank",
+      "systems_used": ["SWIFT", "Branch Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "The SWIFT code {Swift Code} refers to {Bank} in {City}, South Africa. South Africa uses SWIFT for international transfers and a 6-digit branch code system for domestic routing via EFT. SWIFT codes follow the global BIC structure, while branch codes identify specific banking locations within the country.",
+    "faqs": [
+      {
+        "question": "What is South Africa’s domestic system?",
+        "answer": "South Africa uses 6-digit branch codes for local transfers."
+      },
+      {
+        "question": "Is SWIFT required for international transfers?",
+        "answer": "Yes, SWIFT is used for all cross-border payments."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It is the SWIFT identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Egypt",
+    "country_code": "EG",
+    "constants": {
+      "banking_authority": "Central Bank of Egypt",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} in {City}, Egypt. Egypt uses SWIFT for international transfers and IBAN for domestic and cross-border account identification. Egyptian IBANs follow a 29-character format: Country (EG) → Check digits (2) → Bank code (4) → Account number (23).",
+    "faqs": [
+      {
+        "question": "Does Egypt use IBAN?",
+        "answer": "Yes, Egypt uses a 29-character IBAN format."
+      },
+      {
+        "question": "Do Egyptian banks use SWIFT?",
+        "answer": "Yes, SWIFT is required for international transfers."
+      },
+      {
+        "question": "{Swift Code} kis cheez ko indicate karta hai?",
+        "answer": "Yeh {Bank} ka international SWIFT identifier hai jo {City} ke branch ke liye hota hai."
+      }
+    ]
+  },
+  {
+    "country": "Canada",
+    "country_code": "CA",
+    "constants": {
+      "banking_authority": "Bank of Canada",
+      "systems_used": ["SWIFT", "Transit Number"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Canada. Canada uses SWIFT for international transfers and a 9-digit routing/transit number for domestic EFT and wire transfers. The structure is: Institution number (3 digits) → Branch transit number (5 digits) → Check digit (1). SWIFT codes follow the global format for cross-border payments.",
+    "faqs": [
+      {
+        "question": "What is a Canadian transit number?",
+        "answer": "A 9-digit code used for domestic bank routing in Canada."
+      },
+      {
+        "question": "Is SWIFT required for global transfers?",
+        "answer": "Yes, SWIFT is used for international money transfers."
+      },
+      {
+        "question": "What does {Swift Code} identify?",
+        "answer": "It identifies {Bank} in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "Morocco",
+    "country_code": "MA",
+    "constants": {
+      "banking_authority": "Bank Al-Maghrib",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Morocco. Morocco uses SWIFT codes for international transfers and IBAN for domestic routing, structured as: Country (MA) → Check digits (2) → Bank code (3) → Account number (21). This information follows Bank Al-Maghrib guidelines.",
+    "faqs": [
+      {
+        "question": "Does Morocco use IBAN?",
+        "answer": "Yes, Moroccan banks use IBAN for domestic and international transfers."
+      },
+      {
+        "question": "Do Moroccan banks use SWIFT?",
+        "answer": "Yes, SWIFT is standard for international payments."
+      },
+      {
+        "question": "What does {Swift Code} mean?",
+        "answer": "It belongs to {Bank} in {City} for cross-border routing."
+      }
+    ]
+  },
+  {
+    "country": "Poland",
+    "country_code": "PL",
+    "constants": {
+      "banking_authority": "National Bank of Poland",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "In Poland, the SWIFT code {Swift Code} identifies {Bank} in {City}. Poland uses SWIFT for international transfers and IBAN for domestic/SEPA routing. Polish IBAN has 28 characters: Country (PL) → Check digits (2) → NRB number (26 digits), which encodes the bank and account information.",
+    "faqs": [
+      {
+        "question": "Does Poland use IBAN?",
+        "answer": "Yes, Poland uses 28-character IBANs."
+      },
+      {
+        "question": "Do Polish banks use SWIFT?",
+        "answer": "Yes, SWIFT is required for transfers outside SEPA."
+      },
+      {
+        "question": "What is {Swift Code}?",
+        "answer": "It is the global identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Ukraine",
+    "country_code": "UA",
+    "constants": {
+      "banking_authority": "National Bank of Ukraine",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} located in {City}, Ukraine. Ukraine transitioned to mandatory IBAN use in 2020. Ukrainian IBAN contains 29 characters: Country (UA) → Check digits (2) → Bank code (6) → Account number (19). SWIFT codes are used for global transactions.",
+    "faqs": [
+      {
+        "question": "Does Ukraine use IBAN?",
+        "answer": "Yes, Ukraine uses a 29-character IBAN format for all transfers."
+      },
+      {
+        "question": "Is SWIFT used in Ukraine?",
+        "answer": "Yes, SWIFT is used for international transfers."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "Algeria",
+    "country_code": "DZ",
+    "constants": {
+      "banking_authority": "Bank of Algeria",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "The identifier {Swift Code} belongs to {Bank} located in {City}, Algeria. Algeria uses SWIFT codes for international transfers and IBAN for domestic routing. Algerian IBAN is 24 characters long: Country (DZ) → Check digits (2) → Bank code (3) → Account number (19).",
+    "faqs": [
+      {
+        "question": "Does Algeria use IBAN?",
+        "answer": "Yes, Algeria uses a 24-character IBAN."
+      },
+      {
+        "question": "Do Algerian banks use SWIFT?",
+        "answer": "Yes, SWIFT is necessary for international transfers."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It is the SWIFT identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Australia",
+    "country_code": "AU",
+    "constants": {
+      "banking_authority": "Australian Prudential Regulation Authority",
+      "systems_used": ["SWIFT", "BSB"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} operating in {City}, Australia. Australia uses SWIFT for global transfers and BSB numbers for domestic routing. BSB codes are 6 digits: Bank (2 digits) → State (1 digit) → Branch (3 digits). SWIFT codes follow the Bank → Country → Location → Branch model.",
+    "faqs": [
+      {
+        "question": "What is a BSB number?",
+        "answer": "A 6-digit domestic routing code used in Australia."
+      },
+      {
+        "question": "Do Australian banks use SWIFT?",
+        "answer": "Yes, SWIFT is required for international transactions."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} internationally."
+      }
+    ]
+  },
+  {
+    "country": "Iraq",
+    "country_code": "IQ",
+    "constants": {
+      "banking_authority": "Central Bank of Iraq",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies the bank {Bank} operating in {City}, Iraq. Iraq uses SWIFT codes for international transfers and IBAN (23 characters) for domestic and cross-border account identification. The Iraqi IBAN structure is: Country (IQ) → Check digits (2) → Bank code (4) → Account number (17). This listing reflects Central Bank of Iraq standards.",
+    "faqs": [
+      {
+        "question": "Does Iraq use IBAN?",
+        "answer": "Yes, Iraq uses a 23-character IBAN for domestic and international transfers."
+      },
+      {
+        "question": "Is SWIFT required in Iraq?",
+        "answer": "Yes, SWIFT codes are used for all international transfers."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} for secure global transactions."
+      }
+    ]
+  },
+  {
+    "country": "Uzbekistan",
+    "country_code": "UZ",
+    "constants": {
+      "banking_authority": "Central Bank of the Republic of Uzbekistan",
+      "systems_used": ["SWIFT", "MFO Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} located in {City}, Uzbekistan. Uzbekistan uses SWIFT for international transactions and MFO codes (5–6 digits) for domestic routing. MFO identifies the bank and branch for local payments, while SWIFT supports cross-border transfers under Central Bank regulations.",
+    "faqs": [
+      {
+        "question": "What is an MFO code?",
+        "answer": "It is Uzbekistan’s domestic bank routing code used for local transfers."
+      },
+      {
+        "question": "Do Uzbek banks use SWIFT?",
+        "answer": "Yes, SWIFT is required for international transactions."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It is the SWIFT identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Myanmar",
+    "country_code": "MM",
+    "constants": {
+      "banking_authority": "Central Bank of Myanmar",
+      "systems_used": ["SWIFT"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} corresponds to {Bank} in {City}, Myanmar. The country uses SWIFT codes for all international transfers, while domestic transactions rely on bank-specific internal routing codes. SWIFT follows the Bank → Country → Location → Branch structure, used widely across Myanmar’s financial system.",
+    "faqs": [
+      {
+        "question": "Does Myanmar have a domestic routing system?",
+        "answer": "Domestic payments use internal bank routing identifiers."
+      },
+      {
+        "question": "Is SWIFT used in Myanmar?",
+        "answer": "Yes, SWIFT is used for cross-border communication."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} internationally."
+      }
+    ]
+  },
+  {
+    "country": "Peru",
+    "country_code": "PE",
+    "constants": {
+      "banking_authority": "Superintendencia de Banca, Seguros y AFP (SBS)",
+      "systems_used": ["SWIFT", "CCI"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "The SWIFT identifier {Swift Code} belongs to {Bank} in {City}, Peru. Peru uses SWIFT codes for international banking and CCI numbers (20 digits) for domestic transfers. CCI identifies bank, branch, and account information within Peru’s Interbank Payment System.",
+    "faqs": [
+      {
+        "question": "What is a CCI number?",
+        "answer": "CCI is Peru’s 20-digit domestic account and routing identifier."
+      },
+      {
+        "question": "Does Peru use SWIFT?",
+        "answer": "Yes, SWIFT is used for all international transactions."
+      },
+      {
+        "question": "What does {Swift Code} mean?",
+        "answer": "It identifies {Bank} in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "Taiwan",
+    "country_code": "TW",
+    "constants": {
+      "banking_authority": "Central Bank of the Republic of China (Taiwan)",
+      "systems_used": ["SWIFT", "Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} operating in {City}, Taiwan. Taiwan uses SWIFT for international transfers and 3-digit bank codes + 4-digit branch codes for domestic routing. These codes ensure direct local clearing, while SWIFT handles cross-border transfers.",
+    "faqs": [
+      {
+        "question": "What routing system does Taiwan use?",
+        "answer": "Taiwan uses 3-digit bank codes and 4-digit branch codes for domestic transfers."
+      },
+      {
+        "question": "Do Taiwanese banks use SWIFT?",
+        "answer": "Yes, SWIFT is required for global payments."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It is the SWIFT identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Uganda",
+    "country_code": "UG",
+    "constants": {
+      "banking_authority": "Bank of Uganda",
+      "systems_used": ["SWIFT", "Branch Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "The code {Swift Code} identifies {Bank} in {City}, Uganda. Uganda uses SWIFT for international payments and branch codes for domestic routing. SWIFT follows the standard BIC structure for global financial communication.",
+    "faqs": [
+      {
+        "question": "Does Uganda use domestic branch codes?",
+        "answer": "Yes, branch codes are used for internal bank routing."
+      },
+      {
+        "question": "Is SWIFT used in Uganda?",
+        "answer": "Yes, SWIFT codes are required for international money transfers."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It identifies {Bank} in {City} worldwide."
+      }
+    ]
+  },
+  {
+    "country": "Syria",
+    "country_code": "SY",
+    "constants": {
+      "banking_authority": "Central Bank of Syria",
+      "systems_used": ["SWIFT"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} operating in {City}, Syria. Syria uses SWIFT codes for international transfers, while domestic payments rely on internal bank routing systems managed by individual banks. SWIFT follows the usual Bank → Country → Location → Branch format.",
+    "faqs": [
+      {
+        "question": "Does Syria use SWIFT?",
+        "answer": "Yes, Syrian banks use SWIFT for international transactions."
+      },
+      {
+        "question": "Is there a domestic routing system?",
+        "answer": "Domestic routing is based on internal bank-managed branch codes."
+      },
+      {
+        "question": "What does {Swift Code} identify?",
+        "answer": "It identifies {Bank} in {City} for global communication."
+      }
+    ]
+  },
+  {
+    "country": "Ghana",
+    "country_code": "GH",
+    "constants": {
+      "banking_authority": "Bank of Ghana",
+      "systems_used": ["SWIFT", "Branch Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Ghana. Ghana uses SWIFT for cross-border payments and branch codes for domestic routing under the Ghana Interbank Payment and Settlement System (GhIPSS). SWIFT follows the global BIC structure.",
+    "faqs": [
+      {
+        "question": "Does Ghana use domestic branch codes?",
+        "answer": "Yes, Ghana uses branch codes for local transfers."
+      },
+      {
+        "question": "Do Ghanaian banks use SWIFT?",
+        "answer": "Yes, SWIFT codes are required for international transfers."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "Nepal",
+    "country_code": "NP",
+    "constants": {
+      "banking_authority": "Nepal Rastra Bank",
+      "systems_used": ["SWIFT", "NSBL Routing Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} in {City}, Nepal. Nepal uses SWIFT codes for international transfers and NSBL routing codes for domestic bank-to-bank transactions. Domestic routing codes typically include bank and branch identifiers, while SWIFT manages global communication.",
+    "faqs": [
+      {
+        "question": "What routing system does Nepal use?",
+        "answer": "Nepal uses NSBL routing codes for domestic transfers."
+      },
+      {
+        "question": "Is SWIFT used in Nepal?",
+        "answer": "Yes, SWIFT is required for international remittances."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It identifies {Bank} in {City} internationally."
+      }
+    ]
+  },
+  {
+    "country": "Malaysia",
+    "country_code": "MY",
+    "constants": {
+      "banking_authority": "Bank Negara Malaysia",
+      "systems_used": ["SWIFT", "MEPS Routing Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} operating in {City}, Malaysia. Malaysia uses SWIFT for global transfers and MEPS (Malaysian Electronic Payment System) routing codes for domestic transactions. MEPS routing codes identify bank and branch details for local clearing. SWIFT codes follow the international Bank → Country → Location → Branch model.",
+    "faqs": [
+      {
+        "question": "What is Malaysia’s domestic routing system?",
+        "answer": "Malaysia uses MEPS routing codes for internal transfers."
+      },
+      {
+        "question": "Do Malaysian banks use SWIFT?",
+        "answer": "Yes, SWIFT is required for international payments."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It is the SWIFT code for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Colombia",
+    "country_code": "CO",
+    "constants": {
+      "banking_authority": "Bank of the Republic (Banco de la República)",
+      "systems_used": ["SWIFT", "Domestic Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Colombia. Colombia uses SWIFT for international transfers and local bank codes for domestic clearing through the country's ACH system. SWIFT codes follow the global format and enable secure cross-border communication, while domestic bank codes ensure accurate local routing.",
+    "faqs": [
+      {
+        "question": "Does Colombia use SWIFT?",
+        "answer": "Yes, SWIFT codes are used for international transfers."
+      },
+      {
+        "question": "What system is used domestically?",
+        "answer": "Colombia uses bank-specific domestic codes for local transactions."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} for international routing."
+      }
+    ]
+  },
+  {
+    "country": "Iran",
+    "country_code": "IR",
+    "constants": {
+      "banking_authority": "Central Bank of Iran",
+      "systems_used": ["SWIFT", "Sheba Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} in {City}, Iran. Iran uses SWIFT for international transfers (where permitted) and Sheba codes (26 characters) for domestic routing. A Sheba code begins with Country (IR) → Check digits (2) → Bank code → Account number. SWIFT codes follow the typical international format for cross-border financial communication.",
+    "faqs": [
+      {
+        "question": "What is a Sheba code?",
+        "answer": "It is Iran’s 26-character domestic account and routing identifier."
+      },
+      {
+        "question": "Does Iran use SWIFT?",
+        "answer": "Yes, SWIFT codes exist, though access depends on international sanctions."
+      },
+      {
+        "question": "What does {Swift Code} identify?",
+        "answer": "It identifies {Bank} in {City} on the SWIFT network."
+      }
+    ]
+  },
+  {
+    "country": "Saudi Arabia",
+    "country_code": "SA",
+    "constants": {
+      "banking_authority": "Saudi Central Bank (SAMA)",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} operating in {City}, Saudi Arabia. Saudi Arabia uses SWIFT for international transfers and IBAN (24 characters) for domestic and cross-border account identification. The IBAN format is: Country (SA) → Check digits (2) → Bank code (2) → Account number (18). All financial routing complies with SAMA guidelines.",
+    "faqs": [
+      {
+        "question": "Does Saudi Arabia use IBAN?",
+        "answer": "Yes, IBAN is mandatory for all bank accounts in Saudi Arabia."
+      },
+      {
+        "question": "Is SWIFT required for foreign transfers?",
+        "answer": "Yes, SWIFT codes are used for all international payments."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It is the SWIFT identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Kenya",
+    "country_code": "KE",
+    "constants": {
+      "banking_authority": "Central Bank of Kenya",
+      "systems_used": ["SWIFT", "Branch Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} in {City}, Kenya. Kenya uses SWIFT codes for international transfers and 6-digit branch codes for domestic routing. These branch codes identify the bank and specific branch for EFT and RTGS transactions within the country.",
+    "faqs": [
+      {
+        "question": "What routing system does Kenya use?",
+        "answer": "Kenya uses 6-digit branch codes for domestic transfers."
+      },
+      {
+        "question": "Do Kenyan banks use SWIFT?",
+        "answer": "Yes, SWIFT is required for cross-border payments."
+      },
+      {
+        "question": "What does {Swift Code} mean?",
+        "answer": "It identifies {Bank} in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "Netherlands",
+    "country_code": "NL",
+    "constants": {
+      "banking_authority": "De Nederlandsche Bank",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} operating in {City}, Netherlands. The Netherlands is a SEPA member and uses IBAN (18 characters) for domestic and European transfers. IBAN structure: Country (NL) → Check digits (2) → Bank code (4 letters) → Account number (10 digits). SWIFT codes handle non-SEPA international transfers.",
+    "faqs": [
+      {
+        "question": "Does the Netherlands use IBAN?",
+        "answer": "Yes, IBAN is mandatory for all Dutch accounts."
+      },
+      {
+        "question": "Is SWIFT required for global transfers?",
+        "answer": "Yes, SWIFT is used for international payments outside Europe."
+      },
+      {
+        "question": "What does {Swift Code} identify?",
+        "answer": "It identifies {Bank} in {City} internationally."
+      }
+    ]
+  },
+  {
+    "country": "Chile",
+    "country_code": "CL",
+    "constants": {
+      "banking_authority": "Central Bank of Chile",
+      "systems_used": ["SWIFT", "Domestic Routing Number"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} in {City}, Chile. Chile uses SWIFT for global transfers and domestic routing numbers (Código de Transferencia Bancaria) for internal payments. SWIFT codes follow the Bank → Country → Location → Branch format used worldwide.",
+    "faqs": [
+      {
+        "question": "What routing system does Chile use?",
+        "answer": "Chile uses domestic routing codes for local transfers."
+      },
+      {
+        "question": "Does Chile use SWIFT?",
+        "answer": "Yes, SWIFT is used for international payments."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} on the global SWIFT network."
+      }
+    ]
+  },
+  {
+    "country": "Kazakhstan",
+    "country_code": "KZ",
+    "constants": {
+      "banking_authority": "National Bank of Kazakhstan",
+      "systems_used": ["SWIFT", "KISC"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} operating in {City}, Kazakhstan. Kazakhstan uses SWIFT for international transfers and KISC codes (Kazakhstan Interbank Settlement Center) for domestic routing. KISC codes help identify banks and branches for internal settlement operations.",
+    "faqs": [
+      {
+        "question": "What is a KISC code?",
+        "answer": "Kazakhstan’s domestic routing code for interbank settlements."
+      },
+      {
+        "question": "Does Kazakhstan use SWIFT?",
+        "answer": "Yes, SWIFT is used for all cross-border payments."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It is the SWIFT identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Romania",
+    "country_code": "RO",
+    "constants": {
+      "banking_authority": "National Bank of Romania",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} in {City}, Romania. Romania uses a 24-character IBAN format: Country (RO) → Check digits (2) → Bank code (4 letters) → Account number (16). SWIFT handles international transfers, while IBAN is used for domestic and SEPA routing.",
+    "faqs": [
+      {
+        "question": "Does Romania use IBAN?",
+        "answer": "Yes, Romania uses a 24-character IBAN format."
+      },
+      {
+        "question": "Is SWIFT required for global transfers?",
+        "answer": "Yes, SWIFT is used for non-SEPA international payments."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} worldwide."
+      }
+    ]
+  },
+  {
+    "country": "Sri Lanka",
+    "country_code": "LK",
+    "constants": {
+      "banking_authority": "Central Bank of Sri Lanka",
+      "systems_used": ["SWIFT", "CEFT Routing Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} in {City}, Sri Lanka. Sri Lanka uses SWIFT for global transactions and CEFT routing codes for domestic transfers via LankaPay. CEFT codes identify the bank and branch for internal routing.",
+    "faqs": [
+      {
+        "question": "What is a CEFT code?",
+        "answer": "CEFT is Sri Lanka’s domestic routing code used via the LankaPay network."
+      },
+      {
+        "question": "Do Sri Lankan banks use SWIFT?",
+        "answer": "Yes, SWIFT is used for international payments."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It identifies {Bank} in {City} for international routing."
+      }
+    ]
+  },
+  {
+    "country": "Ecuador",
+    "country_code": "EC",
+    "constants": {
+      "banking_authority": "Central Bank of Ecuador",
+      "systems_used": ["SWIFT", "Domestic Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} in {City}, Ecuador. Ecuador uses SWIFT for all international transfers and domestic bank codes for internal payment routing. SWIFT codes follow the global Bank → Country → Location → Branch structure.",
+    "faqs": [
+      {
+        "question": "Does Ecuador use SWIFT?",
+        "answer": "Yes, SWIFT codes are used for cross-border transactions."
+      },
+      {
+        "question": "What system is used domestically?",
+        "answer": "Domestic payments use local bank and branch codes."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It is the SWIFT identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Belgium",
+    "country_code": "BE",
+    "constants": {
+      "banking_authority": "National Bank of Belgium",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies the bank {Bank} in {City}, Belgium. Belgium uses SWIFT for international transfers and IBAN for domestic and SEPA routing. Belgian IBANs contain 16 characters: Country (BE) → Check digits (2) → Bank account number (12 digits). This structure follows National Bank of Belgium standards.",
+    "faqs": [
+      {
+        "question": "Does Belgium use IBAN?",
+        "answer": "Yes, Belgium uses a 16-character IBAN for domestic and European transfers."
+      },
+      {
+        "question": "Do Belgian banks use SWIFT?",
+        "answer": "Yes, SWIFT is required for non-SEPA international transfers."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It is the SWIFT identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Sweden",
+    "country_code": "SE",
+    "constants": {
+      "banking_authority": "Sveriges Riksbank",
+      "systems_used": ["SWIFT", "IBAN", "Clearing Number"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} operating in {City}, Sweden. Sweden uses SWIFT for international payments, IBAN for SEPA routing, and 4-digit clearing numbers for domestic transfers. Swedish IBANs contain 24 characters: Country (SE) → Check digits (2) → Bank code + account number (20 digits). Clearing numbers identify the bank and branch domestically.",
+    "faqs": [
+      {
+        "question": "What is a Swedish clearing number?",
+        "answer": "A 4-digit code used to identify banks and branches domestically."
+      },
+      {
+        "question": "Does Sweden use IBAN?",
+        "answer": "Yes, Swedish IBANs contain 24 characters."
+      },
+      {
+        "question": "What does {Swift Code} identify?",
+        "answer": "It identifies {Bank} in {City} for global transfers."
+      }
+    ]
+  },
+  {
+    "country": "United Arab Emirates",
+    "country_code": "AE",
+    "constants": {
+      "banking_authority": "Central Bank of the UAE",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} in {City}, UAE. The UAE uses SWIFT for international transfers and IBAN (23 characters) for domestic and cross-border routing. UAE IBAN format: Country (AE) → Check digits (2) → Bank code (3 digits) → Account number (16 digits). This page aligns with Central Bank UAE regulations.",
+    "faqs": [
+      {
+        "question": "Does UAE use IBAN?",
+        "answer": "Yes, IBAN is mandatory for all UAE accounts."
+      },
+      {
+        "question": "Is SWIFT required for global transfers?",
+        "answer": "Yes, UAE banks use SWIFT for all foreign transactions."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It identifies {Bank} in {City} on the SWIFT network."
+      }
+    ]
+  },
+  {
+    "country": "Israel",
+    "country_code": "IL",
+    "constants": {
+      "banking_authority": "Bank of Israel",
+      "systems_used": ["SWIFT", "Bank Code", "Branch Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} corresponds to {Bank} in {City}, Israel. Israel uses SWIFT for international transfers and a domestic system consisting of a 2-digit bank code and a 3-digit branch code. These codes route payments within the Israeli banking system. SWIFT codes follow the global Bank → Country → Location → Branch model.",
+    "faqs": [
+      {
+        "question": "How does Israel route domestic transfers?",
+        "answer": "Through 2-digit bank codes and 3-digit branch codes."
+      },
+      {
+        "question": "Does Israel use SWIFT?",
+        "answer": "Yes, SWIFT is used for all international transactions."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} internationally."
+      }
+    ]
+  },
+  {
+    "country": "Switzerland",
+    "country_code": "CH",
+    "constants": {
+      "banking_authority": "Swiss National Bank",
+      "systems_used": ["SWIFT", "IBAN", "Clearing Number"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Switzerland. Switzerland uses SWIFT for global transactions, IBAN for domestic and SEPA transfers, and SIC clearing numbers (3–5 digits) for internal routing. Swiss IBAN contains 21 characters: Country (CH) → Check digits (2) → Bank code (5 digits) → Account number (12 digits).",
+    "faqs": [
+      {
+        "question": "Does Switzerland use IBAN?",
+        "answer": "Yes, Switzerland uses 21-character IBANs."
+      },
+      {
+        "question": "What is a Swiss clearing number?",
+        "answer": "A domestic routing code used in the SIC payment system."
+      },
+      {
+        "question": "What does {Swift Code} mean?",
+        "answer": "It identifies {Bank} in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "Portugal",
+    "country_code": "PT",
+    "constants": {
+      "banking_authority": "Banco de Portugal",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} in {City}, Portugal. Portugal uses a 25-character IBAN: Country (PT) → Check digits (2) → Bank code (4) → Branch code (4) → Account number (11) → Check digits (2). SWIFT is used for international transfers, while IBAN handles domestic and SEPA routing.",
+    "faqs": [
+      {
+        "question": "Does Portugal use IBAN?",
+        "answer": "Yes, IBAN is mandatory for all Portuguese bank accounts."
+      },
+      {
+        "question": "Is SWIFT used in Portugal?",
+        "answer": "Yes, SWIFT is required for global transfers outside SEPA."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} worldwide."
+      }
+    ]
+  },
+  {
+    "country": "Azerbaijan",
+    "country_code": "AZ",
+    "constants": {
+      "banking_authority": "Central Bank of Azerbaijan",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies the bank {Bank} in {City}, Azerbaijan. Azerbaijan uses a 28-character IBAN system: Country (AZ) → Check digits (2) → Bank code (4) → Account number (20). SWIFT codes are used for cross-border payments under the Central Bank’s regulations.",
+    "faqs": [
+      {
+        "question": "Does Azerbaijan use IBAN?",
+        "answer": "Yes, IBAN is standard for all domestic and international transfers."
+      },
+      {
+        "question": "Is SWIFT required?",
+        "answer": "Yes, SWIFT is used for all global transactions."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} on the SWIFT network."
+      }
+    ]
+  },
+  {
+    "country": "Czech Republic",
+    "country_code": "CZ",
+    "constants": {
+      "banking_authority": "Czech National Bank",
+      "systems_used": ["SWIFT", "IBAN", "Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} corresponds to {Bank} in {City}, Czech Republic. The country uses SWIFT for international transfers and domestic bank codes (4 digits) combined with account numbers. IBAN contains 24 characters: Country (CZ) → Check digits (2) → Bank code (4) → Account number (16).",
+    "faqs": [
+      {
+        "question": "Does Czech Republic use IBAN?",
+        "answer": "Yes, IBAN is mandatory for Czech bank accounts."
+      },
+      {
+        "question": "What is the domestic system?",
+        "answer": "Czech banks use 4-digit bank codes for local transfers."
+      },
+      {
+        "question": "What does {Swift Code} identify?",
+        "answer": "It identifies {Bank} in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "Guatemala",
+    "country_code": "GT",
+    "constants": {
+      "banking_authority": "Bank of Guatemala",
+      "systems_used": ["SWIFT", "Domestic Routing Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Guatemala. SWIFT codes are used for international transfers, while domestic payments use local routing codes under Guatemala’s ACH system. SWIFT follows the Bank → Country → Location → Branch structure used globally.",
+    "faqs": [
+      {
+        "question": "Does Guatemala use SWIFT?",
+        "answer": "Yes, SWIFT is used for international transfers."
+      },
+      {
+        "question": "What system is used domestically?",
+        "answer": "Local routing codes are used for domestic payments."
+      },
+      {
+        "question": "What does {Swift Code} mean?",
+        "answer": "It identifies {Bank} in {City} on the SWIFT network."
+      }
+    ]
+  },
+  {
+    "country": "Yemen",
+    "country_code": "YE",
+    "constants": {
+      "banking_authority": "Central Bank of Yemen",
+      "systems_used": ["SWIFT"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} in {City}, Yemen. Yemen uses SWIFT codes for all international transactions, while domestic transfers rely on internal bank-managed routing systems. SWIFT codes follow the global format used across the international financial community.",
+    "faqs": [
+      {
+        "question": "Does Yemen use SWIFT?",
+        "answer": "Yes, Yemen uses SWIFT for all cross-border transactions."
+      },
+      {
+        "question": "Is there a domestic routing code?",
+        "answer": "Domestic routing is based on internal bank branch codes."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It is the SWIFT identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Austria",
+    "country_code": "AT",
+    "constants": {
+      "banking_authority": "Oesterreichische Nationalbank",
+      "systems_used": ["SWIFT", "IBAN", "Bankleitzahl"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} corresponds to {Bank} in {City}, Austria. Austria uses SWIFT for international transfers, IBAN for domestic and SEPA routing, and a 5-digit Bankleitzahl (BLZ) for internal clearing. Austrian IBANs contain 20 characters: Country (AT) → Check digits (2) → Bankleitzahl (5) → Account number (11).",
+    "faqs": [
+      {
+        "question": "What is Bankleitzahl (BLZ)?",
+        "answer": "It is Austria’s 5-digit domestic bank code for local routing."
+      },
+      {
+        "question": "Does Austria use IBAN?",
+        "answer": "Yes, Austrian IBANs contain 20 characters."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} for global transfers."
+      }
+    ]
+  },
+  {
+    "country": "Hungary",
+    "country_code": "HU",
+    "constants": {
+      "banking_authority": "Hungarian National Bank",
+      "systems_used": ["SWIFT", "IBAN", "Domestic Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} in {City}, Hungary. Hungary uses SWIFT for international transfers and IBAN for European/domestic routing. Hungarian IBANs contain 28 characters: Country (HU) → Check digits (2) → Domestic bank code (7 digits) → Account number (17 digits).",
+    "faqs": [
+      {
+        "question": "Does Hungary use IBAN?",
+        "answer": "Yes, Hungary uses 28-character IBANs."
+      },
+      {
+        "question": "Do Hungarian banks use SWIFT?",
+        "answer": "Yes, SWIFT is used for all cross-border payments."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It is the SWIFT identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Greece",
+    "country_code": "GR",
+    "constants": {
+      "banking_authority": "Bank of Greece",
+      "systems_used": ["SWIFT", "IBAN", "Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} in {City}, Greece. Greece uses SWIFT for international transfers, and IBAN for domestic/SEPA routing. Greek IBAN contains 27 characters: Country (GR) → Check digits (2) → Bank code (3) → Branch code (4) → Account number (16).",
+    "faqs": [
+      {
+        "question": "Does Greece use IBAN?",
+        "answer": "Yes, Greece uses 27-character IBANs."
+      },
+      {
+        "question": "Do Greek banks use SWIFT?",
+        "answer": "Yes, SWIFT codes are used for foreign transactions."
+      },
+      {
+        "question": "What does {Swift Code} mean?",
+        "answer": "It is the international identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Jordan",
+    "country_code": "JO",
+    "constants": {
+      "banking_authority": "Central Bank of Jordan",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Jordan. Jordan uses SWIFT for global transfers and IBAN for domestic and cross-border routing. Jordanian IBAN contains 30 characters: Country (JO) → Check digits (2) → Bank code (4) → Account number (24).",
+    "faqs": [
+      {
+        "question": "Does Jordan use IBAN?",
+        "answer": "Yes, Jordan uses 30-character IBANs for all accounts."
+      },
+      {
+        "question": "Is SWIFT required in Jordan?",
+        "answer": "Yes, SWIFT codes are used for all international transfers."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It belongs to {Bank} in {City} for global routing."
+      }
+    ]
+  },
+  {
+    "country": "Cambodia",
+    "country_code": "KH",
+    "constants": {
+      "banking_authority": "National Bank of Cambodia",
+      "systems_used": ["SWIFT", "Domestic Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} in {City}, Cambodia. Cambodia uses SWIFT for international transfers and bank-specific domestic codes for local payment routing. Domestic transfers rely heavily on branch codes, while SWIFT is used for cross-border transactions.",
+    "faqs": [
+      {
+        "question": "Does Cambodia use SWIFT?",
+        "answer": "Yes, SWIFT is used for global financial transfers."
+      },
+      {
+        "question": "What routing system is used domestically?",
+        "answer": "Cambodia uses internal bank and branch codes for local routing."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It identifies {Bank} in {City} on the SWIFT network."
+      }
+    ]
+  },
+  {
+    "country": "Afghanistan",
+    "country_code": "AF",
+    "constants": {
+      "banking_authority": "Da Afghanistan Bank",
+      "systems_used": ["SWIFT"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} operating in {City}, Afghanistan. Afghanistan uses SWIFT codes for all international transfers, while domestic routing is handled through internal bank-managed identifiers. SWIFT remains the primary globally recognized routing standard.",
+    "faqs": [
+      {
+        "question": "Does Afghanistan use SWIFT?",
+        "answer": "Yes, Afghan banks use SWIFT for international payments."
+      },
+      {
+        "question": "Is there a domestic routing code?",
+        "answer": "Domestic transfers rely on internal bank and branch codes."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It is the global identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Tunisia",
+    "country_code": "TN",
+    "constants": {
+      "banking_authority": "Central Bank of Tunisia",
+      "systems_used": ["SWIFT", "RIB Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Tunisia. Tunisia uses SWIFT for international transfers and the 20-digit RIB code for domestic routing. The RIB encodes bank, branch, and account number information for internal transfers.",
+    "faqs": [
+      {
+        "question": "What is a RIB code?",
+        "answer": "Tunisia’s 20-digit domestic routing and account identification code."
+      },
+      {
+        "question": "Do Tunisian banks use SWIFT?",
+        "answer": "Yes, SWIFT is used for global transfers."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It is the SWIFT identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Hong Kong",
+    "country_code": "HK",
+    "constants": {
+      "banking_authority": "Hong Kong Monetary Authority (HKMA)",
+      "systems_used": ["SWIFT", "Clearing Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} in {City}, Hong Kong. Hong Kong uses SWIFT for international transfers and 3-digit clearing codes for domestic routing. Clearing codes identify the bank and branch for local FPS/CHATS payments.",
+    "faqs": [
+      {
+        "question": "What is a clearing code in Hong Kong?",
+        "answer": "A 3-digit domestic bank routing identifier used for CHATS/FPS."
+      },
+      {
+        "question": "Do Hong Kong banks use SWIFT?",
+        "answer": "Yes, SWIFT is used for all international transfers."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} internationally."
+      }
+    ]
+  },
+  {
+    "country": "Belarus",
+    "country_code": "BY",
+    "constants": {
+      "banking_authority": "National Bank of the Republic of Belarus",
+      "systems_used": ["SWIFT", "Domestic Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} located in {City}, Belarus. Belarus uses SWIFT for cross-border transactions and domestic bank codes for internal routing under the local payment system. SWIFT follows the standard Bank → Country → Location → Branch format.",
+    "faqs": [
+      {
+        "question": "Does Belarus use SWIFT?",
+        "answer": "Yes, SWIFT is used for global financial transfers."
+      },
+      {
+        "question": "What routing system is used domestically?",
+        "answer": "Belarus uses national bank and branch codes."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It identifies {Bank} in {City} worldwide."
+      }
+    ]
+  },
+  {
+    "country": "Bolivia",
+    "country_code": "BO",
+    "constants": {
+      "banking_authority": "Central Bank of Bolivia",
+      "systems_used": ["SWIFT", "Domestic Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} in {City}, Bolivia. Bolivia uses SWIFT for international transfers and a domestic routing system based on bank-specific internal codes for local settlements. SWIFT supports international secure communication.",
+    "faqs": [
+      {
+        "question": "Does Bolivia use SWIFT?",
+        "answer": "Yes, SWIFT is used for all international transfers."
+      },
+      {
+        "question": "What system is used domestically?",
+        "answer": "Bolivia relies on internal bank-specific routing codes for local payments."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} on the global network."
+      }
+    ]
+  },
+  {
+    "country": "Libya",
+    "country_code": "LY",
+    "constants": {
+      "banking_authority": "Central Bank of Libya",
+      "systems_used": ["SWIFT", "Domestic Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} located in {City}, Libya. Libya uses SWIFT for international transactions and domestic bank codes for internal transfers. Domestic routing relies on bank and branch identifiers, while SWIFT remains the primary standard for cross-border communication.",
+    "faqs": [
+      {
+        "question": "Does Libya use SWIFT?",
+        "answer": "Yes, Libyan banks use SWIFT for international transfers."
+      },
+      {
+        "question": "How are domestic transfers routed?",
+        "answer": "Through bank-specific internal routing codes."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} on the global network."
+      }
+    ]
+  },
+  {
+    "country": "Rwanda",
+    "country_code": "RW",
+    "constants": {
+      "banking_authority": "National Bank of Rwanda",
+      "systems_used": ["SWIFT", "Branch Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} operating in {City}, Rwanda. Rwanda uses SWIFT for global transfers and branch codes for domestic routing under the Rwandan Integrated Payments Processing System. SWIFT follows the global BIC format.",
+    "faqs": [
+      {
+        "question": "Does Rwanda use SWIFT?",
+        "answer": "Yes, SWIFT is used for international transfers."
+      },
+      {
+        "question": "What is used for domestic routing?",
+        "answer": "Branch codes are used for internal payment routing."
+      },
+      {
+        "question": "What does {Swift Code} mean?",
+        "answer": "It is the SWIFT identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Serbia",
+    "country_code": "RS",
+    "constants": {
+      "banking_authority": "National Bank of Serbia",
+      "systems_used": ["SWIFT", "IBAN", "Domestic Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} in {City}, Serbia. Serbia uses SWIFT for international transactions, IBAN for domestic and SEPA-compatible transfers, and 3-digit domestic bank codes for local routing. Serbian IBAN contains 22 characters: Country (RS) → Check digits (2) → Bank code (3) → Account number (17).",
+    "faqs": [
+      {
+        "question": "Does Serbia use IBAN?",
+        "answer": "Yes, Serbia uses 22-character IBANs."
+      },
+      {
+        "question": "Do Serbian banks use SWIFT?",
+        "answer": "Yes, SWIFT is required for international routing."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It identifies {Bank} in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "Norway",
+    "country_code": "NO",
+    "constants": {
+      "banking_authority": "Norges Bank",
+      "systems_used": ["SWIFT", "IBAN", "Bank Account Number"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Norway. Norway uses SWIFT for international transfers, IBAN for SEPA and domestic routing, and 11-digit account numbers internally. Norwegian IBAN contains 15 characters: Country (NO) → Check digits (2) → Account number (11).",
+    "faqs": [
+      {
+        "question": "Does Norway use IBAN?",
+        "answer": "Yes, Norway uses a 15-character IBAN."
+      },
+      {
+        "question": "Do Norwegian banks use SWIFT?",
+        "answer": "Yes, SWIFT is used for all international payments."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "The global identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Finland",
+    "country_code": "FI",
+    "constants": {
+      "banking_authority": "Bank of Finland",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} operating in {City}, Finland. Finland uses SWIFT for international transfers and IBAN for domestic and SEPA routing. Finnish IBAN contains 18 characters: Country (FI) → Check digits (2) → Account number (14 digits).",
+    "faqs": [
+      {
+        "question": "Does Finland use IBAN?",
+        "answer": "Yes, Finland uses 18-character IBANs."
+      },
+      {
+        "question": "Is SWIFT used in Finland?",
+        "answer": "Yes, SWIFT is required for non-SEPA international transfers."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} internationally."
+      }
+    ]
+  },
+  {
+    "country": "Lebanon",
+    "country_code": "LB",
+    "constants": {
+      "banking_authority": "Banque du Liban",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} corresponds to {Bank} in {City}, Lebanon. Lebanon uses SWIFT for cross-border transfers and IBAN for domestic and regional routing. Lebanese IBAN contains 28 characters: Country (LB) → Check digits (2) → Bank code (4) → Account number (20).",
+    "faqs": [
+      {
+        "question": "Does Lebanon use IBAN?",
+        "answer": "Yes, Lebanon uses a 28-character IBAN format."
+      },
+      {
+        "question": "Is SWIFT required for global payments?",
+        "answer": "Yes, Lebanese banks use SWIFT for international routing."
+      },
+      {
+        "question": "What does {Swift Code} mean?",
+        "answer": "It identifies {Bank} in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "Singapore",
+    "country_code": "SG",
+    "constants": {
+      "banking_authority": "Monetary Authority of Singapore (MAS)",
+      "systems_used": ["SWIFT", "Bank Code", "Branch Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Singapore. Singapore uses SWIFT for international transfers and a combination of 4-digit bank codes and 3-digit branch codes for domestic GIRO and FAST payments. SWIFT follows the global Bank → Country → Location → Branch format.",
+    "faqs": [
+      {
+        "question": "What routing system does Singapore use?",
+        "answer": "4-digit bank codes and 3-digit branch codes for local transfers."
+      },
+      {
+        "question": "Does Singapore use SWIFT?",
+        "answer": "Yes, SWIFT is required for international payments."
+      },
+      {
+        "question": "What is {Swift Code} used for?",
+        "answer": "It identifies {Bank} in {City} for global transactions."
+      }
+    ]
+  },
+  {
+    "country": "Denmark",
+    "country_code": "DK",
+    "constants": {
+      "banking_authority": "Danmarks Nationalbank",
+      "systems_used": ["SWIFT", "IBAN", "Registration Number"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} corresponds to {Bank} in {City}, Denmark. Denmark uses a 18-character IBAN format: Country (DK) → Check digits (2) → Registration number (4) → Account number (10). Domestic payments use the 4-digit registration number for routing.",
+    "faqs": [
+      {
+        "question": "Does Denmark use IBAN?",
+        "answer": "Yes, Denmark uses 18-character IBANs."
+      },
+      {
+        "question": "What is a registration number?",
+        "answer": "A 4-digit domestic routing code."
+      },
+      {
+        "question": "What does {Swift Code} identify?",
+        "answer": "It identifies {Bank} in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "Paraguay",
+    "country_code": "PY",
+    "constants": {
+      "banking_authority": "Central Bank of Paraguay",
+      "systems_used": ["SWIFT", "Domestic Routing Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} in {City}, Paraguay. Paraguay uses SWIFT for international transactions and domestic routing codes for local interbank transfers. SWIFT codes follow the international Bank → Country → Location → Branch structure.",
+    "faqs": [
+      {
+        "question": "Does Paraguay use SWIFT?",
+        "answer": "Yes, SWIFT is used for global transfers."
+      },
+      {
+        "question": "What system is used domestically?",
+        "answer": "Domestic transfers use bank-specific local routing codes."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} on the SWIFT network."
+      }
+    ]
+  },
+  {
+    "country": "New Zealand",
+    "country_code": "NZ",
+    "constants": {
+      "banking_authority": "Reserve Bank of New Zealand",
+      "systems_used": ["SWIFT", "Bank Code", "Branch Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} in {City}, New Zealand. New Zealand uses SWIFT for global transfers and a domestic system that includes 2-digit bank codes and 4-digit branch codes. This structure routes local electronic payments, while SWIFT handles international transactions.",
+    "faqs": [
+      {
+        "question": "Does New Zealand use domestic bank codes?",
+        "answer": "Yes, New Zealand uses 2-digit bank codes and 4-digit branch codes."
+      },
+      {
+        "question": "Do NZ banks use SWIFT?",
+        "answer": "Yes, SWIFT is required for international payments."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It identifies {Bank} in {City} worldwide."
+      }
+    ]
+  },
+  {
+    "country": "Ireland",
+    "country_code": "IE",
+    "constants": {
+      "banking_authority": "Central Bank of Ireland",
+      "systems_used": ["SWIFT", "IBAN", "Sort Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Ireland. Ireland uses SWIFT for international transfers, IBAN for SEPA routing, and Sort Codes (6 digits in XX-XX-XX format) for domestic transactions. Irish IBAN contains 22 characters: Country (IE) → Check digits (2) → Bank code (4 letters) → Account number (14 digits).",
+    "faqs": [
+      {
+        "question": "Does Ireland use Sort Codes?",
+        "answer": "Yes, 6-digit Sort Codes identify banks and branches domestically."
+      },
+      {
+        "question": "Does Ireland use IBAN?",
+        "answer": "Yes, Irish accounts use a 22-character IBAN."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It is the global SWIFT identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Oman",
+    "country_code": "OM",
+    "constants": {
+      "banking_authority": "Central Bank of Oman",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} in {City}, Oman. Oman uses SWIFT for international transfers and IBAN for domestic and GCC routing. Omani IBAN contains 23 characters: Country (OM) → Check digits (2) → Bank code (3) → Account number (18).",
+    "faqs": [
+      {
+        "question": "Does Oman use IBAN?",
+        "answer": "Yes, Oman uses a 23-character IBAN structure."
+      },
+      {
+        "question": "Is SWIFT required for international transfers?",
+        "answer": "Yes, SWIFT codes are mandatory for all cross-border transactions."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It identifies {Bank} in {City} for global routing."
+      }
+    ]
+  },
+  {
+    "country": "Bulgaria",
+    "country_code": "BG",
+    "constants": {
+      "banking_authority": "Bulgarian National Bank",
+      "systems_used": ["SWIFT", "IBAN", "BIC"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} in {City}, Bulgaria. Bulgaria uses SWIFT for international transfers and IBAN (22 characters) for domestic and SEPA routing. Bulgarian IBAN format: Country (BG) → Check digits (2) → Bank code (4) → Branch code (4) → Account number (12).",
+    "faqs": [
+      {
+        "question": "Does Bulgaria use IBAN?",
+        "answer": "Yes, Bulgarian IBANs contain 22 characters."
+      },
+      {
+        "question": "Do Bulgarian banks use SWIFT?",
+        "answer": "Yes, SWIFT is required for global transfers."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It is the international identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Kyrgyzstan",
+    "country_code": "KG",
+    "constants": {
+      "banking_authority": "National Bank of the Kyrgyz Republic",
+      "systems_used": ["SWIFT", "MFO Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} corresponds to {Bank} in {City}, Kyrgyzstan. Kyrgyzstan uses SWIFT for international transfers and 6-digit MFO codes for domestic routing. MFO identifies the bank and branch for local transfers, while SWIFT handles cross-border communication.",
+    "faqs": [
+      {
+        "question": "What is an MFO code?",
+        "answer": "A 6-digit domestic routing code used in Kyrgyzstan."
+      },
+      {
+        "question": "Do Kyrgyz banks use SWIFT?",
+        "answer": "Yes, SWIFT codes are required for foreign payments."
+      },
+      {
+        "question": "What does {Swift Code} mean?",
+        "answer": "It identifies {Bank} in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "Slovakia",
+    "country_code": "SK",
+    "constants": {
+      "banking_authority": "National Bank of Slovakia",
+      "systems_used": ["SWIFT", "IBAN", "Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Slovakia. Slovakia uses SWIFT for international transactions, IBAN for SEPA transfers, and 4-digit domestic bank codes internally. Slovak IBAN contains 24 characters: Country (SK) → Check digits (2) → Bank code (4) → Account number (16).",
+    "faqs": [
+      {
+        "question": "Does Slovakia use IBAN?",
+        "answer": "Yes, Slovakia uses 24-character IBANs."
+      },
+      {
+        "question": "What is the domestic system in Slovakia?",
+        "answer": "4-digit bank codes identify Slovak banks locally."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It is the SWIFT identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Kuwait",
+    "country_code": "KW",
+    "constants": {
+      "banking_authority": "Central Bank of Kuwait",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} in {City}, Kuwait. Kuwait uses SWIFT for international transfers and IBAN for domestic and GCC routing. Kuwaiti IBAN contains 30 characters: Country (KW) → Check digits (2) → Bank code (4) → Account number (22).",
+    "faqs": [
+      {
+        "question": "Does Kuwait use IBAN?",
+        "answer": "Yes, Kuwait uses a 30-character IBAN format."
+      },
+      {
+        "question": "Do Kuwaiti banks use SWIFT?",
+        "answer": "Yes, SWIFT is required for global payments."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It is the global identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Costa Rica",
+    "country_code": "CR",
+    "constants": {
+      "banking_authority": "Central Bank of Costa Rica",
+      "systems_used": ["SWIFT", "SINPE Routing Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Costa Rica. Costa Rica uses SWIFT for international transfers and SINPE routing codes for domestic electronic payments. SINPE codes identify banks and branches for internal clearing.",
+    "faqs": [
+      {
+        "question": "What is a SINPE code?",
+        "answer": "Costa Rica’s domestic routing code for electronic transfers."
+      },
+      {
+        "question": "Does Costa Rica use SWIFT?",
+        "answer": "Yes, SWIFT is used for cross-border transfers."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} internationally."
+      }
+    ]
+  },
+  {
+    "country": "Panama",
+    "country_code": "PA",
+    "constants": {
+      "banking_authority": "Superintendency of Banks of Panama",
+      "systems_used": ["SWIFT", "Domestic Routing Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} corresponds to {Bank} in {City}, Panama. Panama uses SWIFT for international transfers and domestic bank codes for internal routing. The country does not use IBAN; SWIFT and local codes manage all routing processes.",
+    "faqs": [
+      {
+        "question": "Does Panama use IBAN?",
+        "answer": "No, Panama uses SWIFT and domestic routing codes."
+      },
+      {
+        "question": "Does Panama use SWIFT?",
+        "answer": "Yes, SWIFT is required for all global transfers."
+      },
+      {
+        "question": "What does {Swift Code} identify?",
+        "answer": "It identifies {Bank} in {City} worldwide."
+      }
+    ]
+  },
+  {
+    "country": "Croatia",
+    "country_code": "HR",
+    "constants": {
+      "banking_authority": "Croatian National Bank",
+      "systems_used": ["SWIFT", "IBAN", "National Clearing Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} in {City}, Croatia. Croatia uses SWIFT internationally, IBAN for SEPA and domestic transfers, and national clearing codes internally. Croatian IBAN contains 21 characters: Country (HR) → Check digits (2) → Bank code (7 digits) → Account number (10 digits).",
+    "faqs": [
+      {
+        "question": "Does Croatia use IBAN?",
+        "answer": "Yes, Croatian IBANs contain 21 characters."
+      },
+      {
+        "question": "Do Croatian banks use SWIFT?",
+        "answer": "Yes, SWIFT is used for all non-SEPA transfers."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It is the SWIFT identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Georgia",
+    "country_code": "GE",
+    "constants": {
+      "banking_authority": "National Bank of Georgia",
+      "systems_used": ["SWIFT", "Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} operating in {City}, Georgia. Georgia uses SWIFT for international transfers and 6-digit domestic bank codes for internal routing. These bank codes identify financial institutions within the national payment system.",
+    "faqs": [
+      {
+        "question": "Does Georgia use SWIFT?",
+        "answer": "Yes, SWIFT is used for cross-border transactions."
+      },
+      {
+        "question": "What system is used for domestic routing?",
+        "answer": "Georgia uses 6-digit bank codes for local transfers."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} internationally."
+      }
+    ]
+  },
+  {
+    "country": "Tajikistan",
+    "country_code": "TJ",
+    "constants": {
+      "banking_authority": "National Bank of Tajikistan",
+      "systems_used": ["SWIFT", "MFO Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} in {City}, Tajikistan. The country uses SWIFT for cross-border transfers and MFO codes (9 digits) for domestic routing. MFO identifies the bank and its branch in Tajikistan, while SWIFT handles all international communication.",
+    "faqs": [
+      {
+        "question": "What is an MFO code?",
+        "answer": "A 9-digit domestic routing code used for internal transfers."
+      },
+      {
+        "question": "Does Tajikistan use SWIFT?",
+        "answer": "Yes, SWIFT is required for international payments."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It is the global identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Uruguay",
+    "country_code": "UY",
+    "constants": {
+      "banking_authority": "Central Bank of Uruguay",
+      "systems_used": ["SWIFT", "Domestic Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Uruguay. Uruguay uses SWIFT codes for international transfers and domestic bank codes for internal routing within the local payment system. SWIFT supports secure financial messaging for all global transactions.",
+    "faqs": [
+      {
+        "question": "Does Uruguay use SWIFT?",
+        "answer": "Yes, SWIFT is used for international transfers."
+      },
+      {
+        "question": "What routing system is used domestically?",
+        "answer": "Domestic bank codes identify local banks and branches."
+      },
+      {
+        "question": "What does {Swift Code} mean?",
+        "answer": "It identifies {Bank} in {City} across the SWIFT network."
+      }
+    ]
+  },
+  {
+    "country": "Qatar",
+    "country_code": "QA",
+    "constants": {
+      "banking_authority": "Qatar Central Bank",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} in {City}, Qatar. Qatar uses SWIFT for global transfers and a 29-character IBAN for domestic and international routing. The format is: Country (QA) → Check digits (2) → Bank code (4) → Account number (21).",
+    "faqs": [
+      {
+        "question": "Does Qatar use IBAN?",
+        "answer": "Yes, Qatar uses a 29-character IBAN format."
+      },
+      {
+        "question": "Do Qatari banks use SWIFT?",
+        "answer": "Yes, SWIFT is mandatory for international transactions."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It belongs to {Bank} in {City} for global routing."
+      }
+    ]
+  },
+  {
+    "country": "Turkmenistan",
+    "country_code": "TM",
+    "constants": {
+      "banking_authority": "Central Bank of Turkmenistan",
+      "systems_used": ["SWIFT", "Domestic Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Turkmenistan. The country uses SWIFT codes for international transfers and domestic bank codes for internal routing. Domestic codes help identify the bank and branch within the national settlement system.",
+    "faqs": [
+      {
+        "question": "Does Turkmenistan use SWIFT?",
+        "answer": "Yes, SWIFT codes are used for global transfers."
+      },
+      {
+        "question": "What system is used domestically?",
+        "answer": "Local bank codes route domestic transactions."
+      },
+      {
+        "question": "What does {Swift Code} mean?",
+        "answer": "It identifies {Bank} in {City} internationally."
+      }
+    ]
+  },
+  {
+    "country": "Bosnia and Herzegovina",
+    "country_code": "BA",
+    "constants": {
+      "banking_authority": "Central Bank of Bosnia and Herzegovina",
+      "systems_used": ["SWIFT", "IBAN", "Domestic Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} corresponds to {Bank} in {City}, Bosnia and Herzegovina. The country uses SWIFT for global transfers, IBAN for domestic/SEPA routing, and 6-digit bank codes for local clearing. Bosnian IBAN contains 20 characters: Country (BA) → Check digits (2) → Bank code (6) → Account number (12).",
+    "faqs": [
+      {
+        "question": "Does Bosnia use IBAN?",
+        "answer": "Yes, Bosnia uses a 20-character IBAN format."
+      },
+      {
+        "question": "Do Bosnian banks use SWIFT?",
+        "answer": "Yes, SWIFT is used for global payments."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It represents {Bank} in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "Armenia",
+    "country_code": "AM",
+    "constants": {
+      "banking_authority": "Central Bank of Armenia",
+      "systems_used": ["SWIFT", "Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Armenia. Armenia uses SWIFT for international transactions and domestic bank codes for local routing. Bank codes help distinguish Armenian banks and branches within the national payment framework.",
+    "faqs": [
+      {
+        "question": "Does Armenia use SWIFT?",
+        "answer": "Yes, SWIFT is required for international transfers."
+      },
+      {
+        "question": "What are domestic bank codes used for?",
+        "answer": "They identify banks and branches within Armenia."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It is the global identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Lithuania",
+    "country_code": "LT",
+    "constants": {
+      "banking_authority": "Bank of Lithuania",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} corresponds to {Bank} in {City}, Lithuania. Lithuania uses SWIFT for cross-border transfers and IBAN for domestic and European SEPA routing. Lithuanian IBAN contains 20 characters: Country (LT) → Check digits (2) → Account number (16).",
+    "faqs": [
+      {
+        "question": "Does Lithuania use IBAN?",
+        "answer": "Yes, Lithuania uses 20-character IBANs."
+      },
+      {
+        "question": "Is SWIFT used in Lithuania?",
+        "answer": "Yes, SWIFT handles all non-SEPA international transfers."
+      },
+      {
+        "question": "What does {Swift Code} identify?",
+        "answer": "It identifies {Bank} in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "Mongolia",
+    "country_code": "MN",
+    "constants": {
+      "banking_authority": "Bank of Mongolia",
+      "systems_used": ["SWIFT", "Branch Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} in {City}, Mongolia. Mongolia uses SWIFT for international payments and branch codes for domestic routing. SWIFT ensures secure cross-border communication, while local bank codes manage internal clearing.",
+    "faqs": [
+      {
+        "question": "Does Mongolia use SWIFT?",
+        "answer": "Yes, Mongolian banks use SWIFT for global transfers."
+      },
+      {
+        "question": "What routing method is used domestically?",
+        "answer": "Local branch codes route domestic transfers."
+      },
+      {
+        "question": "What does {Swift Code} mean?",
+        "answer": "It is the SWIFT identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Albania",
+    "country_code": "AL",
+    "constants": {
+      "banking_authority": "Bank of Albania",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Albania. Albania uses SWIFT for international transfers and IBAN for domestic routing. Albanian IBAN has 28 characters: Country (AL) → Check digits (2) → Bank code (3) → Branch code (4) → Account number (19).",
+    "faqs": [
+      {
+        "question": "Does Albania use IBAN?",
+        "answer": "Yes, Albania uses a 28-character IBAN."
+      },
+      {
+        "question": "Do Albanian banks use SWIFT?",
+        "answer": "Yes, SWIFT is mandatory for foreign transfers."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It identifies {Bank} in {City} on the global SWIFT network."
+      }
+    ]
+  },
+  {
+    "country": "Jamaica",
+    "country_code": "JM",
+    "constants": {
+      "banking_authority": "Bank of Jamaica",
+      "systems_used": ["SWIFT", "Routing Number"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} corresponds to {Bank} in {City}, Jamaica. Jamaica uses SWIFT for international transfers and 6-digit domestic routing numbers for internal clearing via the local ACH system. SWIFT codes follow the international Bank → Country → Location → Branch model.",
+    "faqs": [
+      {
+        "question": "What routing system does Jamaica use?",
+        "answer": "Jamaica uses 6-digit routing numbers for domestic transfers."
+      },
+      {
+        "question": "Does Jamaica use SWIFT?",
+        "answer": "Yes, SWIFT is required for global payments."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It is the SWIFT identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Moldova",
+    "country_code": "MD",
+    "constants": {
+      "banking_authority": "National Bank of Moldova",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} in {City}, Moldova. Moldova uses SWIFT for international transfers and a 24-character IBAN for local and cross-border payments. Moldovan IBAN structure: Country (MD) → Check digits (2) → Bank code (2) → Account number (18).",
+    "faqs": [
+      {
+        "question": "Does Moldova use IBAN?",
+        "answer": "Yes, Moldova uses a 24-character IBAN format."
+      },
+      {
+        "question": "Do Moldovan banks use SWIFT?",
+        "answer": "Yes, SWIFT is required for all foreign transfers."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It identifies {Bank} in {City} on the global SWIFT network."
+      }
+    ]
+  },
+  {
+    "country": "Botswana",
+    "country_code": "BW",
+    "constants": {
+      "banking_authority": "Bank of Botswana",
+      "systems_used": ["SWIFT", "Branch Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} in {City}, Botswana. Botswana uses SWIFT for international transfers and 6-digit branch codes for domestic routing. Branch codes identify banks and branches within the Botswana Electronic Clearing House.",
+    "faqs": [
+      {
+        "question": "Does Botswana use domestic branch codes?",
+        "answer": "Yes, 6-digit branch codes route internal transactions."
+      },
+      {
+        "question": "Does Botswana use SWIFT?",
+        "answer": "Yes, SWIFT is used for all international payments."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} worldwide."
+      }
+    ]
+  },
+  {
+    "country": "Slovenia",
+    "country_code": "SI",
+    "constants": {
+      "banking_authority": "Bank of Slovenia",
+      "systems_used": ["SWIFT", "IBAN", "Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} corresponds to {Bank} in {City}, Slovenia. Slovenia uses SWIFT for foreign payments, IBAN for domestic and SEPA transfers, and 2-digit bank codes internally. Slovenian IBAN contains 19 characters: Country (SI) → Check digits (2) → Bank code (2) → Account number (15).",
+    "faqs": [
+      {
+        "question": "Does Slovenia use IBAN?",
+        "answer": "Yes, Slovenia uses a 19-character IBAN format."
+      },
+      {
+        "question": "Do Slovenian banks use SWIFT?",
+        "answer": "Yes, SWIFT handles all international transfers."
+      },
+      {
+        "question": "What does {Swift Code} identify?",
+        "answer": "It identifies {Bank} in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "North Macedonia",
+    "country_code": "MK",
+    "constants": {
+      "banking_authority": "National Bank of the Republic of North Macedonia",
+      "systems_used": ["SWIFT", "IBAN", "Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} in {City}, North Macedonia. The country uses SWIFT for global transfers and IBAN for domestic routing. Macedonian IBAN contains 19 characters: Country (MK) → Check digits (2) → Bank code (3 digits) → Account number (14 digits).",
+    "faqs": [
+      {
+        "question": "Does North Macedonia use IBAN?",
+        "answer": "Yes, Macedonian IBANs contain 19 characters."
+      },
+      {
+        "question": "Do banks in North Macedonia use SWIFT?",
+        "answer": "Yes, SWIFT handles all foreign transfers."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It is the international identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Latvia",
+    "country_code": "LV",
+    "constants": {
+      "banking_authority": "Bank of Latvia",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} corresponds to {Bank} in {City}, Latvia. Latvia uses SWIFT for international payments and IBAN for domestic/SEPA routing. Latvian IBAN has 21 characters: Country (LV) → Check digits (2) → Bank code (4 letters) → Account number (13 digits).",
+    "faqs": [
+      {
+        "question": "Does Latvia use IBAN?",
+        "answer": "Yes, Latvia uses a 21-character IBAN."
+      },
+      {
+        "question": "Do Latvian banks use SWIFT?",
+        "answer": "Yes, SWIFT is required for foreign transactions."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It identifies {Bank} in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "Gabon",
+    "country_code": "GA",
+    "constants": {
+      "banking_authority": "Bank of Central African States (BEAC)",
+      "systems_used": ["SWIFT", "Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} in {City}, Gabon. Gabon uses SWIFT for international transfers and domestic bank codes for internal routing within the BEAC regional payment system.",
+    "faqs": [
+      {
+        "question": "Does Gabon use SWIFT?",
+        "answer": "Yes, SWIFT is used for all global transfers."
+      },
+      {
+        "question": "How are domestic payments routed?",
+        "answer": "Through national BEAC-managed bank codes."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It is the SWIFT identifier for {Bank} located in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Namibia",
+    "country_code": "NA",
+    "constants": {
+      "banking_authority": "Bank of Namibia",
+      "systems_used": ["SWIFT", "Branch Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Namibia. The country uses SWIFT for global payments and 6-digit branch codes for domestic transfers. These branch codes identify banks and specific branch locations under Namibia’s payment system.",
+    "faqs": [
+      {
+        "question": "Does Namibia use domestic branch codes?",
+        "answer": "Yes, 6-digit branch codes are used for internal routing."
+      },
+      {
+        "question": "Does Namibia use SWIFT?",
+        "answer": "Yes, all cross-border transfers use SWIFT codes."
+      },
+      {
+        "question": "{Swift Code} kya indicate karta hai?",
+        "answer": "Yeh {Bank} ka global identifier hota hai jo {City} ke branch ko represent karta hai."
+      }
+    ]
+  },
+  {
+    "country": "Kosovo",
+    "country_code": "XK",
+    "constants": {
+      "banking_authority": "Central Bank of the Republic of Kosovo",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} in {City}, Kosovo. Kosovo uses SWIFT for international transactions and IBAN for domestic routing. Kosovo IBAN contains 20 characters: Country (XK) → Check digits (2) → Bank code (4) → Account number (14).",
+    "faqs": [
+      {
+        "question": "Does Kosovo use IBAN?",
+        "answer": "Yes, Kosovo uses a 20-character IBAN."
+      },
+      {
+        "question": "Do Kosovo banks use SWIFT?",
+        "answer": "Yes, SWIFT is required for all international transfers."
+      },
+      {
+        "question": "What does {Swift Code} mean?",
+        "answer": "It identifies {Bank} in {City} globally for cross-border payments."
+      }
+    ]
+  },
+  {
+    "country": "Bahrain",
+    "country_code": "BH",
+    "constants": {
+      "banking_authority": "Central Bank of Bahrain",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} corresponds to {Bank} in {City}, Bahrain. Bahrain uses SWIFT for international transfers and a 22-character IBAN system: Country (BH) → Check digits (2) → Bank code (4 letters) → Account number (14 digits). Bahrain follows GCC and international standards for routing.",
+    "faqs": [
+      {
+        "question": "Does Bahrain use IBAN?",
+        "answer": "Yes, Bahrain uses a 22-character IBAN format."
+      },
+      {
+        "question": "Do Bahraini banks use SWIFT?",
+        "answer": "Yes, SWIFT is required for all cross-border payments."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It is the SWIFT identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Trinidad and Tobago",
+    "country_code": "TT",
+    "constants": {
+      "banking_authority": "Central Bank of Trinidad and Tobago",
+      "systems_used": ["SWIFT", "Routing Number"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Trinidad and Tobago. The country uses SWIFT for global payments and 9-digit domestic routing numbers for internal ACH transfers. These routing numbers identify the bank and specific branch.",
+    "faqs": [
+      {
+        "question": "What routing system is used domestically?",
+        "answer": "9-digit routing numbers identify banks and branches locally."
+      },
+      {
+        "question": "Does Trinidad and Tobago use SWIFT?",
+        "answer": "Yes, SWIFT is used for all international transfers."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It is the global identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Estonia",
+    "country_code": "EE",
+    "constants": {
+      "banking_authority": "Bank of Estonia",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} located in {City}, Estonia. Estonia uses SWIFT for global transfers and an 20-character IBAN for domestic and SEPA routing. Estonian IBAN structure: Country (EE) → Check digits (2) → Account number (16 digits).",
+    "faqs": [
+      {
+        "question": "Does Estonia use IBAN?",
+        "answer": "Yes, Estonia uses a 20-character IBAN format."
+      },
+      {
+        "question": "Do Estonian banks use SWIFT?",
+        "answer": "Yes, SWIFT is required for international payments."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} for cross-border routing."
+      }
+    ]
+  },
+  {
+    "country": "Cyprus",
+    "country_code": "CY",
+    "constants": {
+      "banking_authority": "Central Bank of Cyprus",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} in {City}, Cyprus. Cyprus uses SWIFT internationally and a 28-character IBAN for domestic and SEPA routing. Cypriot IBAN: Country (CY) → Check digits (2) → Bank code (3) → Account number (23).",
+    "faqs": [
+      {
+        "question": "Does Cyprus use IBAN?",
+        "answer": "Yes, Cyprus uses a 28-character IBAN format."
+      },
+      {
+        "question": "Do Cypriot banks use SWIFT?",
+        "answer": "Yes, SWIFT is required for international transfers."
+      },
+      {
+        "question": "What does {Swift Code} mean?",
+        "answer": "It identifies {Bank} in {City} on the SWIFT network."
+      }
+    ]
+  },
+  {
+    "country": "Mauritius",
+    "country_code": "MU",
+    "constants": {
+      "banking_authority": "Bank of Mauritius",
+      "systems_used": ["SWIFT", "IBAN", "Branch Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} corresponds to {Bank} in {City}, Mauritius. The country uses SWIFT for global transactions, IBAN for domestic routing, and 6-digit branch codes for internal clearing. Mauritian IBAN has 30 characters: Country (MU) → Check digits (2) → Bank code (4) → Branch code (4) → Account number (18).",
+    "faqs": [
+      {
+        "question": "Does Mauritius use IBAN?",
+        "answer": "Yes, Mauritius uses a 30-character IBAN format."
+      },
+      {
+        "question": "What is the domestic routing method?",
+        "answer": "Mauritius uses 6-digit branch codes for local transfers."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It is the global identifier of {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Fiji",
+    "country_code": "FJ",
+    "constants": {
+      "banking_authority": "Reserve Bank of Fiji",
+      "systems_used": ["SWIFT", "Branch Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} located in {City}, Fiji. Fiji uses SWIFT for international transfers and domestic branch codes for routing internal payments under the Reserve Bank's Clearing System.",
+    "faqs": [
+      {
+        "question": "Does Fiji use SWIFT?",
+        "answer": "Yes, SWIFT is used for all international transactions."
+      },
+      {
+        "question": "What is used for domestic routing?",
+        "answer": "Fiji uses branch codes for internal bank transfers."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It identifies {Bank} in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "Luxembourg",
+    "country_code": "LU",
+    "constants": {
+      "banking_authority": "Commission de Surveillance du Secteur Financier (CSSF)",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} in {City}, Luxembourg. Luxembourg uses SWIFT for cross-border transfers and IBAN (20 characters) for domestic and SEPA routing. Luxembourg IBAN: Country (LU) → Check digits (2) → Account number (16).",
+    "faqs": [
+      {
+        "question": "Does Luxembourg use IBAN?",
+        "answer": "Yes, a 20-character IBAN is used for all accounts."
+      },
+      {
+        "question": "Does Luxembourg rely on SWIFT?",
+        "answer": "Yes, SWIFT handles all foreign transactions."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} at the international level."
+      }
+    ]
+  },
+  {
+    "country": "Bhutan",
+    "country_code": "BT",
+    "constants": {
+      "banking_authority": "Royal Monetary Authority of Bhutan",
+      "systems_used": ["SWIFT", "Branch Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} operating in {City}, Bhutan. Bhutan uses SWIFT for international payments and domestic branch codes for internal routing. SWIFT enables secure cross-border communication for Bhutanese banks.",
+    "faqs": [
+      {
+        "question": "Does Bhutan use SWIFT?",
+        "answer": "Yes, SWIFT is used for all international transfers."
+      },
+      {
+        "question": "How does domestic routing work?",
+        "answer": "Through bank-specific branch codes."
+      },
+      {
+        "question": "What does {Swift Code} mean?",
+        "answer": "It identifies {Bank} in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "Macao",
+    "country_code": "MO",
+    "constants": {
+      "banking_authority": "Monetary Authority of Macao",
+      "systems_used": ["SWIFT", "Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Macao. Macao uses SWIFT for global transfers and domestic bank codes for internal clearing. These codes help identify individual banks and branch locations under Macao’s payment system.",
+    "faqs": [
+      {
+        "question": "Does Macao use SWIFT?",
+        "answer": "Yes, SWIFT is necessary for foreign transactions."
+      },
+      {
+        "question": "What routing method is used domestically?",
+        "answer": "Macao uses domestic bank codes for local routing."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It is the SWIFT identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Guyana",
+    "country_code": "GY",
+    "constants": {
+      "banking_authority": "Bank of Guyana",
+      "systems_used": ["SWIFT", "Routing Number"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} corresponds to {Bank} in {City}, Guyana. Guyana uses SWIFT for international transfers and routing numbers for domestic payments. These routing numbers identify banks and branches for internal settlement.",
+    "faqs": [
+      {
+        "question": "Does Guyana use domestic routing numbers?",
+        "answer": "Yes, routing numbers identify banks and branches locally."
+      },
+      {
+        "question": "Does Guyana use SWIFT?",
+        "answer": "Yes, SWIFT is required for global transfers."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It represents {Bank} in {City} internationally."
+      }
+    ]
+  },
+  {
+    "country": "Maldives",
+    "country_code": "MV",
+    "constants": {
+      "banking_authority": "Maldives Monetary Authority",
+      "systems_used": ["SWIFT", "Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} in {City}, Maldives. Maldives uses SWIFT for global transfers and 6-digit domestic bank codes for internal routing under the MMA’s clearing system.",
+    "faqs": [
+      {
+        "question": "Does Maldives use SWIFT?",
+        "answer": "Yes, SWIFT is used for all international transactions."
+      },
+      {
+        "question": "What domestic routing method is used?",
+        "answer": "Maldives uses 6-digit bank codes for local transfers."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "Montenegro",
+    "country_code": "ME",
+    "constants": {
+      "banking_authority": "Central Bank of Montenegro",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} in {City}, Montenegro. Montenegro uses SWIFT for foreign payments and a 22-character IBAN for domestic routing. Montenegrin IBAN: Country (ME) → Check digits (2) → Bank code (3) → Account number (17).",
+    "faqs": [
+      {
+        "question": "Does Montenegro use IBAN?",
+        "answer": "Yes, Montenegro uses a 22-character IBAN."
+      },
+      {
+        "question": "Do Montenegrin banks use SWIFT?",
+        "answer": "Yes, SWIFT handles all international transfers."
+      },
+      {
+        "question": "What does {Swift Code} mean?",
+        "answer": "It identifies {Bank} in {City} on the global SWIFT network."
+      }
+    ]
+  },
+  {
+    "country": "Malta",
+    "country_code": "MT",
+    "constants": {
+      "banking_authority": "Malta Financial Services Authority (MFSA)",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} corresponds to {Bank} operating in {City}, Malta. Malta uses SWIFT for global transfers and IBAN for domestic/SEPA routing. Maltese IBAN contains 31 characters: Country (MT) → Check digits (2) → Bank code (4 letters) → Account number (23 digits).",
+    "faqs": [
+      {
+        "question": "Does Malta use IBAN?",
+        "answer": "Yes, Malta uses a 31-character IBAN for all bank accounts."
+      },
+      {
+        "question": "Is SWIFT required for international payments?",
+        "answer": "Yes, SWIFT handles all cross-border transactions."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} internationally."
+      }
+    ]
+  },
+  {
+    "country": "Timor-Leste",
+    "country_code": "TL",
+    "constants": {
+      "banking_authority": "Banco Central de Timor-Leste",
+      "systems_used": ["SWIFT", "Domestic Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} located in {City}, Timor-Leste. The country uses SWIFT for international transfers and domestic bank codes for internal routing. These codes help identify financial institutions across the national payment network.",
+    "faqs": [
+      {
+        "question": "Does Timor-Leste use SWIFT?",
+        "answer": "Yes, SWIFT is used for all cross-border transactions."
+      },
+      {
+        "question": "How are domestic transfers routed?",
+        "answer": "Through bank-specific domestic routing codes."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It globally identifies {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Cape Verde",
+    "country_code": "CV",
+    "constants": {
+      "banking_authority": "Bank of Cape Verde",
+      "systems_used": ["SWIFT", "NIB"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} located in {City}, Cape Verde. Cape Verde uses SWIFT for foreign transfers and the 21-digit NIB (Número de Identificação Bancária) for domestic routing. NIB encodes bank, branch, and account details.",
+    "faqs": [
+      {
+        "question": "What is the NIB system?",
+        "answer": "Cape Verde’s 21-digit domestic routing and account code."
+      },
+      {
+        "question": "Does Cape Verde use SWIFT?",
+        "answer": "Yes, SWIFT handles all international payments."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} located in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "Suriname",
+    "country_code": "SR",
+    "constants": {
+      "banking_authority": "Central Bank of Suriname",
+      "systems_used": ["SWIFT", "Domestic Routing Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} in {City}, Suriname. The country uses SWIFT for all global transfers and internal routing relies on domestic bank codes managed by the national clearing system.",
+    "faqs": [
+      {
+        "question": "Does Suriname use SWIFT?",
+        "answer": "Yes, SWIFT is required for international transfers."
+      },
+      {
+        "question": "How are domestic transfers routed?",
+        "answer": "Through local bank-specific routing codes."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It is the global identifier of {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Brunei",
+    "country_code": "BN",
+    "constants": {
+      "banking_authority": "Monetary Authority of Brunei Darussalam",
+      "systems_used": ["SWIFT", "Domestic Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Brunei. Brunei uses SWIFT for international transfers and local bank codes for domestic routing within the national payment and settlement system.",
+    "faqs": [
+      {
+        "question": "Does Brunei use SWIFT?",
+        "answer": "Yes, SWIFT is used for all international payments."
+      },
+      {
+        "question": "What system is used domestically?",
+        "answer": "Domestic bank codes route internal transfers."
+      },
+      {
+        "question": "What does {Swift Code} mean?",
+        "answer": "It globally identifies {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Bahamas",
+    "country_code": "BS",
+    "constants": {
+      "banking_authority": "Central Bank of The Bahamas",
+      "systems_used": ["SWIFT", "Routing Number"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} corresponds to {Bank} in {City}, Bahamas. The Bahamas uses SWIFT for foreign transfers and a 9-digit domestic routing number format for local ACH transactions.",
+    "faqs": [
+      {
+        "question": "Does Bahamas use domestic routing numbers?",
+        "answer": "Yes, a 9-digit routing number is used for internal clearing."
+      },
+      {
+        "question": "Is SWIFT used for international transfers?",
+        "answer": "Yes, SWIFT handles all cross-border payments."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "The global identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Iceland",
+    "country_code": "IS",
+    "constants": {
+      "banking_authority": "Central Bank of Iceland",
+      "systems_used": ["SWIFT", "IBAN", "Bank Number"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} in {City}, Iceland. Iceland uses SWIFT internationally, IBAN for domestic/SEPA routing, and 4-digit bank numbers for local transfers. Icelandic IBAN contains 26 characters: Country (IS) → Check digits (2) → Bank/branch code (4) → Account number (20).",
+    "faqs": [
+      {
+        "question": "Does Iceland use IBAN?",
+        "answer": "Yes, Iceland uses a 26-character IBAN."
+      },
+      {
+        "question": "What is Iceland’s domestic routing system?",
+        "answer": "A 4-digit bank number is used for local transfers."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} internationally."
+      }
+    ]
+  },
+  {
+    "country": "Solomon Islands",
+    "country_code": "SB",
+    "constants": {
+      "banking_authority": "Central Bank of Solomon Islands",
+      "systems_used": ["SWIFT", "Branch Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} in {City}, Solomon Islands. The country uses SWIFT for international transfers and domestic branch codes for internal payment routing.",
+    "faqs": [
+      {
+        "question": "Does Solomon Islands use SWIFT?",
+        "answer": "Yes, SWIFT handles all international transactions."
+      },
+      {
+        "question": "How are domestic payments routed?",
+        "answer": "Using branch codes assigned to each bank."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It identifies {Bank} in {City} for global payments."
+      }
+    ]
+  },
+  {
+    "country": "Vanuatu",
+    "country_code": "VU",
+    "constants": {
+      "banking_authority": "Reserve Bank of Vanuatu",
+      "systems_used": ["SWIFT", "Branch Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Vanuatu. Vanuatu uses SWIFT for cross-border transactions and domestic branch codes to route internal transfers within the national banking system.",
+    "faqs": [
+      {
+        "question": "Does Vanuatu use SWIFT?",
+        "answer": "Yes, all international transfers rely on SWIFT."
+      },
+      {
+        "question": "What is the domestic routing system?",
+        "answer": "Branch codes are used for local payments."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It globally identifies {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Samoa",
+    "country_code": "WS",
+    "constants": {
+      "banking_authority": "Central Bank of Samoa",
+      "systems_used": ["SWIFT"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} located in {City}, Samoa. Samoa uses SWIFT codes for all international transfers. Domestic payments rely on bank-specific internal routing managed by the national banks themselves.",
+    "faqs": [
+      {
+        "question": "Does Samoa use SWIFT?",
+        "answer": "Yes, SWIFT is essential for all global transfers."
+      },
+      {
+        "question": "Is there a domestic routing system?",
+        "answer": "Domestic routing uses internal bank-managed codes."
+      },
+      {
+        "question": "What does {Swift Code} mean?",
+        "answer": "It identifies {Bank} in {City} for cross-border transactions."
+      }
+    ]
+  },
+  {
+    "country": "Seychelles",
+    "country_code": "SC",
+    "constants": {
+      "banking_authority": "Central Bank of Seychelles",
+      "systems_used": ["SWIFT", "Branch Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} located in {City}, Seychelles. The country uses SWIFT codes for all international transfers and 6-digit domestic branch codes for internal routing within the Seychelles Electronic Funds Transfer (SEFT) system.",
+    "faqs": [
+      {
+        "question": "Does Seychelles use SWIFT?",
+        "answer": "Yes, SWIFT is mandatory for international payments."
+      },
+      {
+        "question": "How are domestic transfers routed?",
+        "answer": "Through 6-digit branch codes under the SEFT system."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "Tonga",
+    "country_code": "TO",
+    "constants": {
+      "banking_authority": "National Reserve Bank of Tonga",
+      "systems_used": ["SWIFT", "Branch Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} identifies {Bank} in {City}, Tonga. Tonga uses SWIFT for international transactions and domestic branch codes for local routing under the NRBT settlement system.",
+    "faqs": [
+      {
+        "question": "Does Tonga use SWIFT?",
+        "answer": "Yes, SWIFT is required for cross-border transfers."
+      },
+      {
+        "question": "How are local payments routed?",
+        "answer": "Using bank-specific branch codes."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It identifies {Bank} in {City} on the SWIFT network."
+      }
+    ]
+  },
+  {
+    "country": "Bermuda",
+    "country_code": "BM",
+    "constants": {
+      "banking_authority": "Bermuda Monetary Authority",
+      "systems_used": ["SWIFT", "Routing Number"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} corresponds to {Bank} in {City}, Bermuda. Bermuda uses SWIFT for international payments and domestic routing numbers for internal ACH transfers within its local clearing system.",
+    "faqs": [
+      {
+        "question": "Does Bermuda use domestic routing numbers?",
+        "answer": "Yes, routing numbers handle local ACH transfers."
+      },
+      {
+        "question": "Does Bermuda rely on SWIFT?",
+        "answer": "Yes, SWIFT is mandatory for foreign transactions."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It globally identifies {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Andorra",
+    "country_code": "AD",
+    "constants": {
+      "banking_authority": "Institut Nacional Andorrà de Finances (INAF)",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} in {City}, Andorra. Andorra uses SWIFT for global transfers and a 24-character IBAN for domestic/European routing. IBAN structure: Country (AD) → Check digits (2) → Bank code (4) → Account number (20).",
+    "faqs": [
+      {
+        "question": "Does Andorra use IBAN?",
+        "answer": "Yes, Andorra uses a 24-character IBAN."
+      },
+      {
+        "question": "Do Andorran banks use SWIFT?",
+        "answer": "Yes, SWIFT is used for all non-SEPA transfers."
+      },
+      {
+        "question": "What does {Swift Code} identify?",
+        "answer": "It identifies {Bank} in {City} at the global level."
+      }
+    ]
+  },
+  {
+    "country": "Monaco",
+    "country_code": "MC",
+    "constants": {
+      "banking_authority": "Monetary Authority of Monaco (via Banque de France framework)",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} in {City}, Monaco. Monaco uses SWIFT for international transfers and a 27-character IBAN compatible with SEPA standards. IBAN format: Country (MC) → Check digits (2) → Bank code (5) → Account number (21).",
+    "faqs": [
+      {
+        "question": "Does Monaco use IBAN?",
+        "answer": "Yes, Monaco uses a 27-character IBAN."
+      },
+      {
+        "question": "Does Monaco rely on SWIFT?",
+        "answer": "Yes, SWIFT is required for international movements."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It is the SWIFT/BIC identifier for {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Liechtenstein",
+    "country_code": "LI",
+    "constants": {
+      "banking_authority": "Financial Market Authority Liechtenstein (FMA)",
+      "systems_used": ["SWIFT", "IBAN"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} corresponds to {Bank} in {City}, Liechtenstein. The country uses SWIFT for international transfers and IBAN for domestic/European SEPA routing. Liechtenstein shares the Swiss IBAN system with 21-character IBANs.",
+    "faqs": [
+      {
+        "question": "Does Liechtenstein use IBAN?",
+        "answer": "Yes, it uses the Swiss-style 21-character IBAN."
+      },
+      {
+        "question": "Do banks in Liechtenstein use SWIFT?",
+        "answer": "Yes, SWIFT is necessary for international transfers."
+      },
+      {
+        "question": "What does {Swift Code} identify?",
+        "answer": "It identifies {Bank} in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "Gibraltar",
+    "country_code": "GI",
+    "constants": {
+      "banking_authority": "Gibraltar Financial Services Commission",
+      "systems_used": ["SWIFT", "IBAN", "Sort Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} in {City}, Gibraltar. Gibraltar uses SWIFT internationally, IBAN domestically, and UK-style Sort Codes for internal routing. Gibraltarian IBAN contains 23 characters: Country (GI) → Check digits (2) → Bank code (4 letters) → Account number (17).",
+    "faqs": [
+      {
+        "question": "Does Gibraltar use Sort Codes?",
+        "answer": "Yes, it follows the UK Sort Code system for domestic transfers."
+      },
+      {
+        "question": "Does Gibraltar use IBAN?",
+        "answer": "Yes, IBAN is used for domestic and SEPA payments."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It globally identifies {Bank} in {City}."
+      }
+    ]
+  },
+  {
+    "country": "Barbados",
+    "country_code": "BB",
+    "constants": {
+      "banking_authority": "Central Bank of Barbados",
+      "systems_used": ["SWIFT", "Routing Number"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} belongs to {Bank} in {City}, Barbados. Barbados uses SWIFT for international transfers and a 9-digit routing number system for domestic ACH payments.",
+    "faqs": [
+      {
+        "question": "Does Barbados use domestic routing numbers?",
+        "answer": "Yes, a 9-digit routing code is used internally."
+      },
+      {
+        "question": "Does Barbados rely on SWIFT?",
+        "answer": "Yes, SWIFT is required for all cross-border payments."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} on the international network."
+      }
+    ]
+  },
+  {
+    "country": "Palestine",
+    "country_code": "PS",
+    "constants": {
+      "banking_authority": "Palestine Monetary Authority",
+      "systems_used": ["SWIFT", "Bank Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} corresponds to {Bank} in {City}, Palestine. The country uses SWIFT for foreign transfers and 3-digit bank codes for domestic clearing under the Palestine Monetary Authority.",
+    "faqs": [
+      {
+        "question": "Does Palestine use a domestic routing system?",
+        "answer": "Yes, 3-digit bank codes route local transfers."
+      },
+      {
+        "question": "Does Palestine use SWIFT?",
+        "answer": "Yes, SWIFT is mandatory for international payments."
+      },
+      {
+        "question": "What does {Swift Code} represent?",
+        "answer": "It identifies {Bank} in {City} globally."
+      }
+    ]
+  },
+  {
+    "country": "Laos",
+    "country_code": "LA",
+    "constants": {
+      "banking_authority": "Bank of the Lao PDR",
+      "systems_used": ["SWIFT", "Branch Code"],
+      "routing_structure": "Bank → Branch → City"
+    },
+    "paragraph_template": "{Swift Code} refers to {Bank} in {City}, Laos. Laos uses SWIFT for international transactions and domestic branch codes for internal payment routing across the national clearing network.",
+    "faqs": [
+      {
+        "question": "Does Laos use SWIFT?",
+        "answer": "Yes, Laos relies on SWIFT for all cross-border payments."
+      },
+      {
+        "question": "What is used for local payment routing?",
+        "answer": "Domestic branch codes route payments within Laos."
+      },
+      {
+        "question": "What does {Swift Code} indicate?",
+        "answer": "It identifies {Bank} in {City} on the SWIFT network."
+      }
+    ]
+  }
+]
