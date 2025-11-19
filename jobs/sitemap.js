@@ -117,7 +117,7 @@ const generateForAllCountries = async (docs, type, allFiles) => {
 };
 
 // ==================================================================
-// POSTAL CODES → ONLY ITS OWN COUNTRY SUBDOMAIN
+// POSTAL CODES → ONLY ITS OWN COUNTRY SUBDOMAIN + EXTRA PAGES
 // ==================================================================
 const generatePostalCodeSitemaps = async (allFiles) => {
   logger.info('🔄 Fetching postal codes...');
@@ -126,20 +126,83 @@ const generatePostalCodeSitemaps = async (allFiles) => {
 
   logger.info(`📦 Total postal codes fetched: ${postals.length}`);
 
+  // Group: country → state → area
   const grouped = {};
+
   postals.forEach((pc) => {
-    const subdomain = pc.countryId.countryCode.toLowerCase();
-    if (!grouped[subdomain]) grouped[subdomain] = [];
-    grouped[subdomain].push(pc);
+    const country = pc.countryId.countryCode.toLowerCase();
+
+    if (!grouped[country]) grouped[country] = {};
+    if (!grouped[country][pc.stateSlug]) grouped[country][pc.stateSlug] = new Set();
+    grouped[country][pc.stateSlug].add(pc.areaSlug);
   });
 
-  for (const subdomain of Object.keys(grouped)) {
-    await processInBatches(grouped[subdomain], 'postalcodes', subdomain, allFiles);
+  // 1) Generate original batch sitemaps (existing behavior)
+  const countryGroups = {};
+  postals.forEach((pc) => {
+    const country = pc.countryId.countryCode.toLowerCase();
+
+    if (!countryGroups[country]) countryGroups[country] = [];
+    countryGroups[country].push(pc);
+  });
+
+  for (const subdomain of Object.keys(countryGroups)) {
+    await processInBatches(countryGroups[subdomain], 'postalcodes', subdomain, allFiles);
+  }
+
+  // 2) Generate extra pages sitemap (NEW)
+  for (const country of Object.keys(grouped)) {
+    const urls = [];
+
+    // PAGE 1: /postal-codes
+    urls.push(`https://${country}.informreaders.com/postal-codes`);
+
+    // PAGE 2: /postal-codes/:stateSlug
+    Object.keys(grouped[country]).forEach((stateSlug) => {
+      urls.push(`https://${country}.informreaders.com/postal-codes/${stateSlug}`);
+
+      // PAGE 3: /postal-codes/:stateSlug/:areaSlug
+      grouped[country][stateSlug].forEach((areaSlug) => {
+        urls.push(`https://${country}.informreaders.com/postal-codes/${stateSlug}/${areaSlug}`);
+      });
+    });
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls
+  .map(
+    (loc) => `
+  <url>
+    <loc>${loc}</loc>
+    <lastmod>${new Date().toISOString()}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>`,
+  )
+  .join('')}
+</urlset>`;
+
+    const fileName = `sitemap-postalcodes-extra-${country}.xml`;
+
+    await Sitemap.findOneAndUpdate(
+      { fileName },
+      {
+        fileName,
+        type: 'postalcodes-extra',
+        country,
+        batch: 0,
+        xmlContent: xml,
+      },
+      { upsert: true },
+    );
+
+    allFiles.push(fileName);
+    logger.info(`📦 Extra postal sitemap saved: ${fileName}`);
   }
 };
 
 // ==================================================================
-// BANK CODES → ONLY ITS OWN COUNTRY SUBDOMAIN
+// BANK CODES → ONLY ITS OWN COUNTRY SUBDOMAIN + EXTRA PAGES
 // ==================================================================
 const generateBankCodeSitemaps = async (allFiles) => {
   logger.info('🔄 Fetching bank codes...');
@@ -148,6 +211,7 @@ const generateBankCodeSitemaps = async (allFiles) => {
 
   logger.info(`📦 Total bank codes fetched: ${banks.length}`);
 
+  // Group: country → bankSlug → branchSlug
   const grouped = {};
 
   banks.forEach((bc) => {
@@ -156,14 +220,232 @@ const generateBankCodeSitemaps = async (allFiles) => {
       return;
     }
 
-    const subdomain = bc.countryId.countryCode.toLowerCase();
+    const country = bc.countryId.countryCode.toLowerCase();
 
-    if (!grouped[subdomain]) grouped[subdomain] = [];
-    grouped[subdomain].push(bc);
+    if (!grouped[country]) grouped[country] = {};
+    if (!grouped[country][bc.bankSlug]) grouped[country][bc.bankSlug] = new Set();
+    grouped[country][bc.bankSlug].add(bc.branchSlug);
   });
 
-  for (const subdomain of Object.keys(grouped)) {
-    await processInBatches(grouped[subdomain], 'bankcodes', subdomain, allFiles);
+  // 1) Generate original batch-wise sitemaps (existing)
+  const countryGroups = {};
+  banks.forEach((bc) => {
+    const country = bc.countryId.countryCode.toLowerCase();
+    if (!countryGroups[country]) countryGroups[country] = [];
+    countryGroups[country].push(bc);
+  });
+
+  for (const subdomain of Object.keys(countryGroups)) {
+    await processInBatches(countryGroups[subdomain], 'bankcodes', subdomain, allFiles);
+  }
+
+  // 2) Generate EXTRA PAGES sitemaps (NEW)
+  for (const country of Object.keys(grouped)) {
+    const urls = [];
+
+    // PAGE 1: /bank-codes
+    urls.push(`https://${country}.informreaders.com/bank-codes`);
+
+    // PAGE 2: /bank-codes/:bankSlug
+    Object.keys(grouped[country]).forEach((bankSlug) => {
+      urls.push(`https://${country}.informreaders.com/bank-codes/${bankSlug}`);
+
+      // PAGE 3: /bank-codes/:bankSlug/:branchSlug
+      grouped[country][bankSlug].forEach((branchSlug) => {
+        urls.push(`https://${country}.informreaders.com/bank-codes/${bankSlug}/${branchSlug}`);
+      });
+    });
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls
+  .map(
+    (loc) => `
+  <url>
+    <loc>${loc}</loc>
+    <lastmod>${new Date().toISOString()}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>`,
+  )
+  .join('')}
+</urlset>`;
+
+    const fileName = `sitemap-bankcodes-extra-${country}.xml`;
+
+    await Sitemap.findOneAndUpdate(
+      { fileName },
+      {
+        fileName,
+        type: 'bankcodes-extra',
+        country,
+        batch: 0,
+        xmlContent: xml,
+      },
+      { upsert: true },
+    );
+
+    allFiles.push(fileName);
+    logger.info(`📦 Extra bank sitemap saved: ${fileName}`);
+  }
+};
+
+// ==================================================================
+// SOFTWARE EXTRA PAGES → ALL COUNTRIES
+// ==================================================================
+const generateSoftwareExtraSitemaps = async (softwares, allFiles) => {
+  logger.info('🔄 Generating software extra pages...');
+
+  if (!softwares.length) {
+    logger.warn('⚠️ No software records found!');
+    return;
+  }
+
+  // Group by country → subCategorySlug
+  const grouped = {};
+
+  softwares.forEach((sw) => {
+    const subCategorySlug = sw.subCategoryId?.slug;
+    if (!subCategorySlug) return;
+
+    // Software is global across all supported countries
+    Object.keys(supportedCountries).forEach((country) => {
+      if (!grouped[country]) grouped[country] = new Set();
+      grouped[country].add(subCategorySlug);
+    });
+  });
+
+  // Generate XML per country
+  for (const country of Object.keys(grouped)) {
+    const urls = [];
+
+    // PAGE 1: /software
+    urls.push(`https://${country}.informreaders.com/software`);
+
+    // PAGE 2: /software/:subCategorySlug
+    grouped[country].forEach((slug) => {
+      urls.push(`https://${country}.informreaders.com/software/${slug}`);
+    });
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls
+  .map(
+    (loc) => `
+  <url>
+    <loc>${loc}</loc>
+    <lastmod>${new Date().toISOString()}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>`,
+  )
+  .join('')}
+</urlset>`;
+
+    const fileName = `sitemap-software-extra-${country}.xml`;
+
+    await Sitemap.findOneAndUpdate(
+      { fileName },
+      {
+        fileName,
+        type: 'software-extra',
+        country,
+        batch: 0,
+        xmlContent: xml,
+      },
+      { upsert: true },
+    );
+
+    allFiles.push(fileName);
+    logger.info(`📦 Extra software sitemap saved: ${fileName}`);
+  }
+};
+
+// ==================================================================
+// BABY NAMES EXTRA PAGES → ALL COUNTRIES
+// ==================================================================
+const generateBabyNamesExtraSitemaps = async (names, allFiles) => {
+  logger.info('🔄 Generating baby names extra pages...');
+
+  if (!names.length) {
+    logger.warn('⚠️ No baby names found!');
+    return;
+  }
+
+  // -----------------------------
+  // GROUP RELIGION (categorySlug)
+  // -----------------------------
+  const religionSlugs = new Set();
+
+  names.forEach((n) => {
+    if (n.categoryId?.slug) {
+      religionSlugs.add(n.categoryId.slug);
+    }
+  });
+
+  // -----------------------------
+  // ALPHABETS A–Z
+  // -----------------------------
+  const alphabets = 'abcdefghijklmnopqrstuvwxyz'.split('');
+
+  // -----------------------------
+  // Generate per country
+  // -----------------------------
+  for (const country of Object.keys(supportedCountries)) {
+    const urls = [];
+
+    // 1) /baby-names
+    urls.push(`https://${country}.informreaders.com/baby-names`);
+
+    // 2) /baby-names/religion/:categorySlug
+    religionSlugs.forEach((slug) => {
+      urls.push(`https://${country}.informreaders.com/baby-names/religion/${slug}`);
+    });
+
+    // 3) /baby-names/letter/boys-starting-with-:alphabet
+    alphabets.forEach((a) => {
+      urls.push(`https://${country}.informreaders.com/baby-names/letter/boys-starting-with-${a}`);
+    });
+
+    // 4) /baby-names/letter/girls-starting-with-:alphabet
+    alphabets.forEach((a) => {
+      urls.push(`https://${country}.informreaders.com/baby-names/letter/girls-starting-with-${a}`);
+    });
+
+    // -----------------------------
+    // Build XML
+    // -----------------------------
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls
+  .map(
+    (loc) => `
+  <url>
+    <loc>${loc}</loc>
+    <lastmod>${new Date().toISOString()}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>`,
+  )
+  .join('')}
+</urlset>`;
+
+    const fileName = `sitemap-babynames-extra-${country}.xml`;
+
+    await Sitemap.findOneAndUpdate(
+      { fileName },
+      {
+        fileName,
+        type: 'babynames-extra',
+        country,
+        batch: 0,
+        xmlContent: xml,
+      },
+      { upsert: true },
+    );
+
+    allFiles.push(fileName);
+    logger.info(`📦 Extra baby names sitemap saved: ${fileName}`);
   }
 };
 
@@ -231,9 +513,15 @@ export const generateAllSitemaps = async () => {
     const names = await Name.find({ isDeleted: false, status: true }).lean();
     await generateForAllCountries(names, 'names', allFiles);
 
+    // Baby Names extra pages
+    await generateBabyNamesExtraSitemaps(names, allFiles);
+
     // Software → All countries
     const softwares = await Software.find({ isDeleted: false, status: true }).populate('subCategoryId', 'slug').lean();
     await generateForAllCountries(softwares, 'software', allFiles);
+
+    // Software extra pages
+    await generateSoftwareExtraSitemaps(softwares, allFiles);
 
     // Global index
     await generateGlobalSitemapIndex();
