@@ -9,7 +9,7 @@ import ApiV1Router from './routes/api/v1/index.js';
 import connectDB from './db/index.js';
 import { initializeSocket } from './socket.js';
 import startCron from './jobs/feeds.js';
-import { getSitemap } from './controllers/website/SitemapController.js';
+import { getSitemap, getSitemapByCountry } from './controllers/website/SitemapController.js';
 import { bullBoardRouter, queues } from './queue/bullBoard.js';
 
 const app = express();
@@ -48,7 +48,6 @@ app.get('/', (req, res) => {
   res.send('Hello, world!');
 });
 
-
 app.get('/sync-merchants', async (req, res) => {
   try {
     await runSyncJob();
@@ -59,6 +58,7 @@ app.get('/sync-merchants', async (req, res) => {
 });
 
 app.get('/sitemaps/:filename', getSitemap);
+app.get('/api/v1/sitemaps', getSitemapByCountry);
 app.use('/api/v1', ApiV1Router);
 
 const PORT = process.env.PORT || 1000;
@@ -79,7 +79,6 @@ function getLocalIP() {
   }
   return 'localhost';
 }
-
 
 startCron();
 server.listen(PORT, () => {

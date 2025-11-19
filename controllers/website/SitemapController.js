@@ -1,4 +1,4 @@
-import Sitemap from "../../models/Sitemap.js";
+import Sitemap from '../../models/Sitemap.js';
 
 export const getSitemap = async (req, res) => {
   try {
@@ -6,13 +6,33 @@ export const getSitemap = async (req, res) => {
     const sitemap = await Sitemap.findOne({ fileName: filename });
 
     if (!sitemap) {
-      return res.status(404).send("Sitemap not found");
+      return res.status(404).send('Sitemap not found');
     }
 
-    res.set("Content-Type", "application/xml");
+    res.set('Content-Type', 'application/xml');
     return res.send(sitemap.xmlContent);
   } catch (err) {
-    console.error("❌ Error fetching sitemap:", err);
-    res.status(500).send("Server error");
+    console.error('❌ Error fetching sitemap:', err);
+    res.status(500).send('Server error');
+  }
+};
+
+export const getSitemapByCountry = async (req, res) => {
+  try {
+    const { host } = req.query;
+
+    let subdomainCountryCode = 'pk';
+    try {
+      const hostname = new URL(`https://${host}`).hostname;
+      const parts = hostname.split('.');
+      if (parts.length > 2) {
+        subdomainCountryCode = parts[0].toUpperCase(); // e.g., "PK"
+      }
+    } catch {}
+
+    const sitemaps = await Sitemap.find({ country: subdomainCountryCode }).limit(1);
+    return { error: false, data: sitemaps };
+  } catch (error) {
+    res.status(500).json({ error: true, message: error.message });
   }
 };
