@@ -149,8 +149,15 @@ const generateBankCodeSitemaps = async (allFiles) => {
   logger.info(`📦 Total bank codes fetched: ${banks.length}`);
 
   const grouped = {};
+
   banks.forEach((bc) => {
+    if (!bc.countryId || !bc.countryId.countryCode) {
+      logger.warn(`⚠️ Skipped BankCode with missing countryId: ${bc._id}`);
+      return;
+    }
+
     const subdomain = bc.countryId.countryCode.toLowerCase();
+
     if (!grouped[subdomain]) grouped[subdomain] = [];
     grouped[subdomain].push(bc);
   });
