@@ -57,7 +57,7 @@ app.get('/sync-merchants', async (req, res) => {
   }
 });
 
-app.get('/sitemaps/:filename', getSitemap);
+app.get('/api/v1/sitemaps/:filename', getSitemap);
 app.get('/api/v1/sitemaps', getSitemapByCountry);
 app.use('/api/v1', ApiV1Router);
 

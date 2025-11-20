@@ -30,7 +30,7 @@ export const getSitemapByCountry = async (req, res) => {
       }
     } catch {}
 
-    const sitemaps = await Sitemap.find({ country: subdomainCountryCode.toLowerCase() });
+    const sitemaps = await Sitemap.find({ country: subdomainCountryCode.toLowerCase() }).select('fileName updatedAt');
     return res.json({ error: false, data: sitemaps });
   } catch (error) {
     return res.status(500).json({ error: true, message: error.message });
