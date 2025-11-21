@@ -447,6 +447,47 @@ class PostalCodeController extends BaseController {
         return this.handleError(next, 'Postal Code not found', 404);
       }
 
+      // Load NEW country.json
+      const countryTemplatesFile = path.join(process.cwd(), 'templates', 'postalcodes', 'country.json');
+      const countryDataRaw = await fs.readFile(countryTemplatesFile, {
+        encoding: 'utf-8',
+      });
+
+      const countryTemplates = JSON.parse(countryDataRaw);
+
+      // Find template block for this country
+      const countryTemplate = countryTemplates.find((item) => item.country_code.toLowerCase() === postalCode.countryId.countryCode.toLowerCase());
+
+      if (!countryTemplate) {
+        return res.status(404).json({
+          message: 'No template found for this country in country.json',
+        });
+      }
+
+      // Replacement variable map
+      const map = {
+        'Postal Code': postalCode.code,
+        Area: postalCode.area || postalCode.adminName2 || '',
+        State: postalCode.state || '',
+        Country: postalCode.countryId.name,
+        Latitude: postalCode.latitude ?? '',
+        Longitude: postalCode.longitude ?? '',
+      };
+
+      // Replace helper
+      const replaceVars = (text) => text?.replace(/{(.*?)}/g, (_, key) => (map[key] !== undefined ? map[key] : `{${key}}`)) || '';
+
+      // Generate paragraph
+      const filledParagraph = replaceVars(countryTemplate.paragraph_template);
+
+      // Generate FAQs
+      const filledFaqs = countryTemplate.faqs.map((faq) => ({
+        question: replaceVars(faq.question),
+        answer: replaceVars(faq.answer),
+      }));
+
+      const constants = countryTemplate.constants || {};
+
       // Group other areas from same state (for sidebar suggestions)
       const relatedAreas = await PostalCode.find({
         countryId: country._id,
@@ -475,6 +516,12 @@ class PostalCodeController extends BaseController {
           adminName2: postalCode.adminName2,
           adminName3: postalCode.adminName3,
           accuracy: postalCode.accuracy,
+        },
+        content: {
+          title: `Postal Code ${postalCode.code} - ${postalCode.area}, ${postalCode.state}, ${postalCode.countryId.name}`,
+          paragraph: filledParagraph,
+          faqs: filledFaqs,
+          constants,
         },
         relatedAreas,
       };
