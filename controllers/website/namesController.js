@@ -60,27 +60,24 @@ class NamesController extends BaseController {
       const { host } = req.query;
 
       // Find the name by its slug
-      const name = await Name.findOne({ slug })
-        .populate('religionId', 'name')
-        .populate('categoryId', 'name')
-        .populate('adminId', 'name') // optional
-        .exec();
+      const name = await Name.findOne({ slug }).populate('religionId', 'name').populate('categoryId', 'name').populate('adminId', 'name').exec();
 
       if (!name) {
         return res.status(404).json({ message: 'Name not found' });
       }
 
-      // Load country.json (template)
+      // Load country.json template file
       const countryTemplatesFile = path.join(process.cwd(), 'templates', 'names', 'country.json');
       const countryDataRaw = await fs.readFile(countryTemplatesFile, 'utf-8');
       const countryTemplates = JSON.parse(countryDataRaw);
 
+      // Detect subdomain country code
       let subdomainCountryCode = 'pk';
       try {
         const hostname = new URL(`https://${host}`).hostname;
         const parts = hostname.split('.');
         if (parts.length > 2) {
-          subdomainCountryCode = parts[0].toLowerCase(); // e.g., "PK"
+          subdomainCountryCode = parts[0].toLowerCase();
         }
       } catch {}
 
@@ -92,44 +89,51 @@ class NamesController extends BaseController {
         return res.status(404).json({ message: 'Country not found' });
       }
 
-      const countryTemplate = countryTemplates.find((item) => item.country_code.toLowerCase() === subdomainCountryCode);
+      // Find the correct template
+      const countryTemplate = countryTemplates.find((item) => item.country_code.toLowerCase() === subdomainCountryCode.toLowerCase());
 
       if (!countryTemplate) {
         return res.status(404).json({ message: 'No template found for this country in country.json' });
       }
 
-      // Replacement variable map
+      // Variable Map for replacements
       const map = {
-        name: name.name,
-        length_of_name: name.nameLength,
-        gender: name.gender,
-        origin: name.origion,
-        meaning: name.longMeaning,
-        easy_to_pronounce: name.shortName === 'YES' ? 'easy to pronounce' : 'hard to pronounce',
-        lucky_number: name.luckyNumber || '',
-        lucky_color: name.luckyColor || '',
-        lucky_stone: name.luckyStone || '',
-        religion: name.religionId?.name || '',
-        category: name.categoryId?.name || '',
-        country: country.name,
-        city: name?.city || '',
+        Name: name.name,
+        Meaning: name.longMeaning,
+        Origin: name.origion,
+        Length: name.nameLength,
+        'Lucky Stone': name.luckyStone || '',
+        'Lucky Number': name.luckyNumber || '',
+        'Lucky Color': name.luckyColor || '',
+        'Short Name': name.shortName || 'NO',
+        Religion: name.religionId?.name || '',
+        Category: name.categoryId?.name || '',
+        Country: country.name,
+        City: name.city || '',
       };
 
-      // Replace helper
-      const replaceVars = (text) => text?.replace(/{(.*?)}/g, (_, key) => (map[key] !== undefined ? map[key] : `{${key}}`)) || '';
+      // Replacement function
+      const replaceVars = (text) =>
+        text?.replace(/{(.*?)}/g, (_, key) => {
+          return map[key] !== undefined ? map[key] : `{${key}}`;
+        }) || '';
 
-      // Generate paragraph
-      const filledParagraph = replaceVars(countryTemplate.paragraph);
+      // Generate individual sections
+      const filledTitle = replaceVars(countryTemplate.template.title);
+      const filledIntro = replaceVars(countryTemplate.template.intro);
+      const filledMeaning = replaceVars(countryTemplate.template.meaning_section);
+      const filledLucky = replaceVars(countryTemplate.template.lucky_section);
+      const filledCountryNote = replaceVars(countryTemplate.template.country_note);
 
-      // Generate FAQs
-      const filledFaqs = countryTemplate.faqs.map((faq) => ({
+      // FAQs
+      const filledFaqs = countryTemplate.template.faqs.map((faq) => ({
         question: replaceVars(faq.q),
         answer: replaceVars(faq.a),
       }));
 
       const constants = countryTemplate.constants || {};
 
-      // Find related names (same category & country)
+      // Related names
       const relatedNames = await Name.find({
         _id: { $ne: name._id },
         categoryId: name.categoryId?._id,
@@ -138,12 +142,15 @@ class NamesController extends BaseController {
         .limit(5)
         .exec();
 
-      // Build response (mirrors getAreaDetail structure)
+      // Final response structure
       const data = {
         ...name.toObject(),
         content: {
-          title: `Name: ${name.name} - ${name.gender}, ${name.origion}`,
-          paragraph: filledParagraph,
+          title: filledTitle,
+          intro: filledIntro,
+          meaningSection: filledMeaning,
+          luckySection: filledLucky,
+          countryNote: filledCountryNote,
           faqs: filledFaqs,
           constants,
         },
