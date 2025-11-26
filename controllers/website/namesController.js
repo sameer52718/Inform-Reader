@@ -99,7 +99,7 @@ class NamesController extends BaseController {
       // Variable Map for replacements
       const map = {
         Name: name.name,
-        Meaning: name.longMeaning,
+        Meaning: name.shortMeaning,
         Origin: name.origion,
         Length: name.nameLength,
         'Lucky Stone': name.luckyStone || '',
