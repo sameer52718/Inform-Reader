@@ -1,6 +1,8 @@
 import Software from '../../models/Software.js';
 import BaseController from '../BaseController.js';
 import SubCategory from '../../models/SubCategory.js';
+import path from 'path';
+import fs from 'fs/promises';
 
 class SoftwareController extends BaseController {
   constructor() {
@@ -66,10 +68,27 @@ class SoftwareController extends BaseController {
   async detail(req, res) {
     try {
       const { id: slug } = req.params;
+      const { host } = req.query;
 
-      // Get the main software by ID
+      let subdomainCountryCode = 'pk';
+      try {
+        const hostname = new URL(`https://${host}`).hostname;
+        const parts = hostname.split('.');
+        if (parts.length > 2) subdomainCountryCode = parts[0].toLowerCase();
+      } catch {}
+
+      // Load country.json
+      const filePath = path.join(process.cwd(), 'templates', 'softwares', 'country.json');
+      const countryJson = JSON.parse(await fs.readFile(filePath, 'utf-8'));
+
+      // Which country template?
+      const countryTemplate = countryJson.find((c) => c.code.toLowerCase() === subdomainCountryCode.toLowerCase());
+
+      if (!countryTemplate) return res.status(404).json({ message: 'Country template not found' });
+
+      // Fetch software
       const software = await Software.findOne({
-        slug: slug,
+        slug,
         status: true,
         isDeleted: false,
       })
@@ -78,25 +97,88 @@ class SoftwareController extends BaseController {
         .populate('adminId', 'name email')
         .select('-__v -isDeleted');
 
-      if (!software) {
-        return res.status(404).json({ message: 'Software not found' });
-      }
+      if (!software) return res.status(404).json({ message: 'Software not found' });
 
+      // Other versions
       const versionList = await Software.find({
-        name: software.name, // same software
-        _id: { $ne: software._id }, // exclude current software
-        version: { $ne: software.version }, // version must be different
+        name: software.name,
+        _id: { $ne: software._id },
+        version: { $ne: software.version },
         status: true,
         isDeleted: false,
       })
         .select('name slug version logo size releaseDate')
         .sort({ createdAt: -1 })
         .lean();
-      console.log(versionList);
 
+      // -------------------------------
+      // 🔥 TEMPLATE SELECTION LOGIC
+      // -------------------------------
+      const cat = software.categoryId?.name?.toLowerCase() || '';
+      const subcat = software.subCategoryId?.name?.toLowerCase() || '';
+
+      let templateKey = '';
+
+      // Priority #1 → Subcategory
+      if (subcat.includes('game') || subcat.includes('games')) templateKey = 'game';
+      else if (subcat.includes('browsers')) templateKey = 'web_tool';
+      // Priority #2 → Category (only if subcategory is not known)
+      else if (cat.includes('windows') || cat.includes('mac')) templateKey = 'pc_software';
+      else if (cat.includes('android') || cat.includes('ios')) templateKey = 'mobile_app';
+
+      // Default fallback
+      if (!templateKey) templateKey = 'pc_software';
+
+      // Get main template block
+      const template = countryTemplate.templates[templateKey];
+      if (!template) return res.status(404).json({ message: 'Template not available for this type' });
+
+      // -------------------------------
+      // 🔥 VARIABLE MAP
+      // -------------------------------
+      const map = {
+        Name: software.name,
+        Version: software.version,
+        LastUpdated: software.releaseDate ? new Date(software.releaseDate).toDateString() : '',
+        Size: software.size || '',
+        Status: software.status ? 'Official' : 'Unofficial',
+        Category: software.categoryId?.name || '',
+        SubCategory: software.subCategoryId?.name || '',
+        Country: countryTemplate.country,
+      };
+
+      const replaceVars = (text) => text?.replace(/{(.*?)}/g, (_, k) => (map[k] ? map[k] : `{${k}}`)) || '';
+
+      // -------------------------------
+      // 🔥 BUILD CONTENT
+      // -------------------------------
+      let content = {};
+
+      for (let key of Object.keys(template)) {
+        if (Array.isArray(template[key])) {
+          content[key] = template[key].map((item) =>
+            typeof item === 'string'
+              ? replaceVars(item)
+              : {
+                  q: replaceVars(item.q),
+                  a: replaceVars(item.a),
+                },
+          );
+        } else if (typeof template[key] === 'object') {
+          content[key] = {};
+          Object.keys(template[key]).forEach((field) => {
+            content[key][field] = replaceVars(template[key][field]);
+          });
+        } else {
+          content[key] = replaceVars(template[key]);
+        }
+      }
+      console.log(content);
       return res.status(200).json({
         data: software,
         versions: versionList,
+        templateType: templateKey,
+        content,
       });
     } catch (error) {
       console.error(error);
