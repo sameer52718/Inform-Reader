@@ -211,6 +211,7 @@ class HomeController extends BaseController {
               slug: 1,
               categoryId: 1,
               categoryName: '$categoryInfo.name',
+              categorySlug: '$categoryInfo.slug',
             },
           },
         ]);

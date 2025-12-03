@@ -4,7 +4,7 @@ import BiographyController from '../../../../controllers/website/biographyContro
 const router = Router();
 
 router.get('/', BiographyController.get);
-router.get('/:categoryId', BiographyController.filterByCategory);
+router.get('/:categorySlug', BiographyController.filterByCategory);
 router.get('/detail/:biographyId', BiographyController.detail);
 
 export default router;

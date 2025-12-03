@@ -86,6 +86,7 @@ class BiographyController extends BaseController {
                   _id: '$$bio._id',
                   name: '$$bio.name',
                   image: '$$bio.image',
+                  categorySlug: '$categoryInfo.slug',
                   categoryId: '$$bio.categoryId',
                   subCategoryId: '$$bio.subCategoryId',
                   slug: '$$bio.slug',
@@ -116,8 +117,8 @@ class BiographyController extends BaseController {
 
   async filterByCategory(req, res, next) {
     try {
-      let { page = 1, limit = 10, isDeleted, search, subCategoryId, country, industry, gender } = req.query;
-      const { categoryId } = req.params;
+      let { page = 1, limit = 10, search, subCategoryId, country, industry, gender } = req.query;
+      const { categorySlug } = req.params;
 
       page = parseInt(page);
       limit = parseInt(limit);
@@ -125,10 +126,16 @@ class BiographyController extends BaseController {
 
       // Construct filters
       const filters = {
-        categoryId,
         isDeleted: false,
       };
-      if (isDeleted) filters.isDeleted = true;
+
+      const category = await Category.findOne({ slug: categorySlug });
+      if (!category) {
+        return this.handleError(next, 'Category Not Found', 404);
+      }
+
+      filters.categoryId = category._id;
+
       if (search) {
         filters.name = { $regex: search, $options: 'i' }; // Case-insensitive name filter
       }
@@ -165,7 +172,7 @@ class BiographyController extends BaseController {
 
       // Query with filters, pagination, and populate related fields
       const biographies = await Biography.find(filters)
-        .populate('categoryId', 'name')
+        .populate('categoryId', 'name slug')
         .populate('subCategoryId', 'name')
         .populate('nationalityId', 'name')
         .select('name image slug')
@@ -182,6 +189,7 @@ class BiographyController extends BaseController {
           name: bio.name,
           image: bio.image,
           slug: bio.slug,
+          categorySlug: bio.categoryId?.slug,
           categoryName: bio.categoryId?.name,
           subCategoryName: bio.subCategoryId?.name,
           nationality: bio.nationalityId?.name,
