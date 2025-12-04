@@ -1,7 +1,8 @@
 import axios from 'axios';
 import CurrencyRate from '../models/CurrencyRate.js';
 import Country from '../models/Country.js';
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
+import CurrencyRateHistory from '../models/CurrencyRateHistory.js';
 dotenv.config();
 // Currency metadata mapping
 const CURRENCY_METADATA = {
@@ -94,6 +95,12 @@ export async function fetchAndSaveCurrencyRates() {
         },
         { upsert: true },
       );
+
+      await CurrencyRateHistory.create({
+        baseCurrency,
+        conversionRates,
+        fetchedAt: new Date(),
+      });
     }
 
     console.log('All currency rates updated successfully.');

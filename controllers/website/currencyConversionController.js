@@ -1,6 +1,7 @@
 import BaseController from '../BaseController.js';
 import CurrencyRate from '../../models/CurrencyRate.js';
 import Country from '../../models/Country.js';
+import CurrencyRateHistory from '../../models/CurrencyRateHistory.js';
 
 class CurrencyConverterController extends BaseController {
   constructor() {
@@ -9,6 +10,7 @@ class CurrencyConverterController extends BaseController {
     this.convert = this.convert.bind(this);
     this.getForexPage = this.getForexPage.bind(this);
     this.getCountryForex = this.getCountryForex.bind(this);
+    this.getHistory = this.getHistory.bind(this);
   }
 
   async getCurrencies(req, res, next) {
@@ -259,7 +261,7 @@ class CurrencyConverterController extends BaseController {
             code: rel.countryCode,
             currency: relCurrency.baseCurrency,
             currencyName: relCurrency.fullName,
-            link: `/forex/${rel.name.toLowerCase().replaceAll(' ', '-')}`,
+            link: `/currency-converter/country/${rel.name.toLowerCase().replaceAll(' ', '-')}`,
           });
         }
       }
@@ -296,6 +298,77 @@ class CurrencyConverterController extends BaseController {
         seo,
       });
     } catch (error) {
+      return this.handleError(next, error.message, 500);
+    }
+  }
+
+  async getHistory(req, res, next) {
+    try {
+      const { pair, range } = req.params;
+
+      if (!pair || !pair.includes('-to-')) {
+        return this.handleError(next, 'Invalid currency pair format', 400);
+      }
+
+      const [fromCurrency, toCurrency] = pair.split('-to-');
+      const from = fromCurrency.toUpperCase();
+      const to = toCurrency.toUpperCase();
+
+      const allowedRanges = ['7d', '30d', '90d', '1y'];
+      if (!allowedRanges.includes(range)) {
+        return this.handleError(next, 'Invalid range. Allowed: 7d, 30d, 90d, 1y', 400);
+      }
+
+      // Range → days mapping
+      const daysMap = {
+        '7d': 7,
+        '30d': 30,
+        '90d': 90,
+        '1y': 365,
+      };
+
+      const days = daysMap[range];
+      const fromDate = new Date();
+      fromDate.setDate(fromDate.getDate() - days);
+
+      // Fetch history for base currency
+      const records = await CurrencyRateHistory.find({
+        baseCurrency: from,
+        fetchedAt: { $gte: fromDate },
+      })
+        .sort({ fetchedAt: 1 })
+        .select('conversionRates fetchedAt -_id');
+
+      if (!records.length) {
+        return this.handleError(next, 'No historical data found for this range', 404);
+      }
+
+      // Build chart-ready history
+      const history = records
+        .map((entry) => {
+          const rate = entry.conversionRates.get(to);
+          if (!rate) return null;
+
+          return {
+            date: entry.fetchedAt,
+            rate: rate,
+          };
+        })
+        .filter(Boolean); // remove nulls
+
+      if (!history.length) {
+        return this.handleError(next, `No historical rates found for ${from} → ${to}`, 404);
+      }
+
+      return res.status(200).json({
+        success: true,
+        pair: `${from}-${to}`,
+        range,
+        count: history.length,
+        data: history,
+      });
+    } catch (error) {
+      console.error(error);
       return this.handleError(next, error.message, 500);
     }
   }

@@ -7,4 +7,5 @@ router.get('/', CurrencyConversionController.getCurrencies);
 router.get('/convert', CurrencyConversionController.convert);
 router.get('/convert/:pair', CurrencyConversionController.getForexPage);
 router.get('/:country', CurrencyConversionController.getCountryForex);
+router.get('/history/:pair/:range', CurrencyConversionController.getHistory);
 export default router;
