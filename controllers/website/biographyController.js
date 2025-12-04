@@ -78,6 +78,7 @@ class BiographyController extends BaseController {
           $project: {
             categoryId: 1,
             categoryName: '$categoryInfo.name',
+            categorySlug: '$categoryInfo.slug',
             biographies: {
               $map: {
                 input: '$biographies',
