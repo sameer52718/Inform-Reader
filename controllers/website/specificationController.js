@@ -10,7 +10,26 @@ class SpecificationController extends BaseController {
     this.get = this.get.bind(this);
     this.getAll = this.getAll.bind(this);
     this.detail = this.detail.bind(this);
+    this.getBrands = this.getBrands.bind(this);
     this.wishlist = this.wishlist.bind(this);
+  }
+
+  async getBrands(req, res, next) {
+    const { categorySlug } = req.params;
+
+    try {
+      const category = await Category.findOne({ status: true, isDeleted: false, slug: categorySlug }).sort({ createdAt: -1 });
+
+      if (!category) {
+        return res.json({ success: true, data: [] });
+      }
+
+      const brands = await Brand.find({ category: category._id });
+
+      return res.json({ success: true, data: { brands, category } });
+    } catch (error) {
+      return this.handleError(next, error.message || 'Failed to update wishlist', 500);
+    }
   }
 
   async get(req, res, next) {
@@ -76,6 +95,7 @@ class SpecificationController extends BaseController {
           $project: {
             categoryId: 1,
             categoryName: '$categoryInfo.name',
+            categorySlug: '$categoryInfo.slug',
             specifications: {
               $map: {
                 input: '$specifications',
@@ -83,11 +103,13 @@ class SpecificationController extends BaseController {
                 in: {
                   _id: '$$spec._id',
                   name: '$$spec.name',
+                  slug: '$$spec.slug',
                   image: '$$spec.image',
                   price: '$$spec.price',
                   priceSymbol: '$$spec.priceSymbol', // Fixed typo: priceSymbal -> priceSymbol
                   brandId: '$$spec.brandId',
                   categoryId: '$$spec.categoryId',
+                  categorySlug: '$categoryInfo.slug',
                   subCategoryId: '$$spec.subCategoryId',
                   // Match brandInfo with brandId
                   brandName: {
@@ -97,6 +119,9 @@ class SpecificationController extends BaseController {
                         $indexOfArray: ['$brandInfo._id', '$$spec.brandId'],
                       },
                     ],
+                  },
+                  brandSlug: {
+                    $arrayElemAt: ['$brandInfo.slug', { $indexOfArray: ['$brandInfo._id', '$$spec.brandId'] }],
                   },
                   // Match subCategoryInfo with subCategoryId
                   subCategoryName: {
@@ -137,12 +162,11 @@ class SpecificationController extends BaseController {
   async getAll(req, res, next) {
     try {
       // Extract and validate query parameters
-      const { category: categoryId } = req.params;
+      const { categorySlug, brandSlug } = req.params;
       const {
         page = 1,
         limit = 10,
         sortBy = 'latest',
-        brand,
         priceRange,
         availability,
         condition,
@@ -160,17 +184,12 @@ class SpecificationController extends BaseController {
         storageType,
         graphicsCard,
         displayResolution,
-        connectivity,
         cameraType,
         megapixels,
         sensorType,
         lensMount,
         videoResolution,
         cameraFeatures,
-        accessoryType,
-        compatibility,
-        color,
-        accessoryFeatures,
         resolution,
         smartTv,
         tvFeatures,
@@ -181,10 +200,6 @@ class SpecificationController extends BaseController {
         printerConnectivity,
         printSpeed,
         printerFeatures,
-        networkProductType,
-        networkSpeed,
-        band,
-        networkFeatures,
         applianceType,
         capacity,
         applianceFeatures,
@@ -194,33 +209,30 @@ class SpecificationController extends BaseController {
       const limitNum = parseInt(limit, 10);
       const skip = (pageNum - 1) * limitNum;
 
-      // Validate categoryId parameter
-      if (!mongoose.Types.ObjectId.isValid(categoryId)) {
-        return next({
-          status: 400,
-          message: 'Valid Category ID is required',
-        });
-      }
-
-      // Find category by ID
-      const categoryDoc = await Category.findById(categoryId);
+      // Find category by slug
+      const categoryDoc = await Category.findOne({ status: true, isDeleted: false, slug: categorySlug }).sort({ createdAt: -1 });
       if (!categoryDoc) {
         return next({
           status: 404,
-          message: `Category with ID '${categoryId}' not found`,
+          message: `Category with slug '${categorySlug}' not found`,
+        });
+      }
+
+      const brand = await Brand.findOne({ status: true, isDeleted: false, slug: brandSlug }).sort({ createdAt: -1 });
+
+      if (!brand) {
+        return next({
+          status: 404,
+          message: `Brand with slug '${brandSlug}' not found`,
         });
       }
 
       // Build query
       const query = {
-        categoryId: new mongoose.Types.ObjectId(categoryId),
+        categoryId: categoryDoc._id,
+        brandId: brand._id,
       };
 
-      // Apply general filters
-      if (brand) {
-        const brandIds = brand.split(',').map((b) => new mongoose.Types.ObjectId(b.trim()));
-        query.brandId = { $in: brandIds };
-      }
       if (priceRange) {
         const ranges = priceRange.split(',').map((r) => r.trim());
         query.$or = ranges.map((range) => {
@@ -340,7 +352,7 @@ class SpecificationController extends BaseController {
         if (capacity) query['data.capacity'] = { $in: capacity.split(',').map((c) => c.trim()) };
         if (applianceFeatures) query['data.applianceFeatures'] = { $in: applianceFeatures.split(',').map((f) => f.trim()) };
       }
-console.log(query);
+      console.log(query);
 
       // Define aggregation pipeline
       const aggregationPipeline = [
@@ -404,6 +416,7 @@ console.log(query);
             categoryName: '$category.name',
             subCategoryId: 1,
             subCategoryName: '$subCategory.name',
+            slug: 1,
             wishlist: 1,
             data: 1, // Include data for client-side rendering of specifications
           },
@@ -464,20 +477,11 @@ console.log(query);
   // GET DETAIL: By id and categoryId
   async detail(req, res, next) {
     try {
-      const { category, id } = req.params;
+      const { slug } = req.params;
 
-      if (!this.isValidId(category)) {
-        return this.handleError(next, 'Invalid Category Id', 400);
-      }
-
-      if (!this.isValidId(id)) {
-        return this.handleError(next, 'Invalid Specification Id', 400);
-      }
-      
       // Build query with categoryId
       const query = {
-        categoryId: category,
-        _id: id,
+        slug,
       };
 
       const specification = await Specification.findOne(query).populate('categoryId', 'name').populate('brandId', 'name').populate('subCategoryId', 'name');

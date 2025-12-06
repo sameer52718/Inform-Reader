@@ -6,6 +6,7 @@ const brandSchema = new mongoose.Schema(
     name: { type: String, required: true, unique: true },
     status: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
+    slug: { type: String },
     category: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: 'Category',
@@ -14,6 +15,7 @@ const brandSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+brandSchema.index({ slug: 1 });
 const Brand = mongoose.model('Brand', brandSchema);
 
 export default Brand;

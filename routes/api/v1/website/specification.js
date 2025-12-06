@@ -4,8 +4,9 @@ import isUser from '../../../../middlewares/isUser.js';
 const router = Router();
 
 router.get('/', SpecificationController.get);
-router.get('/:category', SpecificationController.getAll);
-router.get('/:category/:id', SpecificationController.detail);
+router.get('/:categorySlug', SpecificationController.getBrands);
+router.get('/:categorySlug/:brandSlug', SpecificationController.getAll);
+router.get('/:categorySlug/:brandSlug/:slug', SpecificationController.detail);
 router.post('/wishlist', isUser, SpecificationController.wishlist);
 
 export default router;

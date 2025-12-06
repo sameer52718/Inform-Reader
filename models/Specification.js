@@ -57,6 +57,7 @@ const specificationSchema = new mongoose.Schema(
     price: { type: Number, required: true },
     priceSymbol: { type: String, default: 'PKR' },
     image: { type: String, required: false, trim: true },
+    slug: { type: String, unique: true },
     data: dataSchema,
     status: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
