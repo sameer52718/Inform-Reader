@@ -1,12 +1,22 @@
-import Category from '../../models/Category.js';
 import Vehicle from '../../models/Bike.js';
 import BaseController from '../BaseController.js';
-
+import Make from '../../models/Make.js';
 class VehicleController extends BaseController {
   constructor() {
     super();
     this.get = this.get.bind(this);
     this.detail = this.detail.bind(this);
+    this.getMakes = this.getMakes.bind(this);
+  }
+
+  async getMakes(req, res, next) {
+    try {
+      const makes = await Make.find({ type: 'BIKE', status: true, isDeleted: false }).sort({ name: 1 });
+
+      return res.json({ success: true, data: makes });
+    } catch (error) {
+      return this.handleError(next, error.message || 'Failed to update wishlist', 500);
+    }
   }
 
   // Helper function to parse year range into MongoDB query conditions
@@ -42,19 +52,33 @@ class VehicleController extends BaseController {
 
   async get(req, res, next) {
     try {
-      const { page = 1, limit = 10, search, makeId, category, vehicleType, year } = req.query;
+      const { page = 1, limit = 10, search, makeSlug, vehicleType, year } = req.query;
 
       const parsedLimit = parseInt(limit);
       const parsedPage = parseInt(page);
+
+      const make = await Make.findOne({ slug: makeSlug, status: true, isDeleted: false });
+
+      if (!make) {
+        return res.status(200).json({
+          data: [],
+          pagination: {
+            totalItems: 0,
+            totalPages: 1,
+            currentPage: parsedPage,
+            pageSize: parsedLimit,
+          },
+        });
+      }
 
       // Base filters for active and not-deleted vehicles
       const filter = {
         status: true,
         isDeleted: false,
+        makeId: make._id,
       };
 
       // Apply optional filters
-      if (makeId) filter.makeId = makeId;
       if (vehicleType) filter.vehicleType = vehicleType.toUpperCase(); // Ensure case consistency
 
       // Apply name search if provided (case-insensitive)
@@ -76,6 +100,7 @@ class VehicleController extends BaseController {
       // Query the database with pagination
       const vehicleList = await Vehicle.find(filter)
         .select('name year vehicleType image slug')
+        .populate('makeId', 'name slug')
         .skip((parsedPage - 1) * parsedLimit)
         .limit(parsedLimit);
 
@@ -89,9 +114,6 @@ class VehicleController extends BaseController {
           totalPages: Math.ceil(totalCount / parsedLimit),
           currentPage: parsedPage,
           pageSize: parsedLimit,
-        },
-        filters: {
-          year, // Echo back the applied year filter for debugging or UI purposes
         },
       });
     } catch (error) {
@@ -123,10 +145,11 @@ class VehicleController extends BaseController {
         _id: { $ne: vehicle._id }, // Exclude the current vehicle
         status: true,
         isDeleted: false,
-        categoryId: vehicle.categoryId._id,
+        makeId: vehicle.makeId._id,
       })
         .limit(20)
         .select('name year vehicleType image slug')
+        .populate('makeId', 'name slug')
         .lean();
 
       return res.status(200).json({

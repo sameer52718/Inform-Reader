@@ -4,13 +4,16 @@ const modelSchema = new mongoose.Schema(
   {
     adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     makeId: { type: mongoose.Types.ObjectId, required: false, ref: 'Make' },
-    name: { type: String, required: true, },
+    name: { type: String, required: true },
+    slug: { type: String },
     image: { type: String, required: false, trim: true },
     status: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },
 );
+
+modelSchema.index({ slug: 1 });
 
 const Model = mongoose.model('Model', modelSchema);
 

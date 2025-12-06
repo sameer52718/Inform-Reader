@@ -3,14 +3,17 @@ import mongoose from 'mongoose';
 const makeSchema = new mongoose.Schema(
   {
     adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    name: { type: String, required: true, },
+    name: { type: String, required: true },
     image: { type: String, required: false, trim: true },
     status: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
-    type: { type: String, default: "CAR", enum: ["CAR", "BIKE"] }
+    type: { type: String, default: 'CAR', enum: ['CAR', 'BIKE'] },
+    slug: { type: String },
   },
   { timestamps: true },
 );
+
+makeSchema.index({ slug: 1 });
 
 const Make = mongoose.model('Make', makeSchema);
 
