@@ -33,10 +33,12 @@ const softwareSchema = new mongoose.Schema(
 softwareSchema.index({ slug: 1 }, { unique: true });
 softwareSchema.index({ status: 1, isDeleted: 1, categoryId: 1 });
 softwareSchema.index({ status: 1, isDeleted: 1, subCategoryId: 1 });
-softwareSchema.index({ status: 1, isDeleted: 1, operatingSystem: 1 });
-softwareSchema.index({ status: 1, isDeleted: 1, tag: 1 });
-softwareSchema.index({ name: 'text' });
-
+softwareSchema.index({
+  name: 1,
+  status: 1,
+  isDeleted: 1,
+  createdAt: -1,
+});
 const Software = mongoose.model('Software', softwareSchema);
 
 export default Software;

@@ -32,5 +32,7 @@ const nameSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+nameSchema.index({ categoryId: 1, _id: 1 });
+
 const Name = mongoose.model('Name', nameSchema);
 export default Name;
