@@ -4,6 +4,8 @@ import vehicleController from '../../../../controllers/website/vehicleController
 const router = Router();
 
 // Route for listing software with pagination and filters
+router.get('/make', vehicleController.getMakes);
+router.get('/model/:slug', vehicleController.getModel);
 router.get('/', vehicleController.get);
 router.get('/:id', vehicleController.detail);
 

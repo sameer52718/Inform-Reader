@@ -259,8 +259,8 @@ class HomeController extends BaseController {
               image: 1,
               slug: 1,
               category: { _id: '$categoryId', name: '$categoryInfo.name' },
-              make: { _id: '$makeId', name: '$makeInfo.name' },
-              model: { _id: '$modelId', name: '$modelInfo.name' },
+              make: { _id: '$makeId', name: '$makeInfo.name', slug: '$makeInfo.slug' },
+              model: { _id: '$modelId', name: '$modelInfo.name', slug: '$modelInfo.slug' },
             },
           },
         ]);

@@ -1,12 +1,16 @@
 import Category from '../../models/Category.js';
 import Vehicle from '../../models/Vehicle.js';
 import BaseController from '../BaseController.js';
+import Make from '../../models/Make.js';
+import Model from '../../models/Model.js';
 
 class VehicleController extends BaseController {
   constructor() {
     super();
     this.get = this.get.bind(this);
     this.detail = this.detail.bind(this);
+    this.getMakes = this.getMakes.bind(this);
+    this.getModel = this.getModel.bind(this);
   }
 
   // Helper function to parse year range into MongoDB query conditions
@@ -42,20 +46,49 @@ class VehicleController extends BaseController {
 
   async get(req, res, next) {
     try {
-      const { page = 1, limit = 10, search, makeId, modelId, category, vehicleType, year } = req.query;
+      const { page = 1, limit = 10, search, makeSlug, modelSlug, category, vehicleType, year } = req.query;
 
       const parsedLimit = parseInt(limit);
       const parsedPage = parseInt(page);
+
+      const make = await Make.findOne({ slug: makeSlug, status: true, isDeleted: false });
+      console.log(make);
+
+      if (!make) {
+        return res.status(200).json({
+          data: [],
+          pagination: {
+            totalItems: 0,
+            totalPages: 1,
+            currentPage: parsedPage,
+            pageSize: parsedLimit,
+          },
+        });
+      }
+
+      const model = await Model.findOne({ slug: modelSlug, status: true, isDeleted: false });
+
+      if (!model) {
+        return res.status(200).json({
+          data: [],
+          pagination: {
+            totalItems: 0,
+            totalPages: 1,
+            currentPage: parsedPage,
+            pageSize: parsedLimit,
+          },
+        });
+      }
 
       // Base filters for active and not-deleted vehicles
       const filter = {
         status: true,
         isDeleted: false,
+        makeId: make._id,
+        modelId: model._id,
       };
 
       // Apply optional filters
-      if (makeId) filter.makeId = makeId;
-      if (modelId) filter.modelId = modelId;
       if (vehicleType) filter.vehicleType = vehicleType.toUpperCase(); // Ensure case consistency
 
       if (category) {
@@ -85,6 +118,9 @@ class VehicleController extends BaseController {
       // Query the database with pagination
       const vehicleList = await Vehicle.find(filter)
         .select('name year vehicleType image slug')
+        .populate('makeId', 'name slug')
+        .populate('modelId', 'name slug')
+        .sort({ year: -1 })
         .skip((parsedPage - 1) * parsedLimit)
         .limit(parsedLimit);
 
@@ -119,8 +155,8 @@ class VehicleController extends BaseController {
         status: true,
         isDeleted: false,
       })
-        .populate('makeId', 'name')
-        .populate('modelId', 'name')
+        .populate('makeId', 'name slug')
+        .populate('modelId', 'name slug')
         .populate('categoryId', 'name')
         .select('-__v -isDeleted');
 
@@ -134,9 +170,14 @@ class VehicleController extends BaseController {
         status: true,
         isDeleted: false,
         categoryId: vehicle.categoryId._id,
+        modelId: vehicle?.modelId?._id,
+        makeId: vehicle?.makeId?._id,
       })
         .limit(20)
+        .populate('makeId', 'name slug')
+        .populate('modelId', 'name slug')
         .select('name year vehicleType image slug')
+        .sort({ year: -1 })
         .lean();
 
       return res.status(200).json({
@@ -146,6 +187,32 @@ class VehicleController extends BaseController {
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: 'Error retrieving vehicle details' });
+    }
+  }
+
+  async getMakes(req, res, next) {
+    try {
+      const makes = await Make.find({ type: 'CAR', status: true, isDeleted: false }).sort({ name: 1 });
+
+      return res.json({ success: true, data: makes });
+    } catch (error) {
+      return this.handleError(next, error.message || 'Failed to update wishlist', 500);
+    }
+  }
+
+  async getModel(req, res, next) {
+    try {
+      const { slug } = req.params;
+
+      const make = await Make.findOne({ slug, isDeleted: false, status: true });
+      if (!make) {
+        return res.json({ success: true, data: [] });
+      }
+      const models = await Model.find({ makeId: make._id, status: true, isDeleted: false }).sort({ name: 1 });
+
+      return res.json({ success: true, data: { models, make } });
+    } catch (error) {
+      return this.handleError(next, error.message || 'Failed to update wishlist', 500);
     }
   }
 }
