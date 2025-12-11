@@ -1,9 +1,10 @@
 import axios from 'axios';
 import MetalPrice from '../models/MetalPrice.js';
+import MetalPriceHistory from '../models/MetalPriceHistory.js';
 import CurrencyRate from '../models/CurrencyRate.js';
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 dotenv.config();
-// Metal metadata mapping
+
 const METAL_METADATA = {
   XAU: { fullName: 'Gold', symbol: 'Au', unit: 'ounce' },
   XAG: { fullName: 'Silver', symbol: 'Ag', unit: 'ounce' },
@@ -22,14 +23,15 @@ const API_KEY = process.env.METALS_API_KEY;
 
 export async function fetchAndSaveMetalPrices() {
   try {
-    // Fetch USD currency rates
+    // 1. USD conversion rates
     const usdCurrency = await CurrencyRate.findOne({ baseCurrency: 'USD' });
     if (!usdCurrency || !usdCurrency.conversionRates) {
-      throw new Error('USD currency or conversion rates not found in CurrencyRate collection');
+      throw new Error('USD conversion rates not found');
     }
 
-    // Fetch metal prices from Metals-API
+    // 2. Fetch metal prices from Metals API
     const response = await axios.get(`https://metals-api.com/api/latest?access_key=${API_KEY}&base=USD&symbols=${METALS.join(',')}`);
+
     const data = response.data;
 
     if (!data.success) {
@@ -38,26 +40,26 @@ export async function fetchAndSaveMetalPrices() {
     }
 
     for (const metalCode of METALS) {
-      const rate = data.rates[`USD${metalCode}`] || data.rates[metalCode];
+      const metadata = METAL_METADATA[metalCode];
 
-      console.log(`${metalCode}, ${rate} , rate`);
+      // Metal price from API (typically price is inverse)
+      const rate = data.rates[metalCode];
 
-      if (!rate) {
+      if (!rate || rate === 0) {
         console.warn(`No rate found for ${metalCode}`);
         continue;
       }
 
-      // Convert rate (1/value) to price in USD
-      const priceUSD = rate !== 0 ? rate.toFixed(6) : 0;
-      const metadata = METAL_METADATA[metalCode];
-      console.log(`${metalCode}, ${priceUSD}, priceusd`);
+      // Convert API rate -> metal price in USD
+      const priceUSD = Number(rate);
 
-      // Calculate prices in all supported currencies
+      // Convert price in all known currencies
       const conversionPrices = new Map();
       for (const [currency, rate] of usdCurrency.conversionRates.entries()) {
-        conversionPrices.set(currency, (priceUSD * rate).toFixed(4));
+        conversionPrices.set(currency, Number(priceUSD * rate));
       }
 
+      // 3. Update latest metal price
       await MetalPrice.updateOne(
         { metalCode },
         {
@@ -74,11 +76,18 @@ export async function fetchAndSaveMetalPrices() {
         },
         { upsert: true },
       );
+
+      // 4. Insert history
+      await MetalPriceHistory.create({
+        metalCode,
+        priceUSD,
+        conversionPrices,
+        fetchedAt: new Date(data.date),
+      });
     }
 
     console.log('All metal prices updated successfully.');
   } catch (error) {
-    console.error(error.response)
     console.error('Error fetching or saving metal prices:', error.message);
   }
 }
