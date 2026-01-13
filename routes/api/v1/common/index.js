@@ -18,5 +18,6 @@ router.get('/nationality', commonController.nationality);
 router.post('/translate', commonController.translateContent);
 
 router.post('/chat', commonController.chat);
+router.post('/gemini', commonController.generateContent);
 
 export default router;

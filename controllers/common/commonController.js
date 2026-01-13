@@ -13,7 +13,13 @@ import City from '../../models/City.js';
 import Nationality from '../../models/Nationality.js';
 import dotenv from 'dotenv';
 import ollama from 'ollama';
+import { GoogleGenAI } from '@google/genai';
+
 dotenv.config();
+
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+
+const gemini = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
 class CommonController extends BaseController {
   constructor() {
@@ -32,6 +38,7 @@ class CommonController extends BaseController {
     this.translateContent = this.translateContent.bind(this);
     this.nationality = this.nationality.bind(this);
     this.chat = this.chat.bind(this);
+    this.generateContent = this.generateContent.bind(this);
   }
 
   async country(req, res, next) {
@@ -273,6 +280,25 @@ class CommonController extends BaseController {
         messages: [{ role: 'user', content: message }],
       });
       return res.json({ error: false, response: response.message.content });
+    } catch (error) {
+      return this.handleError(next, error.message, 500);
+    }
+  }
+
+  async generateContent(req, res, next) {
+    try {
+      const { message } = req.body;
+      // console.log(`Generating content for ${message}`);
+      if (!message) {
+        return res.status(400).json({ error: true, message: 'Message is required' });
+      }
+
+      const response = await gemini.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: message,
+      });
+
+      return res.json({ error: false, response: response.candidates[0].content.parts[0].text });
     } catch (error) {
       return this.handleError(next, error.message, 500);
     }
