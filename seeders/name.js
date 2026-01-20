@@ -66,6 +66,8 @@ const seedNames = async () => {
             typeId: type._id,
             name: item.categoryName,
             status: false,
+            slug: slugify(item.categoryName, { lower: true, strict: true }),
+            order: categoryMap.size + 1,
           });
         }
         categoryMap.set(item.categoryName, category); // Cache the category result
