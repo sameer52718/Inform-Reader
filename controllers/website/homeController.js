@@ -128,7 +128,7 @@ class HomeController extends BaseController {
 
       const getRandomNames = () =>
         Name.aggregate([
-          { $match: { status: true, isDeleted: false } },
+          { $match: { isProcessed: true, status: true, isDeleted: false } },
           { $sample: { size: 10 } },
           {
             $project: {

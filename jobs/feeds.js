@@ -17,6 +17,7 @@ import { runCouponSync } from './coupon.js';
 import { runOfferSync } from './offer.js';
 import { runCJMerchantSync } from './cjMerchant.js';
 import { runCJCouponSync } from './cjCoupon.js';
+import { scheduleNameProcessingCron } from './name.js';
 
 import * as cheerio from 'cheerio';
 
@@ -171,11 +172,11 @@ async function startCron() {
       fetchAndSaveMetalPrices();
     });
 
-    // Sitemap cron job
-    cron.schedule('0 0 * * *', () => {
-      logger.info(`[Cron] Running Sitemap generation at ${new Date().toISOString()}`);
-      generateAllSitemaps();
-    });
+    // // Sitemap cron job
+    // cron.schedule('0 0 * * *', () => {
+    //   logger.info(`[Cron] Running Sitemap generation at ${new Date().toISOString()}`);
+    //   generateAllSitemaps();
+    // });
 
     // Merchant sync cron job
     cron.schedule('0 */4 * * *', () => {
@@ -207,7 +208,11 @@ async function startCron() {
       runCJCouponSync();
     });
 
-
+    // Baby names processing cron job (Gemini)
+    cron.schedule('0 1 * * *', async () => {
+      logger.info(`[Cron] Running Baby names processing at ${new Date().toISOString()}`);
+    });
+    scheduleNameProcessingCron();
   } catch (err) {
     logger.error(`[Startup Error] ${err.message}`);
   }

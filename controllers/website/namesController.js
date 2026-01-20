@@ -60,24 +60,96 @@ class NamesController extends BaseController {
       const { host } = req.query;
 
       // Find the name by its slug
-      const name = await Name.findOne({ slug }).populate('religionId', 'name').populate('categoryId', 'name').populate('adminId', 'name').exec();
+      const name = await Name.findOne({ slug, isDeleted: false, status: true })
+        .populate('religionId', 'name')
+        .populate('categoryId', 'name')
+        .populate('adminId', 'name')
+        .exec();
 
       if (!name) {
         return res.status(404).json({ message: 'Name not found' });
       }
 
+      // If name is processed with Gemini, return the new structure
+      if (name.isProcessed && name.introduction) {
+        // Return the new structured data
+        const data = {
+          name: name.name,
+          slug: name.slug,
+          gender: name.gender,
+          origin: name.origin,
+          religion: name.religionId?.name || '',
+          category: name.categoryId?.name || '',
+          seo: name.seo,
+          focus_keywords: name.focus_keywords,
+          ai_overview_summary: name.ai_overview_summary,
+          introduction: name.introduction,
+          quick_facts: name.quick_facts,
+          meaning: name.meaning,
+          etymology: name.etymology,
+          cultural_context: name.cultural_context,
+          popularity_trends: name.popularity_trends,
+          modern_vs_traditional: name.modern_vs_traditional,
+          regional_usage: name.regional_usage,
+          ethnic_community_usage: name.ethnic_community_usage,
+          traditionally_admired_qualities: name.traditionally_admired_qualities,
+          notable_individuals: name.notable_individuals,
+          internal_linking_signals: name.internal_linking_signals,
+          nicknames: name.nicknames,
+          similar_names: name.similar_names,
+          pronunciation: name.pronunciation,
+          search_intent_analysis: name.search_intent_analysis,
+          faqs: name.faqs,
+          luckyNumber: name.luckyNumber,
+          luckyColor: name.luckyColor,
+          luckyStone: name.luckyStone,
+        };
+
+        // Get related names
+        const relatedNames = await Name.find({
+          _id: { $ne: name._id },
+          categoryId: name.categoryId?._id,
+          isDeleted: false,
+          status: true,
+        })
+          .select('name slug gender')
+          .limit(5)
+          .exec();
+
+        return res.status(200).json({ 
+          success: true, 
+          data: {
+            ...data,
+            relatedNames,
+          }
+        });
+      }
+
+      // Fallback to old template-based system if not processed
       // Load country.json template file
       const countryTemplatesFile = path.join(process.cwd(), 'templates', 'names', 'country.json');
-      const countryDataRaw = await fs.readFile(countryTemplatesFile, 'utf-8');
-      const countryTemplates = JSON.parse(countryDataRaw);
+      let countryTemplates = [];
+      
+      try {
+        const countryDataRaw = await fs.readFile(countryTemplatesFile, 'utf-8');
+        countryTemplates = JSON.parse(countryDataRaw);
+      } catch (err) {
+        // If template file doesn't exist, return basic data
+        return res.status(200).json({ 
+          success: true, 
+          data: name.toObject() 
+        });
+      }
 
       // Detect subdomain country code
       let subdomainCountryCode = 'pk';
       try {
-        const hostname = new URL(`https://${host}`).hostname;
-        const parts = hostname.split('.');
-        if (parts.length > 2) {
-          subdomainCountryCode = parts[0].toLowerCase();
+        if (host) {
+          const hostname = new URL(`https://${host}`).hostname;
+          const parts = hostname.split('.');
+          if (parts.length > 2) {
+            subdomainCountryCode = parts[0].toLowerCase();
+          }
         }
       } catch {}
 
@@ -86,14 +158,20 @@ class NamesController extends BaseController {
       });
 
       if (!country) {
-        return res.status(404).json({ message: 'Country not found' });
+        return res.status(200).json({ 
+          success: true, 
+          data: name.toObject() 
+        });
       }
 
       // Find the correct template
       const countryTemplate = countryTemplates.find((item) => item.country_code.toLowerCase() === subdomainCountryCode.toLowerCase());
 
       if (!countryTemplate) {
-        return res.status(404).json({ message: 'No template found for this country in country.json' });
+        return res.status(200).json({ 
+          success: true, 
+          data: name.toObject() 
+        });
       }
 
       // Variable Map for replacements
@@ -137,6 +215,8 @@ class NamesController extends BaseController {
       const relatedNames = await Name.find({
         _id: { $ne: name._id },
         categoryId: name.categoryId?._id,
+        isDeleted: false,
+        status: true,
       })
         .select('name slug gender')
         .limit(5)

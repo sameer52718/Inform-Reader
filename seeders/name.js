@@ -5,6 +5,8 @@ import Name from '../models/Name.js';
 import Religion from '../models/Religion.js';
 import Category from '../models/Category.js';
 import Type from '../models/Type.js';
+import slugify from 'slugify';
+import logger from '../logger.js';
 
 dotenv.config();
 
@@ -17,10 +19,10 @@ const seedNames = async () => {
       useUnifiedTopology: true,
     });
 
-    console.log('🚀 Connected to MongoDB');
+    logger.info('🚀 Connected to MongoDB');
 
     // Read the JSON file and parse it
-    const rawData = fs.readFileSync('seeders/output.json');
+    const rawData = fs.readFileSync('seeders/names.json');
     const namesData = JSON.parse(rawData);
 
     // Maps to cache religions, categories, and types to avoid redundant DB calls
@@ -81,19 +83,20 @@ const seedNames = async () => {
         origion: item.origin,
         shortName: item.shortName || 'NO',
         nameLength: item.name.length,
+        slug: slugify(`${item.name}-${item.origin || item.religion || 'unknown'}-${item.gender?.toLowerCase() || 'male'}`, { lower: true, strict: true }),
       };
 
       // batchData.push(formattedName);
 
       // Skip the name if it's already been added to the batch or exists in the database
       if (existingNamesSet.has(item.name)) {
-        console.log(`⚠️ Skipped (already exists in batch): ${item.name}`);
+        logger.warn(`⚠️ Skipped (already exists in batch): ${item.name}`);
         continue; // Skip this iteration if the name is already in the set
       }
 
       const existing = await Name.findOne({ name: item.name });
       if (existing) {
-        console.log(`⚠️ Skipped (already exists in DB): ${item.name}`);
+        logger.warn(`⚠️ Skipped (already exists in DB): ${item.name}`);
       } else {
         batchData.push(formattedName); // Collect the data in the batch array
         existingNamesSet.add(item.name); // Add name to the set to ensure uniqueness
@@ -104,7 +107,7 @@ const seedNames = async () => {
       if (batchData.length >= BATCH_SIZE) {
         await Name.insertMany(batchData);
         added = added + BATCH_SIZE;
-        console.log(`✅ Inserted ${batchData.length} names into the database , ${added}`);
+        logger.info(`✅ Inserted ${batchData.length} names into the database , ${added}`);
         batchData.length = 0; // Clear the batch after insertion
         existingNamesSet.clear(); // Clear the set after batch insert
       }
@@ -113,14 +116,14 @@ const seedNames = async () => {
     // Insert any remaining data that wasn't inserted in the last batch
     if (batchData.length > 0) {
       await Name.insertMany(batchData);
-      console.log(`✅ Inserted ${batchData.length} names into the database`);
+      logger.info(`✅ Inserted ${batchData.length} names into the database`);
     }
 
     await mongoose.disconnect();
-    console.log('🔌 Disconnected from MongoDB');
+    logger.info('🔌 Disconnected from MongoDB');
     process.exit();
   } catch (error) {
-    console.error('❌ Error seeding names:', error.message);
+    logger.error('❌ Error seeding names:', error.message);
     process.exit(1);
   }
 };
