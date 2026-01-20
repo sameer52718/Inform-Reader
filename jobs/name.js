@@ -181,7 +181,7 @@ STRICT OUTPUT FORMAT — JSON ONLY
 
 Process the provided name using all rules above. Return ONLY valid JSON. Do NOT explain. Do NOT add extra text.`;
 
-const gemini = new GoogleGenAI({ apiKey: "AIzaSyBjE7p0mRv5pZm49z2TQsbbjIoq_UXKRd4" });
+const gemini = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 // Daily job: pick up to 150 unprocessed names from DB and process directly with Gemini
 export async function scheduleNameProcessingCron() {
