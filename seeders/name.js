@@ -10,7 +10,7 @@ import logger from '../logger.js';
 
 dotenv.config();
 
-const BATCH_SIZE = 500; // Set batch size for insertions
+const BATCH_SIZE = 50; // Set batch size for insertions
 
 const seedNames = async () => {
   try {
@@ -85,23 +85,23 @@ const seedNames = async () => {
         origion: item.origin,
         shortName: item.shortName || 'NO',
         nameLength: item.name.length,
-        slug: slugify(`${item.name}-${item.origin || item.religion || 'unknown'}-${item.gender?.toLowerCase() || 'male'}`, { lower: true, strict: true }),
+        slug: item.slug,
       };
 
       // batchData.push(formattedName);
 
       // Skip the name if it's already been added to the batch or exists in the database
-      if (existingNamesSet.has(item.name)) {
-        logger.warn(`⚠️ Skipped (already exists in batch): ${item.name}`);
+      if (existingNamesSet.has(item.slug)) {
+        logger.warn(`⚠️ Skipped (already exists in batch): ${item.slug}`);
         continue; // Skip this iteration if the name is already in the set
       }
 
-      const existing = await Name.findOne({ name: item.name });
+      const existing = await Name.findOne({ slug: item.slug });
       if (existing) {
-        logger.warn(`⚠️ Skipped (already exists in DB): ${item.name}`);
+        logger.warn(`⚠️ Skipped (already exists in DB): ${item.slug}`);
       } else {
         batchData.push(formattedName); // Collect the data in the batch array
-        existingNamesSet.add(item.name); // Add name to the set to ensure uniqueness
+        existingNamesSet.add(item.slug); // Add name to the set to ensure uniqueness
         // console.log(`✅ Queued for insertion: ${item.name}`);
       }
 
@@ -111,7 +111,7 @@ const seedNames = async () => {
         added = added + BATCH_SIZE;
         logger.info(`✅ Inserted ${batchData.length} names into the database , ${added}`);
         batchData.length = 0; // Clear the batch after insertion
-        existingNamesSet.clear(); // Clear the set after batch insert
+        // existingNamesSet.clear(); // Clear the set after batch insert
       }
     }
 
@@ -125,6 +125,7 @@ const seedNames = async () => {
     logger.info('🔌 Disconnected from MongoDB');
     process.exit();
   } catch (error) {
+    console.log(error);
     logger.error('❌ Error seeding names:', error.message);
     process.exit(1);
   }
