@@ -211,8 +211,8 @@ async function startCron() {
     // Baby names processing cron job (Gemini)
     cron.schedule('0 1 * * *', async () => {
       logger.info(`[Cron] Running Baby names processing at ${new Date().toISOString()}`);
-      scheduleNameProcessingCron();
     });
+    scheduleNameProcessingCron();
   } catch (err) {
     logger.error(`[Startup Error] ${err.message}`);
   }

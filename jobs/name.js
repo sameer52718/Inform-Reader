@@ -1,14 +1,27 @@
-import cron from 'node-cron';
 import Name from '../models/Name.js';
 import Sitemap from '../models/Sitemap.js';
 import logger from '../logger.js';
 import { GoogleGenAI } from '@google/genai';
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const DAILY_LIMIT = 150;
 
 // Sleep helper (ms)
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const getRetryDelayMs = (err, defaultMs = 20000) => {
+    try {
+        const retryInfo = err?.response?.data?.error?.details?.find(
+            d => d['@type'] === 'type.googleapis.com/google.rpc.RetryInfo'
+        );
+
+        if (!retryInfo?.retryDelay) return defaultMs;
+
+        // "28s" -> 28000
+        const seconds = parseFloat(retryInfo.retryDelay.replace('s', ''));
+        return seconds * 1000;
+    } catch {
+        return defaultMs;
+    }
+};
 
 // Same system prompt used in worker
 const SYSTEM_PROMPT = `SYSTEM ROLE (MANDATORY)
@@ -41,6 +54,14 @@ Rules:
  • Fact-based
  • No adjectives
  • No symbolism
+GENDER FIELD CONSTRAINT (MANDATORY)
+• The "gender" value MUST be one of the following uppercase values ONLY:
+  - MALE
+  - FEMALE
+• No lowercase, mixed-case, plural, or descriptive values are allowed.
+• Do NOT infer or assume gender beyond documented usage.
+• If the name is used across multiple genders, use the gender of the majority of the users.
+• Any output using values outside MALE, FEMALE is INVALID.
 PRIMARY OBJECTIVE
 Generate a HIGH-TRUST, EEAT-COMPLIANT, SEO-OPTIMIZED baby name profile that:
 • Is safe for Google indexing
@@ -191,16 +212,35 @@ export async function scheduleNameProcessingCron() {
 
     try {
         // Find up to 150 names which are not yet processed
-        const names = await Name.find({
-            isProcessed: { $ne: true },
-            isDeleted: false,
-            status: true,
-        })
-            .sort({ createdAt: 1 })
-            .limit(DAILY_LIMIT)
-            .populate('religionId', 'name')
-            .populate('categoryId', 'name')
-            .lean();
+        const names = await Name.aggregate([
+            {
+                $match: {
+                    isProcessed: { $ne: true },
+                    isDeleted: false,
+                    status: true,
+                },
+            },
+            { $sample: { size: DAILY_LIMIT } },
+            {
+                $lookup: {
+                    from: 'religions',
+                    localField: 'religionId',
+                    foreignField: '_id',
+                    as: 'religionId',
+                },
+            },
+            { $unwind: { path: '$religionId', preserveNullAndEmptyArrays: true } },
+            {
+                $lookup: {
+                    from: 'categories',
+                    localField: 'categoryId',
+                    foreignField: '_id',
+                    as: 'categoryId',
+                },
+            },
+            { $unwind: { path: '$categoryId', preserveNullAndEmptyArrays: true } },
+        ]);
+
 
         if (!names.length) {
             logger.info(`[NamesCron][Job:${jobId}] No unprocessed names found`);
@@ -238,7 +278,7 @@ export async function scheduleNameProcessingCron() {
                 );
 
                 const response = await gemini.models.generateContent({
-                    model: 'gemini-2.5-flash-lite',
+                    model: 'gemini-2.5-flash',
                     contents: prompt,
                 });
 
@@ -262,20 +302,20 @@ export async function scheduleNameProcessingCron() {
                     logger.error(`Response text: ${responseText.substring(0, 500)}`);
                     continue;
                 }
-                logger.info(parsedData,'parsedData');
+                logger.info(parsedData, 'parsedData');
 
                 // Prepare update
                 const nameData = {
                     name: parsedData.name || n.name,
                     slug: n.slug,
-                    gender: n.gender,
+                    gender: ["MALE", "FEMALE"].includes(parsedData.gender) ? parsedData.gender : n.gender,
                     initialLetter: n.initialLetter || (n.name ? n.name.charAt(0).toUpperCase() : ''),
                     shortMeaning:
                         parsedData.quick_facts?.meaning_short ||
                         parsedData.meaning?.primary ||
                         n.shortMeaning ||
                         '',
-                    luckyNumber: parsedData.luckyNumber || n.luckyNumber || '',
+                    luckyNumber: typeof parsedData.luckyNumber !== 'number' ? n.luckyNumber : parsedData.luckyNumber || '',
                     luckyColor: parsedData.luckyColor || n.luckyColor || '',
                     luckyStone: parsedData.luckyStone || n.luckyStone || '',
                     longMeaning: parsedData.introduction || n.longMeaning || '',
@@ -339,15 +379,18 @@ export async function scheduleNameProcessingCron() {
                 // 1 minute delay between Gemini calls
                 if (processedCount < names.length) {
                     logger.info(
-                        `[NamesCron][Job:${jobId}] Sleeping 60s before next Gemini call (processed: ${processedCount})`,
+                        `[NamesCron][Job:${jobId}] Sleeping 20s before next Gemini call (processed: ${processedCount})`,
                     );
-                    await sleep(60_000);
+                    await sleep(20000);
                 }
             } catch (err) {
+                const delayMs = getRetryDelayMs(err);
+
                 logger.error(
-                    `[NamesCron][Job:${jobId}] Error processing name ${n.name} (${n.slug}): ${err.message}`,
+                    `[NamesCron][Job:${jobId}] Error processing name ${n.name} (${n.slug}): ${err.message}. Retrying after ${delayMs}ms`
                 );
-                await sleep(2000);
+
+                await sleep(delayMs);
             }
         }
 

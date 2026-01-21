@@ -1,9 +1,6 @@
 import Name from '../../models/Name.js';
 import BaseController from '../BaseController.js';
 import Category from '../../models/Category.js';
-import fs from 'fs/promises';
-import path from 'path';
-import Country from '../../models/Country.js';
 class NamesController extends BaseController {
   constructor() {
     super();
@@ -18,7 +15,7 @@ class NamesController extends BaseController {
       const { page = 1, limit = 10, initialLetter, categoryId, gender, search } = req.query;
 
       // Build filter object
-      let filter = {};
+      let filter = { isProcessed: true };
       if (initialLetter) filter.initialLetter = initialLetter;
 
       if (categoryId) {
@@ -60,7 +57,7 @@ class NamesController extends BaseController {
       const { host } = req.query;
 
       // Find the name by its slug
-      const name = await Name.findOne({ slug, isDeleted: false, status: true })
+      const name = await Name.findOne({ slug, isDeleted: false, status: true, isProcessed: true })
         .populate('religionId', 'name')
         .populate('categoryId', 'name')
         .populate('adminId', 'name')
@@ -70,174 +67,59 @@ class NamesController extends BaseController {
         return res.status(404).json({ message: 'Name not found' });
       }
 
-      // If name is processed with Gemini, return the new structure
-      if (name.isProcessed && name.introduction) {
-        // Return the new structured data
-        const data = {
-          name: name.name,
-          slug: name.slug,
-          gender: name.gender,
-          origin: name.origin,
-          religion: name.religionId?.name || '',
-          category: name.categoryId?.name || '',
-          seo: name.seo,
-          focus_keywords: name.focus_keywords,
-          ai_overview_summary: name.ai_overview_summary,
-          introduction: name.introduction,
-          quick_facts: name.quick_facts,
-          meaning: name.meaning,
-          etymology: name.etymology,
-          cultural_context: name.cultural_context,
-          popularity_trends: name.popularity_trends,
-          modern_vs_traditional: name.modern_vs_traditional,
-          regional_usage: name.regional_usage,
-          ethnic_community_usage: name.ethnic_community_usage,
-          traditionally_admired_qualities: name.traditionally_admired_qualities,
-          notable_individuals: name.notable_individuals,
-          internal_linking_signals: name.internal_linking_signals,
-          nicknames: name.nicknames,
-          similar_names: name.similar_names,
-          pronunciation: name.pronunciation,
-          search_intent_analysis: name.search_intent_analysis,
-          faqs: name.faqs,
-          luckyNumber: name.luckyNumber,
-          luckyColor: name.luckyColor,
-          luckyStone: name.luckyStone,
-        };
-
-        // Get related names
-        const relatedNames = await Name.find({
-          _id: { $ne: name._id },
-          categoryId: name.categoryId?._id,
-          isDeleted: false,
-          status: true,
-        })
-          .select('name slug gender')
-          .limit(5)
-          .exec();
-
-        return res.status(200).json({ 
-          success: true, 
-          data: {
-            ...data,
-            relatedNames,
-          }
-        });
-      }
-
-      // Fallback to old template-based system if not processed
-      // Load country.json template file
-      const countryTemplatesFile = path.join(process.cwd(), 'templates', 'names', 'country.json');
-      let countryTemplates = [];
-      
-      try {
-        const countryDataRaw = await fs.readFile(countryTemplatesFile, 'utf-8');
-        countryTemplates = JSON.parse(countryDataRaw);
-      } catch (err) {
-        // If template file doesn't exist, return basic data
-        return res.status(200).json({ 
-          success: true, 
-          data: name.toObject() 
-        });
-      }
-
-      // Detect subdomain country code
-      let subdomainCountryCode = 'pk';
-      try {
-        if (host) {
-          const hostname = new URL(`https://${host}`).hostname;
-          const parts = hostname.split('.');
-          if (parts.length > 2) {
-            subdomainCountryCode = parts[0].toLowerCase();
-          }
-        }
-      } catch {}
-
-      const country = await Country.findOne({
-        countryCode: subdomainCountryCode.toLowerCase(),
-      });
-
-      if (!country) {
-        return res.status(200).json({ 
-          success: true, 
-          data: name.toObject() 
-        });
-      }
-
-      // Find the correct template
-      const countryTemplate = countryTemplates.find((item) => item.country_code.toLowerCase() === subdomainCountryCode.toLowerCase());
-
-      if (!countryTemplate) {
-        return res.status(200).json({ 
-          success: true, 
-          data: name.toObject() 
-        });
-      }
-
-      // Variable Map for replacements
-      const map = {
-        Name: name.name,
-        Meaning: name.shortMeaning,
-        Origin: name.origion,
-        Length: name.nameLength,
-        'Lucky Stone': name.luckyStone || '',
-        'Lucky Number': name.luckyNumber || '',
-        'Lucky Color': name.luckyColor || '',
-        'Short Name': name.shortName || 'NO',
-        Religion: name.religionId?.name || '',
-        Category: name.categoryId?.name || '',
-        Country: country.name,
-        City: name.city || '',
+      // Return the new structured data
+      const data = {
+        name: name.name,
+        slug: name.slug,
+        gender: name.gender,
+        origin: name.origin,
+        religion: name.religionId?.name || '',
+        category: name.categoryId?.name || '',
+        seo: name.seo,
+        focus_keywords: name.focus_keywords,
+        ai_overview_summary: name.ai_overview_summary,
+        introduction: name.introduction,
+        quick_facts: name.quick_facts,
+        meaning: name.meaning,
+        etymology: name.etymology,
+        cultural_context: name.cultural_context,
+        popularity_trends: name.popularity_trends,
+        modern_vs_traditional: name.modern_vs_traditional,
+        regional_usage: name.regional_usage,
+        ethnic_community_usage: name.ethnic_community_usage,
+        traditionally_admired_qualities: name.traditionally_admired_qualities,
+        notable_individuals: name.notable_individuals,
+        internal_linking_signals: name.internal_linking_signals,
+        nicknames: name.nicknames,
+        similar_names: name.similar_names,
+        pronunciation: name.pronunciation,
+        search_intent_analysis: name.search_intent_analysis,
+        faqs: name.faqs,
+        luckyNumber: name.luckyNumber,
+        luckyColor: name.luckyColor,
+        luckyStone: name.luckyStone,
       };
 
-      // Replacement function
-      const replaceVars = (text) =>
-        text?.replace(/{(.*?)}/g, (_, key) => {
-          return map[key] !== undefined ? map[key] : `{${key}}`;
-        }) || '';
-
-      // Generate individual sections
-      const filledTitle = replaceVars(countryTemplate.template.title);
-      const filledIntro = replaceVars(countryTemplate.template.intro);
-      const filledMeaning = replaceVars(countryTemplate.template.meaning_section);
-      const filledLucky = replaceVars(countryTemplate.template.lucky_section);
-      const filledCountryNote = replaceVars(countryTemplate.template.country_note);
-
-      // FAQs
-      const filledFaqs = countryTemplate.template.faqs.map((faq) => ({
-        question: replaceVars(faq.q),
-        answer: replaceVars(faq.a),
-      }));
-
-      const constants = countryTemplate.constants || {};
-
-      // Related names
+      // Get related names
       const relatedNames = await Name.find({
         _id: { $ne: name._id },
         categoryId: name.categoryId?._id,
         isDeleted: false,
         status: true,
+        isProcessed: true,
       })
         .select('name slug gender')
         .limit(5)
         .exec();
 
-      // Final response structure
-      const data = {
-        ...name.toObject(),
-        content: {
-          title: filledTitle,
-          intro: filledIntro,
-          meaningSection: filledMeaning,
-          luckySection: filledLucky,
-          countryNote: filledCountryNote,
-          faqs: filledFaqs,
-          constants,
-        },
-        relatedNames,
-      };
+      return res.status(200).json({
+        success: true,
+        data: {
+          ...data,
+          relatedNames,
+        }
+      });
 
-      return res.status(200).json({ success: true, data });
     } catch (error) {
       console.error('❌ Error fetching name detail:', error);
       return res.status(500).json({ message: 'Error retrieving name detail' });
