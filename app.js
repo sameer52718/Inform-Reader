@@ -9,7 +9,7 @@ import ApiV1Router from './routes/api/v1/index.js';
 import connectDB from './db/index.js';
 import { initializeSocket } from './socket.js';
 import startCron from './jobs/feeds.js';
-import { getSitemap, getSitemapByCountry } from './controllers/website/SitemapController.js';
+import { getSitemap, getSitemapByCountry, getSitemapIndex } from './controllers/website/SitemapController.js';
 import { bullBoardRouter, queues } from './queue/bullBoard.js';
 
 const app = express();
@@ -57,8 +57,10 @@ app.get('/sync-merchants', async (req, res) => {
   }
 });
 
-app.get('/api/v1/sitemaps/:filename', getSitemap);
-app.get('/api/v1/sitemaps', getSitemapByCountry);
+// Sitemap routes - updated for new model structure
+app.get('/api/v1/sitemaps', getSitemap); // Query params: country, type, page, limit
+app.get('/api/v1/sitemaps/index', getSitemapIndex); // Sitemap index XML
+app.get('/api/v1/sitemaps/list', getSitemapByCountry); // List available sitemaps
 app.use('/api/v1', ApiV1Router);
 
 const PORT = process.env.PORT || 1000;
