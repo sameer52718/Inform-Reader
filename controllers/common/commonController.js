@@ -14,6 +14,13 @@ import Nationality from '../../models/Nationality.js';
 import dotenv from 'dotenv';
 import ollama from 'ollama';
 import { GoogleGenAI } from '@google/genai';
+import { google } from 'googleapis';
+import logger from '../../logger.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
@@ -39,6 +46,7 @@ class CommonController extends BaseController {
     this.nationality = this.nationality.bind(this);
     this.chat = this.chat.bind(this);
     this.generateContent = this.generateContent.bind(this);
+    this.sitemapSubmission = this.sitemapSubmission.bind(this);
   }
 
   async country(req, res, next) {
@@ -300,6 +308,37 @@ class CommonController extends BaseController {
 
       return res.json({ error: false, response: response.candidates[0].content.parts[0].text });
     } catch (error) {
+      return this.handleError(next, error.message, 500);
+    }
+  }
+
+
+  async sitemapSubmission(req, res, next) {
+    try {
+      logger.info('Submitting sitemap to Google Search Console');
+
+
+      const auth = new google.auth.JWT({
+        // File ka absolute path dein, ye sabse safe tariqa hai
+        keyFile: path.join(__dirname, '../../sitemap-key.json'),
+        scopes: ['https://www.googleapis.com/auth/webmasters'],
+      });
+
+      // JWT mein authorize() call karne se pehle ye ensure karta hai token valid hai
+      await auth.authorize();
+
+      const webmasters = google.webmasters({ version: 'v3', auth });
+
+      const response = await webmasters.sitemaps.submit({
+        siteUrl: 'sc-domain:informreaders.com',
+        feedpath: 'https://informreaders.com/sitemap.xml',
+      });
+
+      logger.info('Sitemap submitted successfully', response.data);
+      return res.json({ error: false, response: response.data });
+
+    } catch (error) {
+      console.error('Full Error Object:', error);
       return this.handleError(next, error.message, 500);
     }
   }

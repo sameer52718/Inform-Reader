@@ -3,6 +3,7 @@ import commonController from '../../../../controllers/common/commonController.js
 
 const router = Router();
 
+router.get('/sitemap/submit', commonController.sitemapSubmission);
 router.get('/country', commonController.country);
 router.get('/type', commonController.type);
 router.get('/category', commonController.category);
@@ -19,5 +20,6 @@ router.post('/translate', commonController.translateContent);
 
 router.post('/chat', commonController.chat);
 router.post('/gemini', commonController.generateContent);
+
 
 export default router;

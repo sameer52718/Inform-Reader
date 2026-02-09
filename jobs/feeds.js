@@ -10,7 +10,7 @@ import Category from '../models/Category.js';
 
 import { fetchAndSaveCurrencyRates } from '../utils/fetchCurrency.js';
 import { fetchAndSaveMetalPrices } from '../utils/fetchMetalPrice.js';
-import { generateAllSitemaps } from './sitemap.js';
+import { submitSitemap } from './sitemap.js';
 
 import { runSyncJob } from './merchant.js';
 import { runCouponSync } from './coupon.js';
@@ -213,6 +213,13 @@ async function startCron() {
       logger.info(`[Cron] Running Baby names processing at ${new Date().toISOString()}`);
       scheduleNameProcessingCron();
     });
+
+    // Sitemap submission cron job
+    cron.schedule('0 2 * * *', () => {
+      logger.info(`[Cron] Running Sitemap submission at ${new Date().toISOString()}`);
+      submitSitemap();
+    });
+    
   } catch (err) {
     logger.error(`[Startup Error] ${err.message}`);
   }
